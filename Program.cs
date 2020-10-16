@@ -6,32 +6,6 @@ using Nums;
 using System.Xml;
 
 
-/*
-
-
-    Deffered renderer
-    PBR
-    point lights
-    MSAA
-    glTF
-    mesh decimation
-    subshaders - shaders that extend the PBR shader
-    save scenes/prefabs/etc in binary format
-
-
-    todo list:
-        multi-material-mesh
-        rotations (quaternion)
-            collada rotations bug (quaternions)
-        camera controller 
-        UBO api
-
-
-
-
-
-*/
-
 
 static class app {
     public static GameWindow window { get; private set; }
