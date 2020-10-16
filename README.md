@@ -3,7 +3,7 @@
 this project is a work in progress.
 
 when its done it should have these features:
-* Deferred renderer
+* Deferred rendering
 * PBR
 * point lights
 * MSAA
@@ -15,6 +15,8 @@ additional features I may add:
 * mesh decimation
 * subshaders - shaders that extend the PBR shader
 * save scenes/prefabs/etc in binary format
+* blending
+* emissive materials
 
 ## current todo list:
 * multi-material-mesh
