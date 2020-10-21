@@ -98,19 +98,16 @@ static class app {
 
     public static Entity entity;
 
+    static float angle;
+
     static void update(FrameEventArgs e) {
         camera.move();
 
         if (window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.X)) {
-            entity.transform.rotation.x += 0.05f;
+            angle += 0.04f;
+            entity.transform.rotation = quat.fromAxisangle(vec3.unity, angle);
         }
 
-        if (window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Y)) {
-            entity.transform.rotation.y += 0.05f;
-        }
         
-        if (window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Z)) {
-            entity.transform.rotation.z += 0.05f;
-        }
     }
 }
