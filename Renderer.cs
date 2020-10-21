@@ -9,6 +9,7 @@ struct posVertex {
 }
 
 static class Renderer {
+
     public static Shader geomPass { get; private set; }
     public static Shader lightPass { get; private set; }
 
@@ -53,8 +54,7 @@ static class Renderer {
         gBuffer.writeMode();
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
-        app.camera.updateUniforms();
-        app.entity.render();
+        Scene.active.renderGeometry();
 
         lightPass.use();
         gBuffer.readMode();
@@ -62,6 +62,8 @@ static class Renderer {
 
         GL.BindVertexArray(quadVao);
         GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+
+        Scene.active.renderLights();
 
         GL.Flush();
         app.window.SwapBuffers();

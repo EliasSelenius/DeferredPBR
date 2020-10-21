@@ -9,7 +9,6 @@ using System.Xml;
 
 static class app {
     public static GameWindow window { get; private set; }
-    public static Camera camera { get; private set; }
 
     public static void Main() {
         window = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
@@ -23,20 +22,7 @@ static class app {
 
     static void load() {
 
-        
-
-        camera = new Camera();
-
-        // collada
-        {
-            var xml = new XmlDocument();
-            xml.Load("data/models/Ships.dae");
-            var co = (new Collada(xml).toEntity());
-            entity = new Entity();
-            foreach (var item in co) {
-                entity.addChild(item.Value);
-            }
-        }
+        window.CursorGrabbed = true;
 
         
 
@@ -96,18 +82,7 @@ static class app {
     }
 
 
-    public static Entity entity;
-
-    static float angle;
-
     static void update(FrameEventArgs e) {
-        camera.move();
-
-        if (window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.X)) {
-            angle += 0.04f;
-            entity.transform.rotation = quat.fromAxisangle(vec3.unity, angle);
-        }
-
-        
+        Scene.active.update();
     }
 }

@@ -5,7 +5,14 @@ using OpenTK.Mathematics;
 class Transform {
     public vec3 position;
     public vec3 scale = vec3.one;
-    public quat rotation;
+    public quat rotation = quat.identity;
+
+    public vec3 left => quat.leftVector(rotation);
+    public vec3 right => -left;
+    public vec3 up => quat.upVector(rotation);
+    public vec3 down => -up;
+    public vec3 forward => quat.forwardVector(rotation);
+    public vec3 backward => -forward;
 
     public mat4 getMatrix() {
         var m = mat4.identity;
@@ -38,11 +45,15 @@ class Transform {
         rotation = quat.fromMatrix(rm);
     }
 
-
     public void applyUniforms() {
         var m = getMatrix();
         int loc = GL.GetUniformLocation(Renderer.geomPass.id, "model");
         //GL.UniformMatrix4(loc, 1, false, ref m.row1.x);
         GLUtils.setUniformMatrix4(loc, ref m);
     }
+
+
+    public void rotate(quat q) => rotation *= q;
+    public void rotate(vec3 axis, float angle) => rotate(quat.fromAxisangle(axis, angle));
+
 }

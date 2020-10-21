@@ -18,6 +18,10 @@ struct quat {
 
     public quat(float _x, float _y, float _z, float _w) => (x, y, z, w) = (_x, _y, _z, _w);
 
+    public static vec3 leftVector(quat q) => new vec3(1 - 2 * (q.y*q.y + q.z*q.z), 2 * (q.x*q.y - q.z*q.w), 2 * (q.x*q.z + q.y*q.w));
+    public static vec3 upVector(quat q) => new vec3(2 * (q.x*q.y + q.z*q.w), 1 - 2 * (q.x*q.x + q.z*q.z), 2 * (q.y*q.z - q.x*q.w));
+    public static vec3 forwardVector(quat q) => new vec3(2 * (q.x*q.z - q.y*q.w), 2 * (q.y*q.z + q.x*q.w), 1 - 2 * (q.x*q.x + q.y*q.y));
+
 
     // note: assumes axis is normalized
     public static quat fromAxisangle(vec3 axis, float angle) {        
@@ -44,20 +48,19 @@ struct quat {
               zz = q.z * q.z,
               zw = q.z * q.w;
 
-        return new mat3(1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw),
+        /*return new mat3(1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw),
                         2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw),
-                        2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy));
-
-        /*
+                        2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy));*/
+        
         var res = new mat3( yy + zz, xy - zw, xz + yw,
                             xy + zw, xx + zz, yz - xw,
                             xz - yw, yz + xw, xx + yy ) * 2;
-        */
-                
+        res.diagonal = 1 - res.diagonal;
+        return res;
     }
 
     public static quat fromMatrix(mat3 m) {
-        var trace = m.m11 + m.m22 + m.m33;
+        var trace = m.trace;
         var q = new quat();
         if (trace > 0) {
             float s = 0.5f / math.sqrt(trace + 1.0f);
@@ -89,4 +92,30 @@ struct quat {
 
         return q;
     }
+
+    public quat conj() => new quat(-x, -y, -z, w);
+
+
+    public static quat operator *(quat l, quat r) {
+        // (a + ib + jc + kd) * (e + if + jg + kh)
+        
+        float a = l.w,
+              b = l.x,
+              c = l.y,
+              d = l.z,
+              
+              e = r.w,
+              f = r.x,
+              g = r.y,
+              h = r.z;
+
+        return new quat {
+            w = a*e - b*f - c*g - d*h,
+            x = b*e + a*f + c*h - d*g,
+            y = a*g - b*h + c*e + d*f,
+            z = a*h + b*g - c*f + d*e
+        };
+    }
+
+    public override string ToString() => $"{w} + {x} + {y} + {z}";
 }

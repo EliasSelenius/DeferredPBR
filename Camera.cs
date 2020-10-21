@@ -11,27 +11,40 @@ class Camera {
     public mat4 viewMatrix = mat4.identity;
 
     public void move() {
+        
+        var t = vec3.zero;
+        
         if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A)) {
-            transform.position.x += 0.03f;
+            t += transform.left;
         } 
 
         if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D)) {
-            transform.position.x -= 0.03f;
+            t += transform.right;
         }
 
         if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W)) {
-            transform.position.z += 0.03f;
+            t += transform.forward;
         }
         
         if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S)) {
-            transform.position.z -= 0.03f;
+            t += transform.backward;
         }
+        
+
+        transform.position += t * 0.07f;
+        
+        (float mdx, float mdy) = app.window.MouseState.Delta / 100f;
+        System.Console.WriteLine(transform.rotation);
+        transform.rotate(vec3.unity, mdx);
+        transform.rotate(transform.left, -mdy);
+        
+
     }
 
     public void updateUniforms() {
 
-        viewMatrix = math.lookAt(transform.position, transform.position + vec3.unitz, vec3.unity);
-        //viewMatrix = Matrix4.LookAt(transform.position.toOpenTK(), (transform.position + vec3.unitz).toOpenTK(), vec3.unity.toOpenTK()).toNums();
+        viewMatrix = math.lookAt(transform.position, transform.position + transform.forward, transform.up);
+        //viewMatrix = Matrix4.LookAt(transform.position.toOpenTK(), (transform.position + transform.forward).toOpenTK(), transform.up.toOpenTK()).toNums();
 
         Matrix4.CreatePerspectiveFieldOfView(fieldOfView * math.deg2rad, (float)app.window.Size.X / app.window.Size.Y, nearPlane, farPlane, out Matrix4 res);
         projectionMatrix = res.toNums(); 

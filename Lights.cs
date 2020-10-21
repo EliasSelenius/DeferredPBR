@@ -1,0 +1,8 @@
+
+class Pointlight {
+
+}
+
+class Dirlight {
+    
+}
