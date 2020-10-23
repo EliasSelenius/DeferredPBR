@@ -20,5 +20,7 @@ additional features I may add:
 
 ## current todo list:
 * multi-material-mesh
-* UBO api
-* 
+* point light sphere mesh
+* camera UBO
+* PBR dir lights
+* PBR point lights
