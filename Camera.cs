@@ -12,8 +12,10 @@ class Camera {
 
     public void move() {
         
+
         var t = vec3.zero;
-        
+        var speed = 0.07f;
+
         if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A)) {
             t += transform.left;
         } 
@@ -30,13 +32,19 @@ class Camera {
             t += transform.backward;
         }
         
+        if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftShift)) {
+            speed += 0.3f;
+        }
 
-        transform.position += t * 0.07f;
-        
+
+        transform.position += t * speed;
+                
         (float mdx, float mdy) = app.window.MouseState.Delta / 100f;
-        System.Console.WriteLine(transform.rotation);
+        //System.Console.WriteLine(transform.rotation);
         transform.rotate(vec3.unity, mdx);
         transform.rotate(transform.left, -mdy);
+
+    
         
 
     }

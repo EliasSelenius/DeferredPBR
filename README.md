@@ -20,7 +20,5 @@ additional features I may add:
 
 ## current todo list:
 * multi-material-mesh
-* rotations (quaternion)
-* camera controller 
 * UBO api
-* scene class
+* 

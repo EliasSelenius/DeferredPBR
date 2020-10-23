@@ -7,10 +7,15 @@
 
 in vec2 uv;
 
+uniform mat4 view;
+uniform vec3 lightDir;
+uniform vec3 lightColor;
+
 uniform sampler2D g_Albedo_Metallic;
 uniform sampler2D g_Normal_Roughness;
 
 out vec4 FragColor;
+
 
 void main() {
     vec4 gam = texture(g_Albedo_Metallic, uv);
@@ -21,5 +26,10 @@ void main() {
     vec3 normal = gnr.xyz;
     float roughness = gnr.w;
     
-    FragColor = vec4(albedo, 1.0);
+    vec3 ld = (view * vec4(lightDir, 0.0)).xyz;
+    vec3 color = albedo * lightColor;
+    vec3 light = color * 0.1;
+    light += color * max(0, dot(normal, ld));
+
+    FragColor = vec4(light, 1.0);
 }

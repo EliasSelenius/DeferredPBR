@@ -15,11 +15,15 @@ static class Renderer {
 
     private static GBuffer gBuffer;
 
-    static int quadVao;
+    public static int quadVao;
 
     public static void load() {
 
         GL.Enable(EnableCap.DepthTest);
+        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.Blend);
+
+
 
         gBuffer = new GBuffer();
 
@@ -50,20 +54,31 @@ static class Renderer {
         //System.Console.WriteLine("frame: " + e.Time);
         GL.ClearColor(0, 0, 0, 1);
 
-        geomPass.use();
-        gBuffer.writeMode();
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        { // geom pass
+            GL.Disable(EnableCap.Blend);
+            GL.Enable(EnableCap.DepthTest);
+
+            geomPass.use();
+            gBuffer.writeMode();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            
+            Scene.active.renderGeometry();
+        }
+
+        { // light pass
+            GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
+            GL.BlendEquation(BlendEquationMode.FuncAdd);
+
+            lightPass.use();
+            GLUtils.setUniformMatrix4(GL.GetUniformLocation(lightPass.id, "view"), ref Scene.active.camera.viewMatrix);
+            gBuffer.readMode();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            Scene.active.renderLights();
+        }
         
-        Scene.active.renderGeometry();
-
-        lightPass.use();
-        gBuffer.readMode();
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-        GL.BindVertexArray(quadVao);
-        GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
-
-        Scene.active.renderLights();
 
         GL.Flush();
         app.window.SwapBuffers();

@@ -12,6 +12,8 @@ static class app {
 
     public static void Main() {
         window = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
+        window.Size = (1600, 900);
+
         window.Load += Renderer.load;
         window.Load += load;
         window.UpdateFrame += update;
