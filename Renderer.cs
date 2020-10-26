@@ -14,6 +14,8 @@ static class Renderer {
     public static Shader lightPass { get; private set; }
 
     private static GBuffer gBuffer;
+    private static Framebuffer gBufferFBO;
+
 
     public static int quadVao;
 
@@ -23,7 +25,12 @@ static class Renderer {
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
 
-
+        gBufferFBO = new Framebuffer(app.window.Size.X,app.window.Size.Y, new[] {
+            (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
+        }, new[] {
+            PixelInternalFormat.Rgba8,
+            PixelInternalFormat.Rgba16f
+        });
 
         gBuffer = new GBuffer();
 
