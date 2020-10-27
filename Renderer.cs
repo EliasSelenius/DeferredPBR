@@ -14,23 +14,15 @@ static class Renderer {
     public static Shader lightPass { get; private set; }
 
     private static GBuffer gBuffer;
-    private static Framebuffer gBufferFBO;
 
-
-    public static int quadVao;
+    public static int dirlightVAO;
+    public static int pointlightVAO;
 
     public static void load() {
 
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
-
-        gBufferFBO = new Framebuffer(app.window.Size.X,app.window.Size.Y, new[] {
-            (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
-        }, new[] {
-            PixelInternalFormat.Rgba8,
-            PixelInternalFormat.Rgba16f
-        });
 
         gBuffer = new GBuffer();
 
@@ -44,15 +36,21 @@ static class Renderer {
         GL.Uniform1(nrLoc, 1);
         
 
-        quadVao = GLUtils.createVertexArray<posVertex>(GLUtils.createBuffer(new[] {
-            new posVertex(-1, -1, 0),
-            new posVertex(1, -1, 0),
-            new posVertex(-1, 1, 0),
-            new posVertex(1, 1, 0)
-        }), GLUtils.createBuffer(new uint[] {
-            0, 1, 2,
-            2, 1, 3
-        }));
+        {
+            dirlightVAO = GLUtils.createVertexArray<posVertex>(GLUtils.createBuffer(new[] {
+                new posVertex(-1, -1, 0),
+                new posVertex(1, -1, 0),
+                new posVertex(-1, 1, 0),
+                new posVertex(1, 1, 0)
+            }), GLUtils.createBuffer(new uint[] {
+                0, 1, 2,
+                2, 1, 3
+            }));
+
+            
+        }
+
+
 
         //shader = new Shader(File.ReadAllText("data/shaders/frag.glsl"), File.ReadAllText("data/shaders/vert.glsl"));
     }

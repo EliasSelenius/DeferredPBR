@@ -19,6 +19,8 @@ class Mesh<VertType> where VertType : struct {
     public List<VertType> vertices { get; private set; } = new List<VertType>();
     public List<uint> indices { get; private set; } = new List<uint>();
 
+    public Dictionary<PBRMaterial, int> groups = new Dictionary<PBRMaterial, int>();
+
     int vbo, ebo, vao;
 
     public Mesh() {
@@ -30,8 +32,19 @@ class Mesh<VertType> where VertType : struct {
     //public static Mesh<V> copy<V>(Mesh<V> other) where V : struct => new Mesh<V>(other.vertices, other.indices);
     //public static Mesh<V> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
 
-    public void addTriangles(IEnumerable<uint> ind) {
-        this.indices.AddRange(ind);
+    public void addTriangles(PBRMaterial material, IEnumerable<uint> ind) {
+        var indLength = ind.Count();
+        if (groups.ContainsKey(material)) groups[material] += indLength;
+        else groups[material] = indLength;
+
+        int offset = 0;
+        foreach (var group in groups) {
+            if (group.Key == material) {
+                this.indices.InsertRange(offset, ind);
+                break;
+            }
+            offset += group.Value;
+        }
     }
 
     public void bufferdata() {
@@ -41,7 +54,14 @@ class Mesh<VertType> where VertType : struct {
 
     public void render() {
         GL.BindVertexArray(vao);
-        GL.DrawElements(PrimitiveType.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
+        //GL.DrawElements(PrimitiveType.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
+
+        int offset = 0;
+        foreach (var group in groups) {
+            group.Key.updateUniforms();
+            GL.DrawElements(PrimitiveType.Triangles, group.Value, DrawElementsType.UnsignedInt, offset * sizeof(uint));
+            offset += group.Value;
+        }
     }
 
     private void delete() {

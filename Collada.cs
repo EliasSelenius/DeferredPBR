@@ -274,7 +274,7 @@ class Collada {
                     });
                 }
 
-                mesh.addTriangles(/*collada.get_material(trcollection.material_name).pbrMaterial, */indices);
+                mesh.addTriangles(collada.get_material(trcollection.material_name).pbrMaterial, indices);
             }
             mesh.bufferdata();
 

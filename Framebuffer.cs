@@ -11,17 +11,6 @@ class Framebuffer {
     public int width { get; private set; }
     public int height { get; private set; }
 
-
-/*
-createFramebuffer:
-            genFramebuffer()
-            bindFramebuffer()
-            FramebufferTexture2D(attachmentPoint, texture2D)
-            FramebufferRenderbuffer(attachmentPoint, renderbuffer)
-            DrawBuffers(ColorAttachments[])
-            CheckFramebufferStatus()
-            unbind()
-*/
     public Framebuffer(int w, int h, (FramebufferAttachment, RenderbufferStorage)[] rbos, PixelInternalFormat[] texs) {
         (width, height) = (w, h);
         id = GL.GenFramebuffer();

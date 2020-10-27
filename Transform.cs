@@ -45,13 +45,6 @@ class Transform {
         rotation = quat.fromMatrix(rm);
     }
 
-    public void applyUniforms() {
-        var m = getMatrix();
-        int loc = GL.GetUniformLocation(Renderer.geomPass.id, "model");
-        //GL.UniformMatrix4(loc, 1, false, ref m.row1.x);
-        GLUtils.setUniformMatrix4(loc, ref m);
-    }
-
 
     public void rotate(quat q) => rotation *= q;
     public void rotate(vec3 axis, float angle) => rotate(quat.fromAxisangle(axis, angle));

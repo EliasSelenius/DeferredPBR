@@ -23,19 +23,20 @@ class Scene {
 
         entities.Add(entity);
 
+        dirlights.Add(new Dirlight {
+            dir = new Nums.vec3(1,1,-1).normalized()
+        });
 
+        /*
         dirlights.Add(new Dirlight {
             color = (0.1f, 0.1f, 1)
         });
 
-        dirlights.Add(new Dirlight {
-            dir = new Nums.vec3(0,0,1)
-        });
 
         dirlights.Add(new Dirlight {
             dir = new Nums.vec3(0,0,-1),
             color = (0,1,0)
-        });
+        });*/
     
     }
 
@@ -45,12 +46,13 @@ class Scene {
     }
 
     public void renderLights() {
+        GL.BindVertexArray(Renderer.dirlightVAO);
         foreach (var light in dirlights) {
             GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass.id, "lightDir"), light.dir.x, light.dir.y, light.dir.z);
             GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass.id, "lightColor"), light.color.x, light.color.y, light.color.z);
-            GL.BindVertexArray(Renderer.quadVao);
             GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
         }
+
 
         foreach (var light in pointlights) {
             
@@ -59,5 +61,6 @@ class Scene {
 
     public void update() {
         camera.move();
+        entities[0].children[3].transform.rotate(Nums.vec3.unity, 0.01f);
     }
 }

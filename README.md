@@ -19,7 +19,6 @@ additional features I may add:
 * emissive materials
 
 ## current todo list:
-* multi-material-mesh
 * point light sphere mesh
 * camera UBO
 * PBR dir lights
