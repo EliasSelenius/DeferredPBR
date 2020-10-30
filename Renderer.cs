@@ -26,9 +26,8 @@ static class Renderer {
 
         gBuffer = new GBuffer();
 
-        Shader loadShader(string folder) => new Shader(File.ReadAllText($"data/shaders/{folder}/frag.glsl"), File.ReadAllText($"data/shaders/{folder}/vert.glsl")); 
-        geomPass = loadShader("geomPass");
-        lightPass = loadShader("lightPass");
+        geomPass = Assets.getShader("geomPass");
+        lightPass = Assets.getShader("lightPass");
         lightPass.use();
         int amLoc = GL.GetUniformLocation(lightPass.id, "g_Albedo_Metallic");
         int nrLoc = GL.GetUniformLocation(lightPass.id, "g_Normal_Roughness");

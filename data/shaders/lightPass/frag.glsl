@@ -1,4 +1,6 @@
 #version 330 core
+#include "PBR.glsl"
+
 
 /*
     lightPass fragment shader
@@ -26,10 +28,23 @@ void main() {
     vec3 normal = gnr.xyz;
     float roughness = gnr.w;
     
+    // ld: light direction in view space
+    vec3 ld = (view * vec4(lightDir, 0.0)).xyz;
+
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, albedo, metallic);
+
+    /*
     vec3 ld = (view * vec4(lightDir, 0.0)).xyz;
     vec3 color = albedo * lightColor;
     vec3 light = color * 0.1;
     light += color * max(0, dot(normal, ld));
+    */
+
+    vec3 light = CalcDirlight(ld, lightColor, F0, normal, vec3(0.0), albedo, roughness, metallic);
+
+    // ambient
+    light += albedo * 0.1;
 
     FragColor = vec4(light, 1.0);
 }

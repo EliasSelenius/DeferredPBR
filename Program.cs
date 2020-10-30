@@ -14,6 +14,7 @@ static class app {
         window = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
         window.Size = (1600, 900);
 
+        window.Load += Assets.load;
         window.Load += Renderer.load;
         window.Load += load;
         window.UpdateFrame += update;
@@ -25,8 +26,6 @@ static class app {
     static void load() {
 
         window.CursorGrabbed = true;
-
-        
 
         // gen triangle
         /*{
