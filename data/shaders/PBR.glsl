@@ -37,12 +37,6 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0) {
 } 
 
 
-/*
-    F0
-    N = normal
-    V = fragPos
-
-*/
 vec3 CalcDirlight(vec3 light_dir, vec3 light_color, vec3 F0, vec3 N, vec3 V, vec3 albedo, float roughness, float metallic) {
     // calculate radiance
     //vec3 L = normalize(-dirLight.dir);

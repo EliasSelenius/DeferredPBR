@@ -55,7 +55,7 @@ class Collada {
     public Material get_material(string id) => materials.Find(x => x.id.Equals(id));
 
     public Dictionary<string, Entity> toEntity() {
-        var geoms = new Dictionary<string, Mesh<Vertex>>();
+        var geoms = new Dictionary<string, MeshRenderer>();
         foreach (var g in geometries) {
             geoms.Add(g.id, g.genMesh());
         }
@@ -98,7 +98,7 @@ class Collada {
 
             var inst_geom = xml["instance_geometry"];
             if (inst_geom != null) {
-                g.mesh = geoms[inst_geom.GetAttribute("url").TrimStart('#')];
+                g.renderer = geoms[inst_geom.GetAttribute("url").TrimStart('#')];
             }
 
 
@@ -240,10 +240,10 @@ class Collada {
             triangles = xml.GetElementsByTagName("triangles").Cast<XmlElement>().Select(x => new TriangleCollection(this, x)).ToArray();
         }
 
-        public Mesh<Vertex> genMesh() {
-            var mesh = new Mesh<Vertex>();
+        public MeshRenderer genMesh() {
+            var mesh = new Mesh();
 
-            int add_vertex(Vertex v) {
+            static int add_vertex(Vertex v, Mesh mesh) {
                 //if (mesh.vertices.Contains(v)) return mesh.vertices.IndexOf(v);
                 //var index = mesh.vertices.IndexOf(v);
                 //if (index != -1) return index;
@@ -258,6 +258,8 @@ class Collada {
             }
 
 
+            int groupIndex = 0;
+            var materials = new PBRMaterial[triangles.Length];
             foreach (var trcollection in triangles) {
                 var indices = new uint[trcollection.indices.Length];
                 vec3[] positions = trcollection.pos_input.source.as_vector_array<vec3>();
@@ -271,14 +273,19 @@ class Collada {
                         uv = texcoords?[vi.texcoord_index] ?? vec2.zero, 
                         normal = normals[vi.normal_index],
                         //color = (math.range(0, 1), math.range(0, 1),math.range(0, 1))
-                    });
+                    }, mesh);
                 }
 
-                mesh.addTriangles(collada.get_material(trcollection.material_name).pbrMaterial, indices);
+                mesh.addTriangles(groupIndex, indices);
+                groupIndex++;
+                materials[groupIndex] = collada.get_material(trcollection.material_name).pbrMaterial;
             }
             mesh.bufferdata();
 
-            return mesh;
+            return new MeshRenderer {
+                mesh = mesh,
+                materials = materials
+            };
         }
     }
 

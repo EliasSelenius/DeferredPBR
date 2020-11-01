@@ -77,4 +77,16 @@ class Framebuffer {
         if (id != 0) throw new System.Exception("Memory leak detected: Framebuffer was not deleted before garbage collection.");
     }
 
+    public void blit(Framebuffer target, ClearBufferMask mask, Filter filter) {
+        GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, id);
+        GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, target.id);
+        GL.BlitFramebuffer(0, 0, width, height, 0, 0, target.width, target.height, mask, (BlitFramebufferFilter)filter);
+    }
+
+    public void blit(int target, int targetWidth, int targetHeight, ClearBufferMask mask, Filter filter) {
+        GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, id);
+        GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, target);
+        GL.BlitFramebuffer(0, 0, width, height, 0, 0, targetWidth, targetHeight, mask, (BlitFramebufferFilter)filter);
+    }
+
 }

@@ -3,7 +3,7 @@ using Nums;
 
 class Entity {
     public readonly Transform transform = new Transform();
-    public Mesh<Vertex> mesh = null;
+    public MeshRenderer renderer;
     //public PBRMaterial material = new PBRMaterial { albedo = (math.range(0, 1), math.range(0, 1),math.range(0, 1)), metallic = math.range(0, 1), roughness = math.range(0, 1) };
 
     public Entity parent { get; private set; }
@@ -39,7 +39,7 @@ class Entity {
         var mat = calcModelMatrix();
         GLUtils.setUniformMatrix4("model", ref mat);
         //material.updateUniforms();
-        mesh?.render();
+        renderer?.render();
 
         foreach (var child in children) child.render();
 

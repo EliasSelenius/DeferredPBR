@@ -37,6 +37,28 @@ class Scene {
             dir = new Nums.vec3(0,0,-1),
             color = (0,1,0)
         });*/
+
+
+        { // material spectrum
+            for (float r = 0; r <= 1f; r += 0.1f) {
+                for (float m = 0; m <= 1f; m += 0.1f) {
+                    var mat = new PBRMaterial {
+                        albedo = Nums.vec3.one,
+                        roughness = r,
+                        metallic = m
+                    };
+                    var e = new Entity {
+                        renderer = new MeshRenderer {
+                            mesh = null,
+                            materials = new[] { mat }
+                        }
+                    };
+                    e.transform.position.xy = new Nums.vec2(r, m) * 10;
+                    entities.Add(e);
+                }
+            }
+        }
+
     
     }
 

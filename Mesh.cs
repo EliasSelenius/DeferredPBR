@@ -14,12 +14,48 @@ public struct Vertex {
 }
 
 
+
+class Mesh : Mesh<Vertex> {
+
+    public override void genNormals() {
+        // set all normals to zero
+        for (int i = 0; i < vertices.Count; i++) {
+            var v = this.vertices[i];
+            v.normal = vec3.zero;
+            this.vertices[i] = v;
+        }
+
+        void addNorm(int i, in vec3 no) {
+            var v = vertices[i];
+            v.normal += no;
+            vertices[i] = v;
+        }
+
+        // add every triangles contribution to every vertex normal
+        for (int i = 0; i < indices.Count; i += 3) {
+            var v3 = vertices[i + 2].position;
+            var no = (vertices[i].position - v3).cross(vertices[i + 1].position - v3);
+
+            addNorm(i,     in no);
+            addNorm(i + 1, in no);
+            addNorm(i + 2, in no);
+        }
+
+        // normalize vertex normals
+        for (int i = 0; i < vertices.Count; i++) {
+            var v = vertices[i];
+            v.normal.normalize();
+            vertices[i] = v;
+        }
+    }
+}
 class Mesh<VertType> where VertType : struct {
 
     public List<VertType> vertices { get; private set; } = new List<VertType>();
     public List<uint> indices { get; private set; } = new List<uint>();
 
-    public Dictionary<PBRMaterial, int> groups = new Dictionary<PBRMaterial, int>();
+    // groups: <int, int> = <materialIndex, indicesCount>
+    public Dictionary<int, int> groups = new Dictionary<int, int>();
 
     int vbo, ebo, vao;
 
@@ -32,7 +68,13 @@ class Mesh<VertType> where VertType : struct {
     //public static Mesh<V> copy<V>(Mesh<V> other) where V : struct => new Mesh<V>(other.vertices, other.indices);
     //public static Mesh<V> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
 
-    public void addTriangles(PBRMaterial material, IEnumerable<uint> ind) {
+    public void mutate(Func<VertType, int, VertType> f) {
+        for (int i = 0; i < vertices.Count; i++) {
+            vertices[i] = f(vertices[i], i);
+        }
+    }
+
+    public void addTriangles(int material, IEnumerable<uint> ind) {
         var indLength = ind.Count();
         if (groups.ContainsKey(material)) groups[material] += indLength;
         else groups[material] = indLength;
@@ -47,18 +89,26 @@ class Mesh<VertType> where VertType : struct {
         }
     }
 
+    public virtual void genNormals() {
+        throw new NotImplementedException();
+    }
+
+    public void flipIndices() {
+
+    }
+
     public void bufferdata() {
         GLUtils.bufferdata(vbo, vertices.ToArray());
         GLUtils.bufferdata(ebo, indices.ToArray());
     }
 
-    public void render() {
+    public void render(PBRMaterial[] materials) {
         GL.BindVertexArray(vao);
         //GL.DrawElements(PrimitiveType.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
 
         int offset = 0;
         foreach (var group in groups) {
-            group.Key.updateUniforms();
+            materials[group.Key].updateUniforms();
             GL.DrawElements(PrimitiveType.Triangles, group.Value, DrawElementsType.UnsignedInt, offset * sizeof(uint));
             offset += group.Value;
         }
@@ -87,5 +137,41 @@ class Mesh<VertType> where VertType : struct {
 static class MeshFactory {
     public static Mesh<Vertex> randomMesh() {
         return null;
+    }
+
+    public static Mesh genCube(int res, float scale) {
+        var r = _genCube(res, scale);
+        r.genNormals();
+        r.bufferdata();
+        return r;
+    }
+
+    private static Mesh _genCube(int res, float scale) {
+        var m = new Mesh();
+
+        return m;
+    }
+
+    public static Mesh genSphere(int res, float scale) {
+        var m = _genCube(res, 1f);
+        m.mutate((v, i) => {
+            v.position.normalize();
+            v.position *= scale;
+            return v;
+        });
+
+        m.genNormals();
+        m.bufferdata();
+        return m;
+    }
+}
+
+
+class MeshRenderer {
+    public Mesh mesh;
+    public PBRMaterial[] materials;
+
+    public void render() {
+        mesh.render(materials);
     }
 }

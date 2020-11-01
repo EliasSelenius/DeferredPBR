@@ -10,10 +10,14 @@ struct posVertex {
 
 static class Renderer {
 
+    public static int windowWidth => app.window.Size.X;
+    public static int windowHeight => app.window.Size.Y;
+
     public static Shader geomPass { get; private set; }
     public static Shader lightPass { get; private set; }
 
-    private static GBuffer gBuffer;
+    //private static GBuffer gBuffer;
+    private static Framebuffer gBuffer;
 
     public static int dirlightVAO;
     public static int pointlightVAO;
@@ -24,15 +28,24 @@ static class Renderer {
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
 
-        gBuffer = new GBuffer();
+        //gBuffer = new GBuffer();
+        gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
+            (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
+        }, new[] {
+            PixelInternalFormat.Rgba8,
+            PixelInternalFormat.Rgba16f,
+            PixelInternalFormat.Rgb16f
+        });
 
         geomPass = Assets.getShader("geomPass");
         lightPass = Assets.getShader("lightPass");
         lightPass.use();
         int amLoc = GL.GetUniformLocation(lightPass.id, "g_Albedo_Metallic");
         int nrLoc = GL.GetUniformLocation(lightPass.id, "g_Normal_Roughness");
+        int fLoc = GL.GetUniformLocation(lightPass.id, "g_Fragpos");
         GL.Uniform1(amLoc, 0);
         GL.Uniform1(nrLoc, 1);
+        GL.Uniform1(fLoc, 2);
         
 
         {
@@ -48,7 +61,6 @@ static class Renderer {
 
             
         }
-
 
 
         //shader = new Shader(File.ReadAllText("data/shaders/frag.glsl"), File.ReadAllText("data/shaders/vert.glsl"));
@@ -77,8 +89,10 @@ static class Renderer {
 
             lightPass.use();
             GLUtils.setUniformMatrix4(GL.GetUniformLocation(lightPass.id, "view"), ref Scene.active.camera.viewMatrix);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             gBuffer.readMode();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            //gBuffer.blit(0, windowWidth, windowHeight, ClearBufferMask.DepthBufferBit, Filter.Nearest);
 
             Scene.active.renderLights();
         }

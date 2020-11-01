@@ -35,7 +35,7 @@ static class GLUtils {
         if (error != ErrorCode.NoError) throw new System.Exception("GLERROR: " + error.ToString());
     }
 
-
+#region buffers
     public static int createBuffer() => GL.GenBuffer();
     public static int createBuffer<T>(T[] data) where T : struct {
         GL.CreateBuffers(1, out int b);
@@ -46,8 +46,14 @@ static class GLUtils {
     public static void bufferdata<T>(int buffer, T[] data) where T : struct {
         GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
         GL.BufferData(BufferTarget.ArrayBuffer, data.Length * System.Runtime.InteropServices.Marshal.SizeOf<T>(), data, BufferUsageHint.StaticDraw);
-        
     }
+
+    public static void buffersubdata<T>(int buffer, int offset, ref T data) where T : struct {
+        GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
+        GL.BufferSubData(BufferTarget.ArrayBuffer, (System.IntPtr)offset, System.Runtime.InteropServices.Marshal.SizeOf<T>(), ref data);
+    }
+
+#endregion
 
 #region VertexArray
     
