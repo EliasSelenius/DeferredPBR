@@ -277,8 +277,8 @@ class Collada {
                 }
 
                 mesh.addTriangles(groupIndex, indices);
-                groupIndex++;
                 materials[groupIndex] = collada.get_material(trcollection.material_name).pbrMaterial;
+                groupIndex++;
             }
             mesh.bufferdata();
 

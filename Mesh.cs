@@ -33,12 +33,16 @@ class Mesh : Mesh<Vertex> {
 
         // add every triangles contribution to every vertex normal
         for (int i = 0; i < indices.Count; i += 3) {
-            var v3 = vertices[i + 2].position;
-            var no = (vertices[i].position - v3).cross(vertices[i + 1].position - v3);
+            int i1 = (int)indices[i],
+                i2 = (int)indices[i + 1],
+                i3 = (int)indices[i + 2];
 
-            addNorm(i,     in no);
-            addNorm(i + 1, in no);
-            addNorm(i + 2, in no);
+            var v3 = vertices[i3].position;
+            var no = (vertices[i1].position - v3).cross(vertices[i2].position - v3);
+
+            addNorm(i1, in no);
+            addNorm(i2, in no);
+            addNorm(i3, in no);
         }
 
         // normalize vertex normals
@@ -148,6 +152,44 @@ static class MeshFactory {
 
     private static Mesh _genCube(int res, float scale) {
         var m = new Mesh();
+
+        res += 1;
+
+        var vertfunc = new Func<vec3, vec3>[] {
+            v => v,
+            v => v.zyx * new vec3(1, -1, 1),
+            v => v.yzx,
+            v => v.yxz * new vec3(-1, 1, 1),
+            v => v.zxy,
+            v => v.xzy * new vec3(1, 1, -1)
+        };
+
+        for (int f = 0; f < 6; f++) {
+            int i = res * res * f;
+            var ind = new List<uint>();
+            for (int ix = 0; ix < res; ix++) {
+                for (int iy = 0; iy < res; iy++) {
+                    float x = math.map(ix, 0, res - 1, -0.5f, 0.5f);
+                    float y = math.map(iy, 0, res - 1, -0.5f, 0.5f);
+                    m.vertices.Add(new Vertex {
+                        position = vertfunc[f](new vec3(x, 0.5f, y))
+                    });
+
+                    if (ix < res - 1 && iy < res - 1) {
+                        ind.Add((uint)i);
+                        ind.Add((uint)i + 1);
+                        ind.Add((uint)i + (uint)res + 1);
+
+                        ind.Add((uint)i);
+                        ind.Add((uint)i + (uint)res + 1);
+                        ind.Add((uint)i + (uint)res);
+                    }
+
+                    i++;
+                }
+            }
+            m.addTriangles(0, ind);
+        }
 
         return m;
     }

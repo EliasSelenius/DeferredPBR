@@ -20,26 +20,31 @@ class Scene {
         foreach (var item in co) {
             entity.addChild(item.Value);
         }
-
+        entity.transform.position.y = - 60;
         entities.Add(entity);
 
         dirlights.Add(new Dirlight {
             dir = new Nums.vec3(1,1,-1).normalized()
         });
 
-        /*
+        
         dirlights.Add(new Dirlight {
             color = (0.1f, 0.1f, 1)
         });
 
-
         dirlights.Add(new Dirlight {
             dir = new Nums.vec3(0,0,-1),
             color = (0,1,0)
-        });*/
+        });
+
+        dirlights.Add(new Dirlight {
+            dir = new Nums.vec3(-1,1,-1).normalized(),
+            color = (1,0,0)
+        });
 
 
         { // material spectrum
+            var mesh = MeshFactory.genSphere(100, 1f);
             for (float r = 0; r <= 1f; r += 0.1f) {
                 for (float m = 0; m <= 1f; m += 0.1f) {
                     var mat = new PBRMaterial {
@@ -49,11 +54,11 @@ class Scene {
                     };
                     var e = new Entity {
                         renderer = new MeshRenderer {
-                            mesh = null,
+                            mesh = mesh,
                             materials = new[] { mat }
                         }
                     };
-                    e.transform.position.xy = new Nums.vec2(r, m) * 10;
+                    e.transform.position.xy = new Nums.vec2(r, m) * 25;
                     entities.Add(e);
                 }
             }
