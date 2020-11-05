@@ -29,7 +29,7 @@ class Scene {
 
         
         dirlights.Add(new Dirlight {
-            color = (0.1f, 0.1f, 1)
+            color = (0.2f, 0.2f, 1)
         });
 
         dirlights.Add(new Dirlight {
@@ -39,12 +39,20 @@ class Scene {
 
         dirlights.Add(new Dirlight {
             dir = new Nums.vec3(-1,1,-1).normalized(),
-            color = (1,0,0)
+            color = (1,0.2f,0.2f)
         });
 
 
         { // material spectrum
             var mesh = MeshFactory.genSphere(100, 1f);
+
+            mesh.mutate((v, i) => {
+                v.position += v.position * Nums.math.range(0, 0.01f);
+                return v;
+            });
+            mesh.genNormals();
+            mesh.bufferdata();
+
             for (float r = 0; r <= 1f; r += 0.1f) {
                 for (float m = 0; m <= 1f; m += 0.1f) {
                     var mat = new PBRMaterial {
@@ -65,6 +73,38 @@ class Scene {
         }
 
     
+        { // planet
+            var mesh = MeshFactory.genSphere(100, 1f);
+            mesh.mutate((v, i) => {
+                var p = v.position;
+                v.position *= 100f;
+
+                for (int o = 1; o <= 4; o++) {
+                    v.position += p * Nums.math.gradnoise(new Nums.vec3(o,o,o) * 10f + p * 5f * o) * 10f / o;
+                }
+
+                return v;
+            });
+            mesh.genNormals();
+            mesh.bufferdata();
+
+            var planet = new Entity {
+                renderer = new MeshRenderer {
+                    mesh = mesh,
+                    materials = new[] { 
+                        new PBRMaterial { 
+                            roughness = 0.5f,
+                            metallic = 1f,
+                            albedo = 1
+                        }
+                    }
+                }
+            };
+            planet.transform.position = (0, 0, 340);
+
+            entities.Add(planet);
+        }
+
     }
 
     public void renderGeometry() {

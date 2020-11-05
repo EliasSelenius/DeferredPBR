@@ -1,7 +1,6 @@
 #version 330 core
 #include "PBR.glsl"
 
-
 /*
     lightPass fragment shader
 

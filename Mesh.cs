@@ -164,15 +164,19 @@ static class MeshFactory {
             v => v.xzy * new vec3(1, 1, -1)
         };
 
+
         for (int f = 0; f < 6; f++) {
             int i = res * res * f;
             var ind = new List<uint>();
             for (int ix = 0; ix < res; ix++) {
                 for (int iy = 0; iy < res; iy++) {
+
                     float x = math.map(ix, 0, res - 1, -0.5f, 0.5f);
-                    float y = math.map(iy, 0, res - 1, -0.5f, 0.5f);
+                    float y = math.map(iy, 0, res - 1, -0.5f, 0.5f);                    
+                    var pos = vertfunc[f](new vec3(x, 0.5f, y));
+
                     m.vertices.Add(new Vertex {
-                        position = vertfunc[f](new vec3(x, 0.5f, y))
+                        position = pos
                     });
 
                     if (ix < res - 1 && iy < res - 1) {

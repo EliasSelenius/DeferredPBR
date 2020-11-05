@@ -9,6 +9,7 @@ when its done it should have these features:
 * MSAA
 * bloom
 * HDR
+* Skybox
 
 additional features I may add:
 * glTF
@@ -22,6 +23,5 @@ additional features I may add:
 * copy framebuffers
 * camera UBO
 * calc fragposition
-* PBR dirlights
 * pointlight sphere mesh
 * PBR pointlights
