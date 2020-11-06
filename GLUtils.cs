@@ -38,7 +38,7 @@ static class GLUtils {
 #region buffers
     public static int createBuffer() => GL.GenBuffer();
     public static int createBuffer<T>(T[] data) where T : struct {
-        GL.CreateBuffers(1, out int b);
+        int b = GL.GenBuffer();
         bufferdata(b, data);
         return b;
     }
@@ -126,7 +126,7 @@ static class GLUtils {
 
 
     public static int createVertexArray<VertType>(int vbo, int ebo) where VertType : struct {
-        GL.CreateVertexArrays(1, out int vao);
+        int vao = GL.GenVertexArray();
         GL.BindVertexArray(vao);
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);

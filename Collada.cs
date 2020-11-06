@@ -64,7 +64,7 @@ class Collada {
             var g = new Entity();
 
 
-            var fs = xml["matrix"].InnerText.Split(' ').Select(x => float.Parse(x)).ToArray();
+            var fs = xml["matrix"].InnerText.Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
 
             var m = new mat4();
             m.m11 = fs[0];
@@ -131,7 +131,7 @@ class Collada {
             float[] float_array;
             int stride;
             public Source(XmlElement xml) {
-                float_array = xml["float_array"].InnerText.Split(' ').Select(x => float.Parse(x)).ToArray();
+                float_array = xml["float_array"].InnerText.Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
                 stride = int.Parse(xml["technique_common"]["accessor"].GetAttribute("stride"));
             }
             public T[] as_vector_array<T>() where T : vec, new() {
@@ -304,14 +304,14 @@ class Collada {
             var lambert_xml = xml.OwnerDocument.DocumentElement["library_effects"].SelectSingleNode($"*[@id='{effectId}']")["profile_COMMON"]["technique"]["lambert"];
 
             vec4 parse_color(string t) {
-                var n = t.Split(' ').Select(x => float.Parse(x));
+                var n = t.Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture));
                 return new vec4(n.ElementAt(0), n.ElementAt(1), n.ElementAt(2), n.ElementAt(3));
             }
 
             pbrMaterial = new PBRMaterial {
                 albedo = parse_color(lambert_xml["diffuse"].InnerText).xyz,
                 //emission = parse_color(lambert_xml["emission"].InnerText).xyz,
-                roughness = 1 - float.Parse(lambert_xml["reflectivity"]?.InnerText ?? "0")
+                roughness = 1 - float.Parse(lambert_xml["reflectivity"]?.InnerText ?? "0", System.Globalization.CultureInfo.InvariantCulture)
             };
 
         }
