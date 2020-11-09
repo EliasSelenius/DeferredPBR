@@ -38,6 +38,9 @@ static class Renderer {
         });
 
         geomPass = Assets.getShader("geomPass");
+        geomPass.use();
+        GL.Uniform1(GL.GetUniformLocation(geomPass.id, "albedoMap"), 0);
+
         lightPass = Assets.getShader("lightPass");
         lightPass.use();
         int amLoc = GL.GetUniformLocation(lightPass.id, "g_Albedo_Metallic");
@@ -62,9 +65,13 @@ static class Renderer {
             
         }
 
+        whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
+
 
         //shader = new Shader(File.ReadAllText("data/shaders/frag.glsl"), File.ReadAllText("data/shaders/vert.glsl"));
     }
+
+    public static Texture2D whiteTexture;
 
     public static void drawframe(FrameEventArgs e) {
         //System.Console.WriteLine("frame: " + e.Time);

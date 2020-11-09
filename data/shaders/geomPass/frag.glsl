@@ -12,6 +12,7 @@ struct Material {
 };
 
 uniform Material material;
+uniform sampler2D albedoMap;
 
 in V2F {
     vec3 fragPos;
@@ -25,7 +26,7 @@ layout(location = 2) out vec4 g_Fragpos;
 
 
 void main() {
-    g_Albedo_Metallic = vec4(material.albedo, material.metallic);
+    g_Albedo_Metallic = vec4(material.albedo * texture(albedoMap, v2f.uv).rgb, material.metallic);
     g_Normal_Roughness = vec4(v2f.normal, material.roughness);
     g_Fragpos = vec4(v2f.fragPos, 1.0);
 }

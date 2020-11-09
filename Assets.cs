@@ -5,12 +5,22 @@ using System.Text.RegularExpressions;
 static class Assets {
 
     static Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
+    static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
     public static void load() {
         loadShaders();
+        loadTextures();
     }
 
     public static Shader getShader(string name) => shaders[name];
+    public static Texture2D getTexture2D(string name) => textures[name];
+
+    static void loadTextures() {
+        foreach (var file in Directory.EnumerateFiles("data/", "*.png", SearchOption.AllDirectories)) {
+            var fi = new FileInfo(file);
+            textures[fi.Name] = Texture2D.fromFile(file);
+        }
+    }
 
     static void loadShaders() {
         // load files:

@@ -6,6 +6,7 @@ class Scene {
 
     public static Scene active = new Scene();
 
+    public Skybox skybox;
     public Camera camera = new Camera();
     public readonly List<Entity> entities = new List<Entity>();
     public readonly List<Pointlight> pointlights = new List<Pointlight>();
@@ -23,25 +24,41 @@ class Scene {
         entity.transform.position.y = - 60;
         entities.Add(entity);
 
-        dirlights.Add(new Dirlight {
-            dir = new Nums.vec3(1,1,-1).normalized()
-        });
+        { // dir lights
 
-        
-        dirlights.Add(new Dirlight {
-            color = (0.2f, 0.2f, 1)
-        });
+            dirlights.Add(new Dirlight {
+                dir = new Nums.vec3(1,1,-1).normalized()
+            });
 
-        dirlights.Add(new Dirlight {
-            dir = new Nums.vec3(0,0,-1),
-            color = (0,1,0)
-        });
+            
+            dirlights.Add(new Dirlight {
+                color = (0.2f, 0.2f, 1)
+            });
 
-        dirlights.Add(new Dirlight {
-            dir = new Nums.vec3(-1,1,-1).normalized(),
-            color = (1,0.2f,0.2f)
-        });
+            dirlights.Add(new Dirlight {
+                dir = new Nums.vec3(0,0,-1),
+                color = (0,1,0)
+            });
 
+            dirlights.Add(new Dirlight {
+                dir = new Nums.vec3(-1,1,-1).normalized(),
+                color = (1,0.2f,0.2f)
+            });
+        }
+
+        { // textured plane
+            var m = MeshFactory.genPlane(10, 10f);
+            var e = new Entity {
+                renderer = new MeshRenderer {
+                    mesh = m,
+                    materials = new[] { new PBRMaterial {
+                        albedoMap = Assets.getTexture2D("test.png")
+                    } }
+                }
+            };
+            e.transform.position.z += 20;
+            entities.Add(e);
+        }
 
         { // material spectrum
             var mesh = MeshFactory.genSphere(100, 1f);

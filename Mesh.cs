@@ -210,6 +210,38 @@ static class MeshFactory {
         m.bufferdata();
         return m;
     }
+
+    public static Mesh genPlane(int res, float scale) {
+        var mesh = new Mesh();
+        var ind = new List<uint>();
+        int i = 0;
+        for (int ix = 0; ix <= res; ix++) {
+            for (int iz = 0; iz <= res; iz++) {
+                float x = math.map(ix, 0, res, -0.5f, 0.5f) * scale;
+                float z = math.map(iz, 0, res, -0.5f, 0.5f) * scale;
+                mesh.vertices.Add(new Vertex {
+                    position = (x, 0, z),
+                    uv = new vec2(ix, iz) / res
+                });
+
+                if (ix < res && iz < res) {
+                    ind.Add((uint)i);
+                    ind.Add((uint)i + 1);
+                    ind.Add((uint)(i + res + 1));
+
+                    ind.Add((uint)i + 1);
+                    ind.Add((uint)(i + res + 2));
+                    ind.Add((uint)(i + res + 1));
+                }
+                i++;
+            }   
+        }
+
+        mesh.addTriangles(0, ind);
+        mesh.genNormals();
+        mesh.bufferdata();
+        return mesh;
+    }
 }
 
 
