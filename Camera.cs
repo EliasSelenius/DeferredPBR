@@ -1,5 +1,6 @@
 using Nums;
 using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL4;
 
 class Camera {
     public readonly Transform transform = new Transform();
@@ -9,6 +10,15 @@ class Camera {
 
     public mat4 projectionMatrix = mat4.identity;
     public mat4 viewMatrix = mat4.identity;
+
+    public static UBO ubo;
+
+    static Camera() {
+        ubo = new UBO("Camera", 2 * mat4.bytesize);
+        Renderer.geomPass.bindUBO(ubo);
+        Renderer.lightPass_dirlight.bindUBO(ubo);
+        Renderer.lightPass_pointlight.bindUBO(ubo);
+    }
 
     public void move() {
         
@@ -57,8 +67,11 @@ class Camera {
         Matrix4.CreatePerspectiveFieldOfView(fieldOfView * math.deg2rad, (float)app.window.Size.X / app.window.Size.Y, nearPlane, farPlane, out Matrix4 res);
         projectionMatrix = res.toNums(); 
 
-        GLUtils.setUniformMatrix4("projection", ref projectionMatrix);
-        GLUtils.setUniformMatrix4("view", ref viewMatrix);
+        GLUtils.buffersubdata(ubo.id, 0, ref viewMatrix);
+        GLUtils.buffersubdata(ubo.id, mat4.bytesize, ref projectionMatrix);
+
+        //GLUtils.setUniformMatrix4("projection", ref projectionMatrix);
+        //GLUtils.setUniformMatrix4("view", ref viewMatrix);
     }
 
 }

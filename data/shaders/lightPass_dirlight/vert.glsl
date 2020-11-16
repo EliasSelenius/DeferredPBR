@@ -1,7 +1,7 @@
 #version 330 core
 
 /*
-    lightPass vertex shader
+    lightPass_dirlight vertex shader
 
 */
 
@@ -17,7 +17,7 @@ uniform mat4 view;
 
 
 void main() {
-    v2f.uv = (aPos.xy + vec2(1.0)) * 0.5f;
+    v2f.uv = (aPos.xy + vec2(1.0)) * 0.5;
 
     vec3 posVS = (view * vec4(aPos, 1.0)).xyz;
     v2f.viewray = vec3(posVS.xy / posVS.z, 1.0);

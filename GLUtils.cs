@@ -42,6 +42,13 @@ static class GLUtils {
         bufferdata(b, data);
         return b;
     }
+    public static int createBuffer(int bytesize) {
+        int b = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, b);
+        GL.BufferData(BufferTarget.ArrayBuffer, bytesize, System.IntPtr.Zero, BufferUsageHint.StaticDraw);
+        return b;
+    }
+    
 
     public static void bufferdata<T>(int buffer, T[] data) where T : struct {
         GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);

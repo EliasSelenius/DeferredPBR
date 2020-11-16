@@ -13,11 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nums\Nums\Nums.csproj" />
+    <Content Include="./data/**/*" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="./data/**/*" CopyToOutputDirectory="Always" />
+    <Reference Include="Nums">
+      <HintPath>..\Nums\Nums\bin\Debug\netstandard2.0\Nums.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -24,13 +24,13 @@ class Scene {
         entity.transform.position.y = - 60;
         entities.Add(entity);
 
-        { // dir lights
+        { // lights
 
-            dirlights.Add(new Dirlight {
+            /*dirlights.Add(new Dirlight {
                 dir = new Nums.vec3(1,1,-1).normalized()
-            });
+            });*/
 
-            
+            /*
             dirlights.Add(new Dirlight {
                 color = (0.2f, 0.2f, 1)
             });
@@ -44,10 +44,16 @@ class Scene {
                 dir = new Nums.vec3(-1,1,-1).normalized(),
                 color = (1,0.2f,0.2f)
             });
+            */
+
+            pointlights.Add(new Pointlight {
+                position = (3, 3, 3),
+                color = (20, 20, 20)
+            });
         }
 
         { // textured plane
-            var m = MeshFactory.genPlane(10, 10f);
+            var m = MeshFactory<Vertex>.genPlane(10, 10f);
             var e = new Entity {
                 renderer = new MeshRenderer {
                     mesh = m,
@@ -61,7 +67,7 @@ class Scene {
         }
 
         { // material spectrum
-            var mesh = MeshFactory.genSphere(100, 1f);
+            var mesh = MeshFactory<Vertex>.genSphere(100, 1f);
 
             mesh.mutate((v, i) => {
                 v.position += v.position * Nums.math.range(0, 0.01f);
@@ -91,7 +97,7 @@ class Scene {
 
     
         { // planet
-            var mesh = MeshFactory.genSphere(100, 1f);
+            var mesh = MeshFactory<Vertex>.genSphere(100, 1f);
             mesh.mutate((v, i) => {
                 var p = v.position;
                 v.position *= 100f;
@@ -102,8 +108,10 @@ class Scene {
 
                 return v;
             });
+            mesh.flipIndices();
             mesh.genNormals();
             mesh.bufferdata();
+
 
             var planet = new Entity {
                 renderer = new MeshRenderer {
@@ -130,16 +138,20 @@ class Scene {
     }
 
     public void renderLights() {
-        GL.BindVertexArray(Renderer.dirlightVAO);
+        Renderer.lightPass_dirlight.use();
         foreach (var light in dirlights) {
-            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass.id, "lightDir"), light.dir.x, light.dir.y, light.dir.z);
-            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass.id, "lightColor"), light.color.x, light.color.y, light.color.z);
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "lightDir"), light.dir.x, light.dir.y, light.dir.z);
+            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
+            Lights.dirlightMesh.render();
         }
+        
 
-
+        Renderer.lightPass_pointlight.use();
         foreach (var light in pointlights) {
-            
+            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightPosition"), light.position.x, light.position.y, light.position.z);
+            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
+            //Lights.pointlightMesh.render();
+            Lights.dirlightMesh.render();
         }
     }
 

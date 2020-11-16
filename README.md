@@ -21,7 +21,5 @@ additional features I may add:
 
 ## current todo list:
 * copy framebuffers
-* camera UBO
 * calc fragposition
 * pointlight sphere mesh
-* PBR pointlights

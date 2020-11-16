@@ -44,6 +44,7 @@ class Texture2D {
     public void applyChanges() {
         GL.BindTexture(TextureTarget.Texture2D, id);
         GLUtils.applyTextureData(PixelInternalFormat.Rgba, pixels);
+        if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         GL.BindTexture(TextureTarget.Texture2D, 0);
     }
 }

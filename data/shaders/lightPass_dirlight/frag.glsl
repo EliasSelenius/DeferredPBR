@@ -1,8 +1,9 @@
 #version 330 core
+#include "Camera.glsl"
 #include "PBR.glsl"
 
 /*
-    lightPass fragment shader
+    lightPass_dirlight fragment shader
 
 */
 
@@ -13,7 +14,6 @@ in V2F {
 } v2f;
 
 
-uniform mat4 view;
 uniform vec3 lightDir;
 uniform vec3 lightColor;
 

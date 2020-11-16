@@ -34,6 +34,8 @@ static class Assets {
             if (m.Success) {
                 var file = m.Groups[1].Value.Trim('\"');
                 src = src.Replace(m.Value, File.ReadAllText("data/shaders/" + file));
+
+                src = includes(src);
             }
             return src;
         }

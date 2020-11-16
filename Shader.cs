@@ -35,6 +35,8 @@ class Shader {
 
     public void use() => GL.UseProgram(id);
 
-    
-    
+    public void bindUBO(UBO ubo) {
+        int i = GL.GetUniformBlockIndex(id, ubo.name);
+        GL.UniformBlockBinding(id, i, ubo.bindingPoint);
+    }
 }

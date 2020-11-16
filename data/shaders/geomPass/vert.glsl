@@ -1,12 +1,14 @@
 #version 330 core
+#include "Camera.glsl"
 
 /*
     geomPass vertex shader
 
 */
 
+/*
 uniform mat4 projection;
-uniform mat4 view;
+uniform mat4 view;*/
 uniform mat4 model;
 
 layout (location = 0) in vec3 a_Pos;

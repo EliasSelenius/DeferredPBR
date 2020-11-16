@@ -3,10 +3,6 @@ using OpenTK.Windowing.Common;
 using System.IO;
 using Nums;
 
-struct posVertex {
-    public vec3 position;
-    public posVertex(float x, float y, float z) => position = (x, y, z);
-}
 
 static class Renderer {
 
@@ -14,55 +10,81 @@ static class Renderer {
     public static int windowHeight => app.window.Size.Y;
 
     public static Shader geomPass { get; private set; }
-    public static Shader lightPass { get; private set; }
+    public static Shader lightPass_dirlight { get; private set; }
+    public static Shader lightPass_pointlight { get; private set; }
+    public static Shader imagePass { get; private set; }
 
-    //private static GBuffer gBuffer;
     private static Framebuffer gBuffer;
+    private static Framebuffer hdrBuffer;
 
-    public static int dirlightVAO;
-    public static int pointlightVAO;
+    static int screenQuadVAO;
+
+    static void debug_callback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, System.IntPtr message, System.IntPtr userParam) {
+        var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
+        System.Console.WriteLine(m);
+    }
+    static DebugProc dbcallback;
 
     public static void load() {
+
+        { // debug
+            GL.Enable(EnableCap.DebugOutput);
+            dbcallback = debug_callback;
+            GL.DebugMessageCallback(dbcallback, System.IntPtr.Zero);
+        }
 
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
 
-        //gBuffer = new GBuffer();
-        gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
-            (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
-        }, new[] {
-            PixelInternalFormat.Rgba8,
-            PixelInternalFormat.Rgba16f,
-            PixelInternalFormat.Rgb16f
-        });
+        { // init framebuffers
+            gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
+                (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
+            }, new[] {
+                PixelInternalFormat.Rgba8,
+                PixelInternalFormat.Rgba16f,
+                PixelInternalFormat.Rgb16f
+            });
+
+            hdrBuffer = new Framebuffer(windowWidth, windowHeight, new (FramebufferAttachment, RenderbufferStorage)[] {}, new[] {
+                PixelInternalFormat.Rgba16f
+            });
+        }
+
+        screenQuadVAO = GLUtils.createVertexArray<posVertex>(GLUtils.createBuffer(new[] {
+            new posVertex(-1, -1, 0),
+            new posVertex(1, -1, 0),
+            new posVertex(-1, 1, 0),
+            new posVertex(1, 1, 0)
+        }), GLUtils.createBuffer(new uint[] {
+            0, 1, 2,
+            2, 1, 3
+        }));
+
+
 
         geomPass = Assets.getShader("geomPass");
         geomPass.use();
         GL.Uniform1(GL.GetUniformLocation(geomPass.id, "albedoMap"), 0);
 
-        lightPass = Assets.getShader("lightPass");
-        lightPass.use();
-        int amLoc = GL.GetUniformLocation(lightPass.id, "g_Albedo_Metallic");
-        int nrLoc = GL.GetUniformLocation(lightPass.id, "g_Normal_Roughness");
-        int fLoc = GL.GetUniformLocation(lightPass.id, "g_Fragpos");
-        GL.Uniform1(amLoc, 0);
-        GL.Uniform1(nrLoc, 1);
-        GL.Uniform1(fLoc, 2);
+        imagePass = Assets.getShader("imagePass");
+        imagePass.use();
+        GL.Uniform1(GL.GetUniformLocation(imagePass.id, "input"), 0);
+
+
+        lightPass_dirlight = Assets.getShader("lightPass_dirlight");
+        lightPass_pointlight = Assets.getShader("lightPass_pointlight");
+        setupUniforms(lightPass_dirlight);
+        setupUniforms(lightPass_pointlight);
         
-
-        {
-            dirlightVAO = GLUtils.createVertexArray<posVertex>(GLUtils.createBuffer(new[] {
-                new posVertex(-1, -1, 0),
-                new posVertex(1, -1, 0),
-                new posVertex(-1, 1, 0),
-                new posVertex(1, 1, 0)
-            }), GLUtils.createBuffer(new uint[] {
-                0, 1, 2,
-                2, 1, 3
-            }));
-
-            
+        void setupUniforms(Shader shader) {
+            shader.use();
+            int amLoc = GL.GetUniformLocation(shader.id, "g_Albedo_Metallic");
+            int nrLoc = GL.GetUniformLocation(shader.id, "g_Normal_Roughness");
+            int fLoc = GL.GetUniformLocation(shader.id, "g_Fragpos");
+            GL.Uniform1(amLoc, 0);
+            GL.Uniform1(nrLoc, 1);
+            GL.Uniform1(fLoc, 2);
         }
 
         whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
@@ -94,14 +116,21 @@ static class Renderer {
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
 
-            lightPass.use();
-            GLUtils.setUniformMatrix4(GL.GetUniformLocation(lightPass.id, "view"), ref Scene.active.camera.viewMatrix);
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            hdrBuffer.writeMode();
             gBuffer.readMode();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             //gBuffer.blit(0, windowWidth, windowHeight, ClearBufferMask.DepthBufferBit, Filter.Nearest);
 
             Scene.active.renderLights();
+        }
+
+        { // image pass
+            imagePass.use();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            hdrBuffer.readMode();
+            GL.BindVertexArray(screenQuadVAO);
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
         }
         
 
@@ -115,6 +144,7 @@ static class Renderer {
     public static void windowResize(ResizeEventArgs e) {
         GL.Viewport(0,0, e.Width, e.Height);
         gBuffer.resize(e.Width, e.Height);
+        hdrBuffer.resize(e.Width, e.Height);
     }
 }
 /*

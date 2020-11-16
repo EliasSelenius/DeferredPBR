@@ -241,9 +241,9 @@ class Collada {
         }
 
         public MeshRenderer genMesh() {
-            var mesh = new Mesh();
+            var mesh = new Mesh<Vertex>();
 
-            static int add_vertex(Vertex v, Mesh mesh) {
+            static int add_vertex(Vertex v, Mesh<Vertex> mesh) {
                 //if (mesh.vertices.Contains(v)) return mesh.vertices.IndexOf(v);
                 //var index = mesh.vertices.IndexOf(v);
                 //if (index != -1) return index;

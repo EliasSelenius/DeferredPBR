@@ -36,10 +36,28 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 } 
 
+/*
+vec3 cookTorranceBRDF(in vec3 radiance, in vec3 F0, in vec3 N, in vec3 V) {
+    // cook-torrance brdf
+    float NDF = DistributionGGX(N, H, roughness);        
+    float G   = GeometrySmith(N, V, L, roughness);      
+    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);       
+        
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;	  
+
+    vec3 numerator    = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+    vec3 specular     = numerator / max(denominator, 0.001);  
+            
+    float NdotL = max(dot(N, L), 0.0);                
+    return (kD * albedo / PI + specular) * radiance * NdotL; 
+}*/
+
 
 vec3 CalcDirlight(vec3 light_dir, vec3 light_color, vec3 F0, vec3 N, vec3 V, vec3 albedo, float roughness, float metallic) {
     // calculate radiance
-    //vec3 L = normalize(-dirLight.dir);
     vec3 L = normalize(light_dir);
     vec3 H = normalize(V + L);
     //float distance    = length(lightPositions[i] - vInput.fragPos);
@@ -63,8 +81,29 @@ vec3 CalcDirlight(vec3 light_dir, vec3 light_color, vec3 F0, vec3 N, vec3 V, vec
     return (kD * albedo / PI + specular) * radiance * NdotL; 
 }
 
-vec3 CalcPointlight() {
-    return vec3(1.0);
+vec3 CalcPointlight(vec3 light_pos, vec3 light_color, vec3 fragpos, vec3 F0, vec3 N, vec3 V, vec3 albedo, float roughness, float metallic) {
+    // calculate radiance
+    vec3 L = normalize(light_pos - fragpos);
+    vec3 H = normalize(V + L);
+    float distance    = length(light_pos - fragpos);
+    float attenuation = 1.0 / (distance * distance);
+    vec3 radiance     = light_color * attenuation;        
+        
+    // cook-torrance brdf
+    float NDF = DistributionGGX(N, H, roughness);        
+    float G   = GeometrySmith(N, V, L, roughness);      
+    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);       
+        
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;	  
+
+    vec3 numerator    = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+    vec3 specular     = numerator / max(denominator, 0.001);  
+            
+    float NdotL = max(dot(N, L), 0.0);                
+    return (kD * albedo / PI + specular) * radiance * NdotL; 
 }
 
 
