@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL4;
 using System.Collections.Generic;
 using Nums;
+using System;
 
 /*
     GL stuff:
@@ -30,10 +31,49 @@ using Nums;
 
 static class GLUtils {
 
+#region GL DEBUG
+
+    static DebugProc dbcallback;
+    static void debug_callback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam) {
+        
+        var msg = "[" + type.ToString().Substring("DebugType".Length) + "]";
+
+        var color = severity switch {
+            DebugSeverity.DebugSeverityHigh => ConsoleColor.Red,
+            DebugSeverity.DebugSeverityMedium => ConsoleColor.Yellow,
+            DebugSeverity.DebugSeverityLow => ConsoleColor.Magenta,
+            _ => ConsoleColor.White
+        };
+        var sev = severity switch {
+            DebugSeverity.DebugSeverityNotification => "Notification",
+            DebugSeverity.DebugSeverityHigh => "High",
+            DebugSeverity.DebugSeverityMedium => "Medium",
+            DebugSeverity.DebugSeverityLow => "Low",
+            _ => "DontCare"
+        };
+
+        Console.ForegroundColor = color;
+        msg += " severity: " + sev;
+        Console.WriteLine(msg);
+
+
+        var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
+        System.Console.WriteLine("    " + m);
+
+        Console.ResetColor();
+    }
+    public static void enableDebug() {
+        GL.Enable(EnableCap.DebugOutput);
+        dbcallback = debug_callback;
+        GL.DebugMessageCallback(dbcallback, System.IntPtr.Zero);
+    }
+
     public static void assertNoError() {
         var error = GL.GetError();
         if (error != ErrorCode.NoError) throw new System.Exception("GLERROR: " + error.ToString());
     }
+#endregion
+
 
 #region buffers
     public static int createBuffer() => GL.GenBuffer();

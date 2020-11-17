@@ -19,19 +19,11 @@ static class Renderer {
 
     static int screenQuadVAO;
 
-    static void debug_callback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, System.IntPtr message, System.IntPtr userParam) {
-        var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
-        System.Console.WriteLine(m);
-    }
-    static DebugProc dbcallback;
+    
 
     public static void load() {
 
-        { // debug
-            GL.Enable(EnableCap.DebugOutput);
-            dbcallback = debug_callback;
-            GL.DebugMessageCallback(dbcallback, System.IntPtr.Zero);
-        }
+        GLUtils.enableDebug();
 
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
@@ -41,9 +33,9 @@ static class Renderer {
             gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
                 (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
             }, new[] {
-                PixelInternalFormat.Rgba8,
-                PixelInternalFormat.Rgba16f,
-                PixelInternalFormat.Rgb16f
+                PixelInternalFormat.Rgba8, // albedo metallic
+                PixelInternalFormat.Rgba16f, // normal roughness
+                PixelInternalFormat.Rgb16f // fragpos
             });
 
             hdrBuffer = new Framebuffer(windowWidth, windowHeight, new (FramebufferAttachment, RenderbufferStorage)[] {}, new[] {

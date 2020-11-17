@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Xml;
 using OpenTK.Graphics.OpenGL4;
+using Nums;
+
 
 class Scene {
 
@@ -27,8 +29,9 @@ class Scene {
         { // lights
 
             /*dirlights.Add(new Dirlight {
-                dir = new Nums.vec3(1,1,-1).normalized()
-            });*/
+                dir = new Nums.vec3(1,1,1).normalized(),
+                color = Nums.vec3.one * 1f
+            });
 
             /*
             dirlights.Add(new Dirlight {
@@ -48,7 +51,7 @@ class Scene {
 
             pointlights.Add(new Pointlight {
                 position = (3, 3, 3),
-                color = (20, 20, 20)
+                color = (1, 1, 1)
             });
         }
 
@@ -108,7 +111,7 @@ class Scene {
 
                 return v;
             });
-            mesh.flipIndices();
+            //mesh.flipIndices();
             mesh.genNormals();
             mesh.bufferdata();
 
@@ -148,7 +151,9 @@ class Scene {
 
         Renderer.lightPass_pointlight.use();
         foreach (var light in pointlights) {
-            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightPosition"), light.position.x, light.position.y, light.position.z);
+
+            vec3 v = (camera.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
+            GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightPosition"), 1, ref v.x);
             GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
             //Lights.pointlightMesh.render();
             Lights.dirlightMesh.render();
@@ -157,6 +162,8 @@ class Scene {
 
     public void update() {
         camera.move();
+        
+        pointlights[0].position = camera.transform.position + camera.transform.forward;
         entities[0].children[3].transform.rotate(Nums.vec3.unity, 0.01f);
     }
 }

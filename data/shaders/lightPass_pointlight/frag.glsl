@@ -36,20 +36,14 @@ void main() {
     float roughness = gnr.w;
     vec3 fragpos = gf.xyz;
     
-    // lp: light position in view space
-    vec3 lp = (view * vec4(lightPosition, 1.0)).xyz;
 
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 
     vec3 V = normalize(-fragpos);
 
-    vec3 light = CalcPointlight(lp, lightColor, fragpos, F0, normal, V, albedo, roughness, metallic);
+    vec3 light = CalcPointlight(lightPosition, lightColor, fragpos, F0, normal, V, albedo, roughness, metallic);
 
-    //vec3 light = vec3(0.1);
-
-    // ambient  
-    //light += albedo * 0.1;
 
     FragColor = vec4(light, 1.0);
 }

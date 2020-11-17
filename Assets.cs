@@ -50,7 +50,9 @@ static class Assets {
             vertsrc = includes(vertsrc);
 
             var dirinfo = new DirectoryInfo(dir);
-            shaders.Add(dirinfo.Name, new Shader(fragsrc, vertsrc));
+            var shader = new Shader(fragsrc, vertsrc);
+            System.Console.WriteLine("Shader Program " + shader.id + ": " + dirinfo.Name);
+            shaders.Add(dirinfo.Name, shader);
         }
     }
 } 
