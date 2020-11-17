@@ -43,7 +43,7 @@ void main() {
     vec3 V = normalize(-fragpos);
 
     vec3 light = CalcPointlight(lightPosition, lightColor, fragpos, F0, normal, V, albedo, roughness, metallic);
-
+    light = max(light, vec3(0.0));
 
     FragColor = vec4(light, 1.0);
 }

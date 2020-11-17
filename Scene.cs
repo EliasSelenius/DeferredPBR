@@ -51,7 +51,7 @@ class Scene {
 
             pointlights.Add(new Pointlight {
                 position = (3, 3, 3),
-                color = (1, 1, 1)
+                color = (10, 10, 10)
             });
         }
 
