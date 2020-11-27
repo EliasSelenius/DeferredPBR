@@ -72,6 +72,10 @@ vec3 CalcPointlight(in vec3 light_pos, in vec3 light_color, in vec3 fragpos, in 
     float attenuation = 1.0 / (distance * distance);
     vec3 radiance     = light_color * attenuation;
 
+    // temporary fix:
+        float m = max(radiance.x, max(radiance.y, radiance.z));
+        if (m < (1.0 / 1000.0)) discard;
+
     return cookTorranceBRDF(radiance, F0, N, V, L, albedo, roughness, metallic);
 }
 

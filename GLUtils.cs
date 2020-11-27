@@ -187,7 +187,7 @@ static class GLUtils {
 #region uniforms 
 
     public static void setUniformMatrix4(int loc, ref mat4 m) => GL.UniformMatrix4(loc, 1, false, ref m.row1.x);
-    public static void setUniformMatrix4(string name, ref mat4 m) => GL.UniformMatrix4(GL.GetUniformLocation(Renderer.geomPass.id, name), 1, false, ref m.row1.x);
+    public static void setUniformMatrix4(int shader, string name, ref mat4 m) => GL.UniformMatrix4(GL.GetUniformLocation(shader, name), 1, false, ref m.row1.x);
 
 #endregion
 

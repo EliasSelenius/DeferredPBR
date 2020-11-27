@@ -68,9 +68,10 @@ class Mesh<VertType> where VertType : struct, VertexData {
     //public static Mesh<V> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
 
     public void mutate(Func<VertType, int, VertType> f) {
-        for (int i = 0; i < vertices.Count; i++) {
-            vertices[i] = f(vertices[i], i);
-        }
+        for (int i = 0; i < vertices.Count; i++) vertices[i] = f(vertices[i], i);   
+    }
+    public void mutate(Func<VertType, VertType> f) {
+        for (int i = 0; i < vertices.Count; i++) vertices[i] = f(vertices[i]);   
     }
 
     public void addTriangles(IEnumerable<uint> ind) => addTriangles(0, ind);

@@ -1,6 +1,7 @@
 #version 330 core
 #include "Camera.glsl"
 #include "PBR.glsl"
+#include "GBuffer.glsl"
 
 /*
     lightPass_dirlight fragment shader
@@ -17,32 +18,22 @@ in V2F {
 uniform vec3 lightDir;
 uniform vec3 lightColor;
 
-uniform sampler2D g_Albedo_Metallic;
-uniform sampler2D g_Normal_Roughness;
-uniform sampler2D g_Fragpos;
-
 
 out vec4 FragColor;
 
 
 void main() {
-    vec4 gam = texture(g_Albedo_Metallic, v2f.uv);
-    vec4 gnr = texture(g_Normal_Roughness, v2f.uv);
-    vec4 gf  = texture(g_Fragpos, v2f.uv); 
-
-    vec3 albedo = gam.xyz;
-    float metallic = gam.w;
-    vec3 normal = gnr.xyz;
-    float roughness = gnr.w;
-    vec3 fragpos = gf.xyz;
+ 
+    GBufferData fragdata;
+    readGBuffer(v2f.uv, fragdata);
     
     // ld: light direction in view space
-    vec3 ld = (view * vec4(lightDir, 0.0)).xyz;
+    vec3 ld = (camera.view * vec4(lightDir, 0.0)).xyz;
 
     vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, albedo, metallic);
+    F0 = mix(F0, fragdata.albedo, fragdata.metallic);
 
-    vec3 V = normalize(-fragpos);
+    vec3 V = normalize(-fragdata.fragpos);
 
     /*
     vec3 ld = (view * vec4(lightDir, 0.0)).xyz;
@@ -73,10 +64,10 @@ void main() {
     vec3 fragpos = v2f.viewray * ldepth;
     */
 
-    vec3 light = CalcDirlight(ld, lightColor, F0, normal, V, albedo, roughness, metallic);
+    vec3 light = CalcDirlight(ld, lightColor, F0, fragdata.normal, V, fragdata.albedo, fragdata.roughness, fragdata.metallic);
 
     // ambient  
-    light += albedo * 0.1;
+    light += fragdata.albedo * 0.1;
 
     FragColor = vec4(light, 1.0);
 }

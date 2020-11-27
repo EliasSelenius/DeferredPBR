@@ -19,7 +19,7 @@ static class Renderer {
 
     static int screenQuadVAO;
 
-    
+    private static UBO windowInfoUBO;
 
     public static void load() {
 
@@ -79,10 +79,12 @@ static class Renderer {
             GL.Uniform1(fLoc, 2);
         }
 
+
+        windowInfoUBO = new UBO("Window", vec4.bytesize);
+        lightPass_pointlight.bindUBO(windowInfoUBO);
+
         whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
 
-
-        //shader = new Shader(File.ReadAllText("data/shaders/frag.glsl"), File.ReadAllText("data/shaders/vert.glsl"));
     }
 
     public static Texture2D whiteTexture;
@@ -135,8 +137,12 @@ static class Renderer {
 
     public static void windowResize(ResizeEventArgs e) {
         GL.Viewport(0,0, e.Width, e.Height);
+        
         gBuffer.resize(e.Width, e.Height);
         hdrBuffer.resize(e.Width, e.Height);
+
+        vec2 s = new vec2(e.Width, e.Height);
+        GLUtils.buffersubdata(windowInfoUBO.id, 0, ref s);
     }
 }
 /*

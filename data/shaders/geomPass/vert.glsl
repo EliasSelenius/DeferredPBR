@@ -20,12 +20,12 @@ out V2F {
 } v2f;
 
 void main() {
-    mat4 view_model = view * model;
+    mat4 view_model = camera.view * model;
     vec4 pos = view_model * vec4(a_Pos, 1.0);
  
     v2f.fragPos = pos.xyz;
     v2f.normal = normalize((view_model * vec4(a_Normal, 0.0)).xyz);
     v2f.uv = a_Uv;
     
-    gl_Position = projection * pos;
+    gl_Position = camera.projection * pos;
 }

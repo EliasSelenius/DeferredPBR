@@ -28,12 +28,12 @@ class Scene {
 
         { // lights
 
-            /*dirlights.Add(new Dirlight {
+            /*
+            dirlights.Add(new Dirlight {
                 dir = new Nums.vec3(1,1,1).normalized(),
                 color = Nums.vec3.one * 1f
             });
 
-            /*
             dirlights.Add(new Dirlight {
                 color = (0.2f, 0.2f, 1)
             });
@@ -46,13 +46,18 @@ class Scene {
             dirlights.Add(new Dirlight {
                 dir = new Nums.vec3(-1,1,-1).normalized(),
                 color = (1,0.2f,0.2f)
-            });
-            */
+            });*/
 
             pointlights.Add(new Pointlight {
                 position = (3, 3, 3),
                 color = (10, 10, 10)
             });
+
+/*
+            pointlights.Add(new Pointlight {
+                position = (6, 6, 3),
+                color = (3, 30, 3)
+            });*/
         }
 
         { // textured plane
@@ -61,11 +66,15 @@ class Scene {
                 renderer = new MeshRenderer {
                     mesh = m,
                     materials = new[] { new PBRMaterial {
-                        albedoMap = Assets.getTexture2D("test.png")
-                    } }
+                        //albedoMap = Assets.getTexture2D("test.png"),
+                        albedo = 1f,
+                        roughness = 0.5f,
+                        metallic = 1f
+                } }
                 }
             };
             e.transform.position.z += 20;
+            e.transform.scale.xz *= 2000;
             entities.Add(e);
         }
 
@@ -77,7 +86,7 @@ class Scene {
                 return v;
             });
             mesh.genNormals();
-            mesh.bufferdata();
+            //mesh.bufferdata();
 
             for (float r = 0; r <= 1f; r += 0.1f) {
                 for (float m = 0; m <= 1f; m += 0.1f) {
@@ -123,7 +132,7 @@ class Scene {
                         new PBRMaterial { 
                             roughness = 0.5f,
                             metallic = 1f,
-                            albedo = 1
+                            albedo = 1f
                         }
                     }
                 }
@@ -155,15 +164,16 @@ class Scene {
             vec3 v = (camera.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
             GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightPosition"), 1, ref v.x);
             GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
-            //Lights.pointlightMesh.render();
-            Lights.dirlightMesh.render();
+            var m = light.calcModelMatrix();
+            GLUtils.setUniformMatrix4(Renderer.lightPass_pointlight.id, "model", ref m);
+            Lights.pointlightMesh.render();
         }
     }
 
     public void update() {
         camera.move();
         
-        pointlights[0].position = camera.transform.position + camera.transform.forward;
+        //pointlights[0].position = camera.transform.position + camera.transform.forward;
         entities[0].children[3].transform.rotate(Nums.vec3.unity, 0.01f);
     }
 }

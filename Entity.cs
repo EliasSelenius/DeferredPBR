@@ -37,7 +37,7 @@ class Entity {
 
         //var mat = Utils.currentMatrix;
         var mat = calcModelMatrix();
-        GLUtils.setUniformMatrix4("model", ref mat);
+        GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
         //material.updateUniforms();
         renderer?.render();
 

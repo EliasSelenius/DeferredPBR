@@ -1,7 +1,7 @@
 #version 330 core
-#include "Camera.glsl"
 #include "PBR.glsl"
-
+#include "GBuffer.glsl"
+#include "Window.glsl" 
 
 /*
     lightPass_pointlight fragment shader
@@ -9,40 +9,24 @@
 */
 
 
-in V2F {
-    vec2 uv;
-} v2f;
-
-
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 
-uniform sampler2D g_Albedo_Metallic;
-uniform sampler2D g_Normal_Roughness;
-uniform sampler2D g_Fragpos;
-
-
 out vec4 FragColor;
 
-
 void main() {
-    vec4 gam = texture(g_Albedo_Metallic, v2f.uv);
-    vec4 gnr = texture(g_Normal_Roughness, v2f.uv);
-    vec4 gf  = texture(g_Fragpos, v2f.uv); 
 
-    vec3 albedo = gam.xyz;
-    float metallic = gam.w;
-    vec3 normal = gnr.xyz;
-    float roughness = gnr.w;
-    vec3 fragpos = gf.xyz;
-    
+    vec2 uv = gl_FragCoord.xy / window.size.xy;
+
+    GBufferData fragdata;
+    readGBuffer(uv, fragdata);    
 
     vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, albedo, metallic);
+    F0 = mix(F0, fragdata.albedo, fragdata.metallic);
 
-    vec3 V = normalize(-fragpos);
+    vec3 V = normalize(-fragdata.fragpos);
 
-    vec3 light = CalcPointlight(lightPosition, lightColor, fragpos, F0, normal, V, albedo, roughness, metallic);
+    vec3 light = CalcPointlight(lightPosition, lightColor, fragdata.fragpos, F0, fragdata.normal, V, fragdata.albedo, fragdata.roughness, fragdata.metallic);
     light = max(light, vec3(0.0));
 
     FragColor = vec4(light, 1.0);
