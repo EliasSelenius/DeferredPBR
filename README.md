@@ -9,17 +9,21 @@ when its done it should have these features:
 * MSAA
 * bloom
 * HDR
-* Skybox
+* Skybox 
+* IBL
 
 additional features I may add:
 * glTF
 * mesh decimation
 * subshaders - shaders that extend the PBR shader
 * save scenes/prefabs/etc in binary format
-* blending
+* transparent materials
 * emissive materials
+* shadows
 
 ## current todo list:
 * copy framebuffers
 * calc fragposition
-* pointlight sphere mesh
+* instance light volumes
+* implement text meshes from Stopgap
+* implement skybox from Stopgap
