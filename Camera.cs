@@ -18,6 +18,7 @@ class Camera {
         Renderer.geomPass.bindUBO(ubo);
         Renderer.lightPass_dirlight.bindUBO(ubo);
         Renderer.lightPass_pointlight.bindUBO(ubo);
+        Renderer.textShader.bindUBO(ubo);
     }
 
     public void move() {

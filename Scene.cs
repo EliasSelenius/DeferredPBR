@@ -14,8 +14,10 @@ class Scene {
     public readonly List<Pointlight> pointlights = new List<Pointlight>();
     public readonly List<Dirlight> dirlights = new List<Dirlight>();
 
+
     public Scene() {
     
+
         var xml = new XmlDocument();
         xml.Load("data/models/Ships.dae");
         var co = (new Collada(xml).toEntity());
@@ -28,12 +30,12 @@ class Scene {
 
         { // lights
 
-            /*
             dirlights.Add(new Dirlight {
                 dir = new Nums.vec3(1,1,1).normalized(),
                 color = Nums.vec3.one * 1f
             });
 
+            /*
             dirlights.Add(new Dirlight {
                 color = (0.2f, 0.2f, 1)
             });
@@ -61,15 +63,15 @@ class Scene {
         }
 
         { // textured plane
-            var m = MeshFactory<Vertex>.genPlane(10, 10f);
+            var m = MeshFactory<Vertex>.genPlane(10, 10f, 10000);
             var e = new Entity {
                 renderer = new MeshRenderer {
                     mesh = m,
                     materials = new[] { new PBRMaterial {
-                        //albedoMap = Assets.getTexture2D("test.png"),
+                        albedoMap = Assets.getTexture2D("mossyBrick.png"),
                         albedo = 1f,
                         roughness = 0.5f,
-                        metallic = 1f
+                        //metallic = 1f
                 } }
                 }
             };

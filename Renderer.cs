@@ -4,6 +4,7 @@ using System.IO;
 using Nums;
 
 
+
 static class Renderer {
 
     public static int windowWidth => app.window.Size.X;
@@ -13,6 +14,7 @@ static class Renderer {
     public static Shader lightPass_dirlight { get; private set; }
     public static Shader lightPass_pointlight { get; private set; }
     public static Shader imagePass { get; private set; }
+    public static Shader textShader { get; private set; }
 
     private static Framebuffer gBuffer;
     private static Framebuffer hdrBuffer;
@@ -21,6 +23,8 @@ static class Renderer {
 
     private static UBO windowInfoUBO;
 
+    static Textbox tbox;
+
     public static void load() {
 
         GLUtils.enableDebug();
@@ -28,6 +32,8 @@ static class Renderer {
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
+
+        tbox = new Textbox();
 
         { // init framebuffers
             gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
@@ -54,6 +60,9 @@ static class Renderer {
         }));
 
 
+        textShader = Assets.getShader("text");
+        textShader.use();
+        GL.Uniform1(GL.GetUniformLocation(textShader.id, "atlas"), 0);
 
         geomPass = Assets.getShader("geomPass");
         geomPass.use();
@@ -127,6 +136,11 @@ static class Renderer {
             GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
         }
         
+        { // Gui pass
+            textShader.use();
+            tbox.render();
+        }
+
 
         GL.Flush();
         app.window.SwapBuffers();

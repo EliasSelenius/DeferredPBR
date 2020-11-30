@@ -2,7 +2,7 @@ using OpenTK.Graphics.OpenGL4;
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential)]
-struct color {
+public struct color {
     public float red, green, blue, alpha;
 
     public color(float rgb) : this(rgb, 1f) {}
@@ -11,7 +11,7 @@ struct color {
 
 }
 
-class Texture2D {
+public class Texture2D {
     int id;
 
     public int width { get; private set; }

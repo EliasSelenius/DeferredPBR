@@ -29,6 +29,7 @@ using System;
 
 */
 
+
 static class GLUtils {
 
 #region GL DEBUG
@@ -37,7 +38,7 @@ static class GLUtils {
     static void debug_callback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam) {
         
         var msg = "[" + type.ToString().Substring("DebugType".Length) + "]";
-
+        
         var color = severity switch {
             DebugSeverity.DebugSeverityHigh => ConsoleColor.Red,
             DebugSeverity.DebugSeverityMedium => ConsoleColor.Yellow,

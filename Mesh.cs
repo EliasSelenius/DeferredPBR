@@ -42,10 +42,23 @@ struct posVertex : VertexData {
     public vec3 position;
     public posVertex(float x, float y, float z) => position = (x, y, z);
 
-    public vec3 getPosition() => position;
-    public void setPosition(vec3 value) => position = value;
+    vec3 VertexData.getPosition() => position;
+    void VertexData.setPosition(vec3 value) => position = value;
 }
 
+[StructLayout(LayoutKind.Sequential)]
+struct posUvVertex : VertexData {
+    public vec3 position;
+    public vec2 uv;
+
+
+    vec3 VertexData.getPosition() => position;
+    void VertexData.setPosition(vec3 value) => position = value;
+
+    vec2 VertexData.getTexcoord() => uv;
+    void VertexData.setTexcoord(vec2 value) => uv = value;
+
+}
 
 
 class Mesh<VertType> where VertType : struct, VertexData {
@@ -64,8 +77,13 @@ class Mesh<VertType> where VertType : struct, VertexData {
         vao = GLUtils.createVertexArray<VertType>(vbo, ebo);
     }
 
-    //public static Mesh<V> copy<V>(Mesh<V> other) where V : struct => new Mesh<V>(other.vertices, other.indices);
-    //public static Mesh<V> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
+    public Mesh(IEnumerable<VertType> verts, IEnumerable<uint> inds) : this() {
+        vertices.AddRange(verts);
+        indices.AddRange(inds);
+    }
+
+    public static Mesh<VertType> copy(Mesh<VertType> other) => new Mesh<VertType>(other.vertices, other.indices);
+    //public static Mesh<VertType> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
 
     public void mutate(Func<VertType, int, VertType> f) {
         for (int i = 0; i < vertices.Count; i++) vertices[i] = f(vertices[i], i);   
@@ -73,6 +91,7 @@ class Mesh<VertType> where VertType : struct, VertexData {
     public void mutate(Func<VertType, VertType> f) {
         for (int i = 0; i < vertices.Count; i++) vertices[i] = f(vertices[i]);   
     }
+
 
     public void addTriangles(IEnumerable<uint> ind) => addTriangles(0, ind);
     public void addTriangles(int material, IEnumerable<uint> ind) {
@@ -250,7 +269,7 @@ static class MeshFactory<T> where T : struct, VertexData {
         return m;
     }
 
-    public static Mesh<T> genPlane(int res, float scale) {
+    public static Mesh<T> genPlane(int res, float scale, float uvScale = 1f) {
         var mesh = new Mesh<T>();
         var ind = new List<uint>();
         int i = 0;
@@ -261,7 +280,7 @@ static class MeshFactory<T> where T : struct, VertexData {
                 
                 var v = new T();
                 v.setPosition(new vec3(x, 0, z));
-                v.setTexcoord(new vec2(ix, iz) / res);
+                v.setTexcoord((new vec2(ix, iz) / res) * uvScale);
 
                 mesh.vertices.Add(v);
 
