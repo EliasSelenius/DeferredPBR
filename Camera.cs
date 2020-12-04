@@ -8,6 +8,8 @@ class Camera {
     public float nearPlane = 0.1f;
     public float farPlane = 10000;
 
+    public float nearPlaneHeight => 2 * nearPlane * math.tan(fieldOfView * math.deg2rad / 2f);
+
     public mat4 projectionMatrix = mat4.identity;
     public mat4 viewMatrix = mat4.identity;
 
@@ -58,6 +60,10 @@ class Camera {
     
         
 
+    }
+
+    public static void updateProjection(ref mat4 p) {
+        GLUtils.buffersubdata(ubo.id, mat4.bytesize, ref p);
     }
 
     public void updateUniforms() {

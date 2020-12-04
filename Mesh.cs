@@ -202,6 +202,18 @@ static class MeshFactory<T> where T : struct, VertexData {
         return null;
     }
 
+    public static Mesh<T> genQuad() {
+        var res = genPlane(1, 1);
+        res.mutate(v => {
+            v.setPosition(v.getPosition().xzy);
+            return v;
+        });
+        res.flipIndices();
+        res.genNormals();
+        res.bufferdata();
+        return res;
+    }
+
     public static Mesh<T> genCube(int res, float scale) {
         var r = _genCube(res, scale);
         r.genNormals();

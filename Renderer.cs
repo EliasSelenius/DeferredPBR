@@ -9,6 +9,8 @@ static class Renderer {
 
     public static int windowWidth => app.window.Size.X;
     public static int windowHeight => app.window.Size.Y;
+    public static float windowAspect => (float)windowWidth / windowHeight;
+
 
     public static Shader geomPass { get; private set; }
     public static Shader lightPass_dirlight { get; private set; }
@@ -138,7 +140,13 @@ static class Renderer {
         
         { // Gui pass
             textShader.use();
-            tbox.render();
+            //tbox.render();
+
+            OpenTK.Mathematics.Matrix4.CreateOrthographic(windowWidth, windowHeight, 0, 10, out OpenTK.Mathematics.Matrix4 res);
+            var p = res.toNums();
+            Camera.updateProjection(ref p);
+
+            Canvas.render();
         }
 
 

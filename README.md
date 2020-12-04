@@ -25,5 +25,4 @@ additional features I may add:
 * copy framebuffers
 * calc fragposition
 * instance light volumes
-* implement text meshes from Stopgap
 * implement skybox from Stopgap

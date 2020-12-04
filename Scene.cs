@@ -16,7 +16,6 @@ class Scene {
 
 
     public Scene() {
-    
 
         var xml = new XmlDocument();
         xml.Load("data/models/Ships.dae");
@@ -144,6 +143,18 @@ class Scene {
             entities.Add(planet);
         }
 
+        { // quad
+            var e = new Entity {
+                renderer = new MeshRenderer {
+                    mesh = MeshFactory<Vertex>.genQuad(),
+                    materials = new[] { PBRMaterial.defaultMaterial }
+                }
+            };
+            e.transform.position.yz = (4, 10);
+
+            entities.Add(e);
+        }
+
     }
 
     public void renderGeometry() {
@@ -171,11 +182,12 @@ class Scene {
             Lights.pointlightMesh.render();
         }
     }
-
+    float time;
     public void update() {
         camera.move();
-        
+        time += 0.01f; 
         //pointlights[0].position = camera.transform.position + camera.transform.forward;
+        pointlights[0].position = new vec3(math.sin(time), 0.1f, math.cos(time)) * 10;
         entities[0].children[3].transform.rotate(Nums.vec3.unity, 0.01f);
     }
 }
