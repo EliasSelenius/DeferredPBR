@@ -1,7 +1,7 @@
 
 using OpenTK.Graphics.OpenGL4;
 
-class Shader {
+public class Shader {
     public readonly int id;
 
     public Shader(string frag, string vert) {

@@ -11,6 +11,8 @@ static class Renderer {
     public static int windowHeight => app.window.Size.Y;
     public static float windowAspect => (float)windowWidth / windowHeight;
 
+    public static double time;
+    public static double fps => 1f / time;
 
     public static Shader geomPass { get; private set; }
     public static Shader lightPass_dirlight { get; private set; }
@@ -25,7 +27,6 @@ static class Renderer {
 
     private static UBO windowInfoUBO;
 
-    static Textbox tbox;
 
     public static void load() {
 
@@ -35,7 +36,6 @@ static class Renderer {
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Blend);
 
-        tbox = new Textbox();
 
         { // init framebuffers
             gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
@@ -101,6 +101,9 @@ static class Renderer {
     public static Texture2D whiteTexture;
 
     public static void drawframe(FrameEventArgs e) {
+
+        time = e.Time;
+
         //System.Console.WriteLine("frame: " + e.Time);
         GL.ClearColor(0, 0, 0, 1);
 
@@ -139,14 +142,16 @@ static class Renderer {
         }
         
         { // Gui pass
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
             textShader.use();
-            //tbox.render();
 
             OpenTK.Mathematics.Matrix4.CreateOrthographic(windowWidth, windowHeight, 0, 10, out OpenTK.Mathematics.Matrix4 res);
             var p = res.toNums();
             Camera.updateProjection(ref p);
+            whiteTexture.bind(TextureUnit.Texture0);
 
-            Canvas.render();
+            Canvas.activeCanvas.render();
         }
 
 

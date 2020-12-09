@@ -24,7 +24,7 @@ static class app {
     }
 
     static void load() {
-
+        window.VSync = VSyncMode.Off;
         window.CursorGrabbed = true;
 
         // gen triangle

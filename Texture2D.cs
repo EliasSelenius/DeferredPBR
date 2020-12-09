@@ -1,15 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
-using System.Runtime.InteropServices;
 
-[StructLayout(LayoutKind.Sequential)]
-public struct color {
-    public float red, green, blue, alpha;
-
-    public color(float rgb) : this(rgb, 1f) {}
-    public color(float rgb, float a) => (red, green, blue, alpha) = (rgb, rgb, rgb, a);
-    public color(float r, float g, float b, float a) => (red, green, blue, alpha) = (r, g, b, a);
-
-}
 
 public class Texture2D {
     int id;

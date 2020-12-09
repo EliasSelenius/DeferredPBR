@@ -82,6 +82,12 @@ class Mesh<VertType> where VertType : struct, VertexData {
         indices.AddRange(inds);
     }
 
+    public void clear() {
+        groups.Clear();
+        vertices.Clear();
+        indices.Clear();
+    }
+
     public static Mesh<VertType> copy(Mesh<VertType> other) => new Mesh<VertType>(other.vertices, other.indices);
     //public static Mesh<VertType> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
 

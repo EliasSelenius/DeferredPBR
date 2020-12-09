@@ -8,7 +8,7 @@
 */
 
 uniform sampler2D atlas;
-uniform vec3 color;
+uniform vec4 color;
 
 in V2F {
     vec2 uv;
@@ -17,5 +17,5 @@ in V2F {
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(texture(atlas, v2f.uv).rgb * color, 1.0); 
+    FragColor = texture(atlas, v2f.uv) * color; 
 }

@@ -17,6 +17,7 @@ public class Font {
         public int paddingRight { get; private set; }
 
         public int lineHeight { get; private set; }
+        public int baseLine { get; private set; }
 
         public class Glyph {
             public readonly int id;
@@ -82,6 +83,7 @@ public class Font {
             // load line height
             _next();
             lineHeight = _getInt("lineHeight");
+            baseLine = _getInt("base");
 
             // load characters
             _next(); // skip page

@@ -1,7 +1,7 @@
 
 using OpenTK.Graphics.OpenGL4;
 
-class UBO {
+public class UBO {
     public readonly int id;
     public readonly int bindingPoint;
     public readonly string name;
