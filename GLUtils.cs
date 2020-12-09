@@ -57,7 +57,6 @@ static class GLUtils {
         msg += " severity: " + sev;
         Console.WriteLine(msg);
 
-
         var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
         System.Console.WriteLine("    " + m);
 
@@ -78,22 +77,22 @@ static class GLUtils {
 
 #region buffers
     public static int createBuffer() => GL.GenBuffer();
-    public static int createBuffer<T>(T[] data) where T : struct {
+    public static int createBuffer<T>(T[] data, BufferUsageHint hint = BufferUsageHint.StaticDraw) where T : struct {
         int b = GL.GenBuffer();
-        bufferdata(b, data);
+        bufferdata(b, data, hint);
         return b;
     }
-    public static int createBuffer(int bytesize) {
+    public static int createBuffer(int bytesize, BufferUsageHint hint = BufferUsageHint.StaticDraw) {
         int b = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, b);
-        GL.BufferData(BufferTarget.ArrayBuffer, bytesize, System.IntPtr.Zero, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, bytesize, System.IntPtr.Zero, hint);
         return b;
     }
     
 
-    public static void bufferdata<T>(int buffer, T[] data) where T : struct {
+    public static void bufferdata<T>(int buffer, T[] data, BufferUsageHint hint = BufferUsageHint.StaticDraw) where T : struct {
         GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
-        GL.BufferData(BufferTarget.ArrayBuffer, data.Length * System.Runtime.InteropServices.Marshal.SizeOf<T>(), data, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, data.Length * System.Runtime.InteropServices.Marshal.SizeOf<T>(), data, hint);
     }
 
     public static void buffersubdata<T>(int buffer, int offset, ref T data) where T : struct {

@@ -52,10 +52,12 @@ class Camera {
 
         transform.position += t * speed;
                 
-        (float mdx, float mdy) = app.window.MouseState.Delta / 100f;
-        //System.Console.WriteLine(transform.rotation);
-        transform.rotate(vec3.unity, mdx);
-        transform.rotate(transform.left, -mdy);
+        if (Mouse.state == MouseState.disabled) {
+            (float mdx, float mdy) = app.window.MouseState.Delta / 100f;
+            //System.Console.WriteLine(transform.rotation);
+            transform.rotate(vec3.unity, mdx);
+            transform.rotate(transform.left, -mdy);
+        }
 
     
         

@@ -15,6 +15,11 @@ public struct color {
     public static color rgb(float r, float g, float b) => new color(r, g, b);
 
 
+    public static implicit operator color(float rgb) => new color(rgb);
+    public static implicit operator color((float, float, float) t) => new color(t.Item1, t.Item2, t.Item3);
+    public static implicit operator color((float, float, float, float) t) => new color(t.Item1, t.Item2, t.Item3, t.Item4);
+    
+
     #region colors
 
     public static readonly color white = new color(1f);
