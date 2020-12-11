@@ -182,12 +182,10 @@ class Scene {
             Lights.pointlightMesh.render();
         }
     }
-    float time;
     public void update() {
         camera.move();
-        time += 0.01f; 
         //pointlights[0].position = camera.transform.position + camera.transform.forward;
-        pointlights[0].position = new vec3(math.sin(time), 0.1f, math.cos(time)) * 10;
+        pointlights[0].position = new vec3(math.sin((float)Renderer.time), 0.1f, math.cos((float)Renderer.time)) * 10;
         entities[0].children[3].transform.rotate(Nums.vec3.unity, 0.01f);
     }
 }

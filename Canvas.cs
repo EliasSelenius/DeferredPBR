@@ -3,6 +3,8 @@ using Nums;
 using OpenTK.Graphics.OpenGL4;
 using System.Collections.Generic;
 
+using System.Reflection;
+
 abstract class Canvas {
 
     public static Canvas activeCanvas;
@@ -30,6 +32,7 @@ abstract class Canvas {
         public vec2 pos;
         public vec2 size;
         public vec2 displacement;
+        public float max_displacement_y;
     }
 
     #region start ... end 
@@ -45,12 +48,15 @@ abstract class Canvas {
     public void start(vec2 size) {
         var box = currentBox;
 
+
         if (box.displacement.x + size.x > box.size.x) {
             box.displacement.x = 0;
-            box.displacement.y += size.y;
+            box.displacement.y += box.max_displacement_y;
+            box.max_displacement_y = 0;
         } 
         start(box.displacement, size);
         box.displacement.x += size.x;
+        box.max_displacement_y = math.max(box.max_displacement_y, size.y);
     }
 
     public void fill(color c) {
@@ -99,17 +105,30 @@ abstract class Canvas {
 
 
     public bool clicking() {
-        var o = boxStack.TryPeek(out BoxModel p) ? p.pos : vec2.zero;
+        return hovering() && app.window.IsMouseButtonPressed(OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Left);
+    }
+
+    public bool hovering() {
+        var o = currentBox.pos;
         var c = o + size;
-        return app.window.IsMouseButtonDown(OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Left)
-            && Mouse.position.x < c.x && Mouse.position.x > o.x && Mouse.position.y < c.y && Mouse.position.y > o.y && Mouse.state == MouseState.free;
-    } 
+        return Mouse.position.x < c.x && Mouse.position.x > o.x && Mouse.position.y < c.y && Mouse.position.y > o.y && Mouse.state == MouseState.free;
+    }
 
     
     public abstract void render();
 
 }
 
+
+/*
+    ui elements:
+        - buttons
+        - sliders
+        - checkboxes
+        - dropdowns
+        - textinput
+
+*/
 
 
 class MenueCanvas : Canvas {
@@ -118,40 +137,56 @@ class MenueCanvas : Canvas {
     Textbox mousePosText = new Textbox();
 
     bool chk_state = false;
+    int click_count = 0;
 
     public override void render() {
 
         var alt = app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftAlt);        
         Mouse.state = alt ? MouseState.free : MouseState.disabled;
-
-        var colors = new[] { color.black, color.silver, color.rgb(1, 0, 0), color.rgb(0,1,1), color.rgb(0,1,0) };
-        start(150, size - 300);
-        //fill (color.gray);
-        for (int i = 0; i < 100; i++) {
-            start(size / 10f);
-            var alpha = (Mouse.position - currentBox.pos).length / 1000f;
-            fill(color.rgba(1,1,1,alpha));
-            text("" + alpha, 22, color.rgb(.9f, .4f, .1f));
-            end();
-        }
-        end();
-
-
-
-        //rect(0, (width, height / 15f), color.gray); 
-        
-        text("cursorgrab: " + app.window.CursorGrabbed, (0, 32), 16, color.white);
-
         
         fps.setText("Time: " + (Renderer.deltaTime * 1000.0).ToString("##.#") + "ms, fps: " + Renderer.fps.ToString());
         text(fps, 0, 16, color.white);
-
-        
         mousePosText.setText(Mouse.position.ToString());
         text(mousePosText, (0, 16), 16, color.white);
-
+        text("cursorgrab: " + app.window.CursorGrabbed, (0, 32), 16, color.white);
         
 
+        start(200, (500, 22));
+        //if (mouseDown())
+        fill(color.gray);
+            // window title:
+            start((100, 22));
+            fill(color.silver);
+            text("Window", 22, color.white);
+            end();
+
+
+            // window content
+            start((0, height), 500);
+            var c = color.hex(0x004156FF);
+            fill(c);
+            text(c.ToString(), 22, color.white);
+            end();
+        end();
+
+
+    }
+
+    void displayMembers(object obj) {
+        var type = obj.GetType();
+        var members = type.FindMembers(MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null);
+        
+        var colors = new[] {color.silver, color.black};
+
+        foreach (var member in members) {
+            start((width, 18));
+            if (member is FieldInfo f) {
+                text(member.Name + ": " + f.GetValue(obj), 18, color.white);
+            } else if (member is PropertyInfo p) {
+                text(member.Name + ": " + p.GetValue(obj), 18, color.white);
+            }
+            end();
+        }
     }
 
     void checkbox(vec2 pos, vec2 size, ref bool state) {
