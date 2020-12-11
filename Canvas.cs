@@ -18,35 +18,48 @@ abstract class Canvas {
     protected vec2 canvasSize => new vec2(Renderer.windowWidth, Renderer.windowHeight);
     protected int canvasWidth => Renderer.windowWidth;
     protected int canvasHeight => Renderer.windowHeight;
-    protected vec2 size => boxStack.TryPeek(out box b) ? b.size : canvasSize;
+    protected vec2 size => currentBox.size;
     protected float width => size.x;
     protected float height => size.y;
 
-    private readonly Stack<box> boxStack = new Stack<box>(); 
-    struct box {
+    
+    BoxModel rootBox = new BoxModel { pos = vec2.zero, size = new vec2(Renderer.windowWidth, Renderer.windowHeight) };
+    protected BoxModel currentBox => boxStack.TryPeek(out BoxModel b) ? b : rootBox;
+    readonly Stack<BoxModel> boxStack = new Stack<BoxModel>(); 
+    public class BoxModel {
         public vec2 pos;
         public vec2 size;
+        public vec2 displacement;
     }
 
     #region start ... end 
     
     public void start(vec2 pos, vec2 size) {
 
-        var prevPos = boxStack.TryPeek(out box p) ? p.pos : vec2.zero;
-
-        boxStack.Push(new box {
-            pos = prevPos + pos,
+        boxStack.Push(new BoxModel {
+            pos = currentBox.pos + pos,
             size = size
         });
     }
 
+    public void start(vec2 size) {
+        var box = currentBox;
+
+        if (box.displacement.x + size.x > box.size.x) {
+            box.displacement.x = 0;
+            box.displacement.y += size.y;
+        } 
+        start(box.displacement, size);
+        box.displacement.x += size.x;
+    }
+
     public void fill(color c) {
-        var b = boxStack.Peek();  
+        var b = currentBox;  
         rect(b.pos, b.size, c);
     }
 
     public void text(string text, int fontSize, color c) {
-        var b = boxStack.Peek();
+        var b = currentBox;
         this.text(text, b.pos, fontSize, c);
     }
 
@@ -86,7 +99,7 @@ abstract class Canvas {
 
 
     public bool clicking() {
-        var o = boxStack.TryPeek(out box p) ? p.pos : vec2.zero;
+        var o = boxStack.TryPeek(out BoxModel p) ? p.pos : vec2.zero;
         var c = o + size;
         return app.window.IsMouseButtonDown(OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Left)
             && Mouse.position.x < c.x && Mouse.position.x > o.x && Mouse.position.y < c.y && Mouse.position.y > o.y && Mouse.state == MouseState.free;
@@ -111,33 +124,26 @@ class MenueCanvas : Canvas {
         var alt = app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftAlt);        
         Mouse.state = alt ? MouseState.free : MouseState.disabled;
 
+        var colors = new[] { color.black, color.silver, color.rgb(1, 0, 0), color.rgb(0,1,1), color.rgb(0,1,0) };
+        start(150, size - 300);
+        //fill (color.gray);
+        for (int i = 0; i < 100; i++) {
+            start(size / 10f);
+            var alpha = (Mouse.position - currentBox.pos).length / 1000f;
+            fill(color.rgba(1,1,1,alpha));
+            text("" + alpha, 22, color.rgb(.9f, .4f, .1f));
+            end();
+        }
+        end();
+
+
 
         //rect(0, (width, height / 15f), color.gray); 
-        start(100, 1000);
-        var cs = new[] { color.gray, color.white };
-        for (int i = 1; i <= 10; i++) {
-            start(20, size - 40);
-            fill(cs[i % 2]);
-            text("Hello, World!", 20, cs[(i + 1) % 2]);
-        }
-        for (int i = 0; i < 10; i++) end();
-        end();
-
-        start(300, size - 600);
-
-        if (button(10, 30)) {
-            fill(color.gray);
-        }
-        text("Penis", 100, color.gray);
-
-        checkbox(100, 20, ref chk_state);
-
-        end();
         
         text("cursorgrab: " + app.window.CursorGrabbed, (0, 32), 16, color.white);
 
         
-        fps.setText("Time: " + (Renderer.time * 1000.0).ToString("##.#") + "ms, fps: " + Renderer.fps.ToString());
+        fps.setText("Time: " + (Renderer.deltaTime * 1000.0).ToString("##.#") + "ms, fps: " + Renderer.fps.ToString());
         text(fps, 0, 16, color.white);
 
         
@@ -157,10 +163,11 @@ class MenueCanvas : Canvas {
         end();
     }
 
-    bool button(vec2 pos, vec2 size) {
+    bool button(string t, vec2 pos, vec2 size, color c) {
         start(pos, size);
         var res = clicking();
-        fill(color.white);
+        fill(c);
+        text(t, (int)size.y + 1, color.invert(c));
         end();
         return res;
     }

@@ -12,7 +12,8 @@ static class Renderer {
     public static float windowAspect => (float)windowWidth / windowHeight;
 
     public static double time;
-    public static double fps => 1f / time;
+    public static double deltaTime;
+    public static double fps => 1f / deltaTime;
 
     public static Shader geomPass { get; private set; }
     public static Shader lightPass_dirlight { get; private set; }
@@ -102,7 +103,7 @@ static class Renderer {
 
     public static void drawframe(FrameEventArgs e) {
 
-        time = e.Time;
+        time += deltaTime = e.Time;
 
         //System.Console.WriteLine("frame: " + e.Time);
         GL.ClearColor(0, 0, 0, 1);

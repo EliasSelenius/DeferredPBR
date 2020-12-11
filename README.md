@@ -26,4 +26,4 @@ additional features I may add:
 * calc fragposition
 * instance light volumes
 * implement skybox from Stopgap
-* render cubemap skybox 
+* render cubemap skybox

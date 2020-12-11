@@ -1,5 +1,4 @@
 
-
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential)]
@@ -13,12 +12,14 @@ public struct color {
 
 
     public static color rgb(float r, float g, float b) => new color(r, g, b);
+    public static color rgba(float r, float g, float b, float a) => new color(r, g, b, a);
 
 
     public static implicit operator color(float rgb) => new color(rgb);
     public static implicit operator color((float, float, float) t) => new color(t.Item1, t.Item2, t.Item3);
     public static implicit operator color((float, float, float, float) t) => new color(t.Item1, t.Item2, t.Item3, t.Item4);
     
+    public static color invert(color c) => new color(1f - c.red, 1f - c.green, 1f - c.blue);
 
     #region colors
 
@@ -30,4 +31,7 @@ public struct color {
 
     #endregion
 
+}
+
+class ColorPalette {
 }
