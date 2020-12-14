@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using Nums;
 
-public class Font {
+namespace Engine {
+
+    public class Font {
 
         public static readonly Font arial = new Font(System.IO.File.ReadAllLines("data/fonts/arial.fnt"), Texture2D.fromFile("data/fonts/arial.png"));
 
@@ -112,3 +114,4 @@ public class Font {
                     select o).FirstOrDefault();
         }
     }
+}
