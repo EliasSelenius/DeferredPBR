@@ -12,7 +12,7 @@ abstract class Canvas {
     static readonly Dictionary<string, Textbox> cachedTextMeshes = new Dictionary<string, Textbox>();
     static Mesh<posUvVertex> rectMesh;
     static Canvas() {
-        activeCanvas = new MenueCanvas();
+        activeCanvas = new MenuCanvas();
         rectMesh = MeshFactory<posUvVertex>.genQuad();
     }
 
@@ -69,6 +69,42 @@ abstract class Canvas {
         this.text(text, b.pos, fontSize, c);
     }
 
+    public void checkbox(vec2 size, ref bool state) {
+        start(size);
+        if (state) fill(color.white);
+        else fill(color.gray);
+        
+        if (clicking()) state = !state;
+        end();
+    }
+
+    public bool button(string t, vec2 size) {
+        start(size);
+        var res = clicking();
+        if (res) fill(color.gray);
+        else fill(color.white);
+        text(t, (int)size.y + 1, color.black);
+        end();
+        return res;
+    }
+
+    public void displayMembers(object obj) {
+        var type = obj.GetType();
+        var members = type.FindMembers(MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null);
+        
+        var colors = new[] {color.silver, color.black};
+
+        foreach (var member in members) {
+            start((width, 18));
+            if (member is FieldInfo f) {
+                text(member.Name + ": " + f.GetValue(obj), 18, color.white);
+            } else if (member is PropertyInfo p) {
+                text(member.Name + ": " + p.GetValue(obj), 18, color.white);
+            }
+            end();
+        }
+    }
+
     public void end() {
         boxStack.Pop();
     }
@@ -105,7 +141,7 @@ abstract class Canvas {
 
 
     public bool clicking() {
-        return hovering() && app.window.IsMouseButtonPressed(OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Left);
+        return hovering() && Mouse.isPressed(MouseButton.left);
     }
 
     public bool hovering() {
@@ -117,27 +153,110 @@ abstract class Canvas {
     
     public abstract void render();
 
+
+
+
 }
 
 
 /*
     ui elements:
+        Basics:
         - buttons
         - sliders
         - checkboxes
         - dropdowns
         - textinput
+        - images
+        - icons
+        - scrollbar
+        - collapsing elements
+
+        Advanced:
+        - windows
+            - tabs
+            - docking
+        - color picker
+        - curve editor
 
 */
 
 
-class MenueCanvas : Canvas {
+
+class GuiWindow : Canvas {
+
+    bool isWindowSelected = false;
+    vec2 window_pos = 100;
+    vec2 mouse_offset;
+    vec2 window_size;
+    string title;
+
+    bool render_background = true;
+    int clickCount = 0;
+
+    public GuiWindow(string title, vec2 s) {
+        window_size = s;
+        this.title = title;
+    }
+
+    public override void render() {
+        start(window_pos, (window_size.x, 22));
+        
+        if (Mouse.isReleased(MouseButton.left)) isWindowSelected = false;
+        if (hovering()) {
+            if (Mouse.isPressed(MouseButton.left)) {
+                mouse_offset = Mouse.position - window_pos;
+                isWindowSelected = true;
+            }
+        } 
+        if (isWindowSelected) {
+            window_pos = Mouse.position - mouse_offset;
+            fill(.8f);
+        } else {
+            fill(color.gray);
+        }
+        
+        // window title:
+        start((100, 22));
+        fill(color.silver);
+        text(title, 22, color.white);
+        end();
+
+
+        void t(string name) {
+            start((width, 22));
+            text(name, 22, color.white);
+            end();
+        }
+
+
+        // window content
+        start((0, height), window_size);
+        var c = color.hex(0x004156AF);
+        fill(c);
+            displayMembers(Assets.getMaterial("default"));
+        end();
+        
+        end();
+    }
+
+}
+
+
+
+
+class MenuCanvas : Canvas {
 
     Textbox fps = new Textbox();
     Textbox mousePosText = new Textbox();
 
-    bool chk_state = false;
-    int click_count = 0;
+    List<GuiWindow> windows = new List<GuiWindow>();
+
+    public MenuCanvas() {
+        windows.Add(new GuiWindow("My Wind", (500, 200)));
+        windows.Add(new GuiWindow("Window", (400, 400)));
+
+    }
 
     public override void render() {
 
@@ -151,61 +270,17 @@ class MenueCanvas : Canvas {
         text("cursorgrab: " + app.window.CursorGrabbed, (0, 32), 16, color.white);
         
 
-        start(200, (500, 22));
-        //if (mouseDown())
-        fill(color.gray);
-            // window title:
-            start((100, 22));
-            fill(color.silver);
-            text("Window", 22, color.white);
-            end();
+        foreach (var window in windows) {
+            window.render();
+        }        
 
-
-            // window content
-            start((0, height), 500);
-            var c = color.hex(0x004156FF);
-            fill(c);
-            text(c.ToString(), 22, color.white);
-            end();
-        end();
 
 
     }
 
-    void displayMembers(object obj) {
-        var type = obj.GetType();
-        var members = type.FindMembers(MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null);
-        
-        var colors = new[] {color.silver, color.black};
 
-        foreach (var member in members) {
-            start((width, 18));
-            if (member is FieldInfo f) {
-                text(member.Name + ": " + f.GetValue(obj), 18, color.white);
-            } else if (member is PropertyInfo p) {
-                text(member.Name + ": " + p.GetValue(obj), 18, color.white);
-            }
-            end();
-        }
-    }
 
-    void checkbox(vec2 pos, vec2 size, ref bool state) {
-        start(pos, size);
-        if (state) fill(color.white);
-        else fill(color.gray);
-        
-        if (clicking()) state = !state;
-        end();
-    }
-
-    bool button(string t, vec2 pos, vec2 size, color c) {
-        start(pos, size);
-        var res = clicking();
-        fill(c);
-        text(t, (int)size.y + 1, color.invert(c));
-        end();
-        return res;
-    }
+    
 }
 
 
@@ -251,3 +326,50 @@ public enum Origin {
     bottomLeft,
     bottomRight
 }
+
+
+
+
+class SpatialHashGrid {
+    private readonly int gridSize = 10;
+    private readonly Dictionary<ivec3, List<int>> grid = new Dictionary<ivec3, List<int>>();
+
+    private ivec3 getGridCoord(vec3 pos) => (ivec3)(pos / gridSize);
+
+    public void set(vec3 pos, int i) {
+        var gp = getGridCoord(pos);
+        if (!grid.ContainsKey(gp)) grid.Add(gp, new List<int>());
+        grid[gp].Add(i); 
+    }
+
+}
+
+
+
+/*
+
+spacegame idea:
+    level 1:
+        prerequisits: figure out project structure
+            - from scratch
+            - from library (dll)
+            - from engine (dll + exe)
+
+        fly simple ship around in asteroid field, and have blasters go pew pew
+    level 2:
+        prerequisits: learn uv stuff in blender
+        kitbash of ship parts
+            - cockpit
+            - engine
+            - hull
+            - wings
+            - blaster
+        
+
+
+game design principles:
+    - premature optimalization/abstraction
+    - kiss (keep it simple stupid)
+    - feature creep
+
+*/

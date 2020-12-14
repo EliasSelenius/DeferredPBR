@@ -6,14 +6,19 @@ static class Assets {
 
     static Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
     static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+    static Dictionary<string, PBRMaterial> materials = new Dictionary<string, PBRMaterial>();
+
 
     public static void load() {
         loadShaders();
         loadTextures();
+
+        materials["default"] = PBRMaterial.defaultMaterial;
     }
 
     public static Shader getShader(string name) => shaders[name];
     public static Texture2D getTexture2D(string name) => textures[name];
+    public static PBRMaterial getMaterial(string name) => materials[name];
 
     static void loadTextures() {
         foreach (var file in Directory.EnumerateFiles("data/", "*.png", SearchOption.AllDirectories)) {
