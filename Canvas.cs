@@ -348,23 +348,34 @@ class SpatialHashGrid {
 
 /*
 
+
+todo before we start:
+    make project a dll and move current test code in to another exe
+    scene/gameobject/component stuff
+    collada stuff in assets
+
+
+
 spacegame idea:
     level 1:
+        fly simple ship around in asteroid field, and have blasters go pew pew.
         prerequisits: figure out project structure
             - from scratch
             - from library (dll)
             - from engine (dll + exe)
 
-        fly simple ship around in asteroid field, and have blasters go pew pew
+
     level 2:
+        spore-like ship editor
         prerequisits: learn uv stuff in blender
-        kitbash of ship parts
+        and create kitbash of ship parts
             - cockpit
             - engine
             - hull
             - wings
             - blaster
         
+
 
 
 game design principles:
