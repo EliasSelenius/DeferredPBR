@@ -353,7 +353,7 @@ namespace Engine {
 
     todo before we start:
         make project a dll and move current test code in to another exe
-        scene/gameobject/component stuff
+        scene/gameobject/component/prefab stuff
         collada stuff in assets
 
 

@@ -15,6 +15,12 @@ namespace Engine {
         public vec3 forward => quat.forwardVector(rotation);
         public vec3 backward => -forward;
 
+        public void set(Transform transform) {
+            this.position = transform.position;
+            this.rotation = transform.rotation;
+            this.scale = transform.scale;
+        }
+
         public mat4 getMatrix() {
             var m = mat4.identity;
             

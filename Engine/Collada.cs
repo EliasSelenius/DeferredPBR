@@ -61,14 +61,14 @@ namespace Engine {
         public Geometry get_geometry(string id) => geometries.Find(x => x.id.Equals(id));
         public Material get_material(string id) => materials.Find(x => x.id.Equals(id));
 
-        public Dictionary<string, Gameobject> toGameobject() {
+        public Dictionary<string, Prefab> toPrefabs() {
             var geoms = new Dictionary<string, (Mesh<Vertex>, PBRMaterial[])>();
             foreach (var g in geometries) {
                 geoms.Add(g.id, g.genMesh());
             }
 
-            Gameobject node(XmlElement xml) {
-                var g = new Gameobject();
+            Prefab node(XmlElement xml) {
+                var g = new Prefab();
 
 
                 var fs = xml["matrix"].InnerText.Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
@@ -106,9 +106,9 @@ namespace Engine {
                 var inst_geom = xml["instance_geometry"];
                 if (inst_geom != null) {
                     var t = geoms[inst_geom.GetAttribute("url").TrimStart('#')];
-                    g.addComponent(new MeshRenderer {
-                        mesh = t.Item1,
-                        materials = t.Item2
+                    g.addComponent<MeshRenderer>(new Dictionary<string, object> {
+                        { "mesh", t.Item1 },
+                        { "materials", t.Item2 }
                     });
                 }
 
@@ -120,7 +120,7 @@ namespace Engine {
                 return g;
             }
 
-            var res = new Dictionary<string, Gameobject>();
+            var res = new Dictionary<string, Prefab>();
             var nodes = scene.SelectNodes("*[@type='NODE']");
             foreach (var item in nodes) {
                 var x = (XmlElement)item;

@@ -30,11 +30,11 @@ namespace Engine {
 
             {
 
-                var co = Collada.fromFile("data/models/Ships.dae").toGameobject();
+                var co = Collada.fromFile("data/models/Ships.dae").toPrefabs();
 
                 foreach (var item in co) {
-                    item.Value.enterScene(this);
-                    item.Value.transform.position.y = - 60;
+                    item.Value.createInstance().enterScene(this);
+                    //item.Value.transform.position.y = - 60;
                 }
 
 
@@ -170,6 +170,20 @@ namespace Engine {
                     g.transform.position.yz = (4, 10);
                     g.enterScene(this);
                 }
+            
+                { // prefab test
+
+                    var prefab = new Prefab();
+                    prefab.transform.position = 4;
+                    prefab.addComponent<MeshRenderer>(new Dictionary<string, object> { 
+                        { "mesh", MeshFactory<Vertex>.genCube(1, 1f) },
+                        { "materials", new[] { PBRMaterial.defaultMaterial }}
+                    });
+
+                    prefab.createInstance().enterScene(this);
+
+                }
+
             }
         }
 
