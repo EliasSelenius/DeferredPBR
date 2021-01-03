@@ -8,7 +8,9 @@ namespace Engine {
 
     public class Font {
 
-        public static readonly Font arial = new Font(System.IO.File.ReadAllLines("data/fonts/arial.fnt"), Texture2D.fromFile("data/fonts/arial.png"));
+        
+        // Texture2D.fromFile("data/fonts/arial.png")
+        public static readonly Font arial = new Font(System.IO.File.ReadAllLines("data/fonts/arial.fnt"), Utils.getEmbeddedTexture("arial"));
 
         public readonly Texture2D atlas;
         public readonly List<Glyph> glyphs = new List<Glyph>();

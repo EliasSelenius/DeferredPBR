@@ -104,8 +104,6 @@ namespace Engine {
 
             return pixels;
         }
-
-
     }
 }
 

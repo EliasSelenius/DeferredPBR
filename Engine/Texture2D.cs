@@ -31,6 +31,8 @@ namespace Engine {
             return new Texture2D(WrapMode.Repeat, Filter.Nearest, Utils.bitmapToColorArray(new System.Drawing.Bitmap(System.Drawing.Image.FromFile(filename))));
         }
 
+        
+
         public void applyChanges() {
             GL.BindTexture(TextureTarget.Texture2D, id);
             GLUtils.applyTextureData(PixelInternalFormat.Rgba, pixels);

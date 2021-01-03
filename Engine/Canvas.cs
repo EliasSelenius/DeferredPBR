@@ -257,6 +257,7 @@ namespace Engine {
         public MenuCanvas() {
             windows.Add(new GuiWindow("My Wind", (500, 200)));
             windows.Add(new GuiWindow("Window", (400, 400)));
+            
 
         }
 
@@ -347,7 +348,6 @@ namespace Engine {
     }
 
 
-
     /*
 
 
@@ -358,7 +358,7 @@ namespace Engine {
 
 
 
-    spacegame idea:
+    spore/spaz spacegame idea:
         level 1:
             fly simple ship around in asteroid field, and have blasters go pew pew.
             prerequisits: figure out project structure
@@ -377,13 +377,39 @@ namespace Engine {
                 - wings
                 - blaster
             
+        level 3: 
+            dock with station to create/modify/switch ship
 
+        level 4:
+            
+
+
+    blocky spacegame idea:
+        level 1:
+            build ship out of blocks
+        level 2:
+            bake all blocks into one mesh
+        level 3:
+            place thrusters on ship, and have them thrust
+    
 
 
     game design principles:
         - premature optimalization/abstraction
         - kiss (keep it simple stupid)
         - feature creep
+
+
+
+    what to use Source Generators for:
+        - Nums
+        - void update() instead of protected override void update()
+        - scripting language transpiler
+        - generating a parser (Pgen)
+        - integrate assets into assembly
+        - reflection (inside Prefab) begone
+
+
 
     */
 }

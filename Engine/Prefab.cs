@@ -8,10 +8,11 @@ namespace Engine {
         readonly List<Comp> components = new();
         readonly List<Prefab> children = new();
 
-        public void addComponent<T>(Dictionary<string, object> fields) => components.Add(new Comp(typeof(T), fields)); 
+        
+        public void addComponent(Type type, Dictionary<string, object> fields) => components.Add(new Comp(type, fields)); 
+        public void addComponent<T>(Dictionary<string, object> fields) => addComponent(typeof(T), fields); 
 
         public void addChild(Prefab child) => children.Add(child);
-        
 
         public Gameobject createInstance() {
             Gameobject g = new();
@@ -35,6 +36,22 @@ namespace Engine {
                 foreach (var item in fields) type.GetField(item.Key).SetValue(res, item.Value);
                 return res;
             }
+        }
+
+        public Prefab fromInstance(Gameobject gameobject) {
+            Prefab res = new();
+
+            res.transform.set(gameobject.transform);
+
+            foreach (var c in gameobject.components) {
+                res.addComponent(c.GetType(), new Dictionary<string, object>());
+            }
+
+            foreach (var c in gameobject.children) {
+                res.addChild(fromInstance(c));
+            }
+
+            return res;
         }
     }
 }

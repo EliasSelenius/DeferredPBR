@@ -33,7 +33,9 @@ namespace Engine {
                 var co = Collada.fromFile("data/models/Ships.dae").toPrefabs();
 
                 foreach (var item in co) {
-                    item.Value.createInstance().enterScene(this);
+                    var inst = item.Value.createInstance();
+                    //inst.addComponent(new TestComp());
+                    inst.enterScene(this);
                     //item.Value.transform.position.y = - 60;
                 }
 
@@ -65,7 +67,7 @@ namespace Engine {
 
                     pointlights.Add(new Pointlight {
                         position = (3, 3, 3),
-                        color = (10, 10, 10)
+                        color = 100 
                     });
 
         /*
@@ -126,7 +128,7 @@ namespace Engine {
                 }
 
             
-                { // planet
+                { // planets
                     var mesh = MeshFactory<Vertex>.genSphere(100, 1f);
                     mesh.mutate((v, i) => {
                         var p = v.position;
@@ -143,20 +145,23 @@ namespace Engine {
                     mesh.bufferdata();
 
 
-                    Gameobject planet = new();
-                    planet.addComponent(new MeshRenderer {
-                        mesh = mesh,
-                        materials = new[] { 
-                            new PBRMaterial { 
-                                roughness = 0.5f,
-                                metallic = 1f,
-                                albedo = 1f
+                    for (int i = 0; i < 100; i++) {
+                        Gameobject planet = new();
+                        planet.addComponent(new MeshRenderer {
+                            mesh = mesh,
+                            materials = new[] { 
+                                new PBRMaterial { 
+                                    roughness = 0.5f,
+                                    metallic = 1f,
+                                    albedo = 1f
+                                }
                             }
-                        }
-                    });
-                    planet.transform.position = (0, 0, 340);
+                        });
+                        planet.transform.position = new vec3(math.rand(), math.rand() *.5f+.5f, math.rand()) * 1000f;
 
-                    planet.enterScene(this);
+                        planet.enterScene(this);
+                    }
+
                 }
 
                 { // quad

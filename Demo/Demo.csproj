@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <!--<ProjectReference Include="..\Engine\DeferredPBR.csproj" />-->
-  </ItemGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\DeferredPBR.csproj" />
+  </ItemGroup>
 
 </Project>
