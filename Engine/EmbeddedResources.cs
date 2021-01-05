@@ -16,5 +16,15 @@ namespace Engine {
             return (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(s);
         }
 
+        public static Shader getShader(string name) {
+            var path = "DeferredPBR.data.shaders." + name;
+            return new Shader(getText(path + ".frag.glsl"), getText(path + ".vert.glsl"));
+        }
+
+        public static System.Xml.XmlDocument getXml(string name) {
+            var doc = new System.Xml.XmlDocument();
+            doc.LoadXml(getText(name));
+            return doc;
+        }
     }
 }

@@ -22,8 +22,9 @@ additional features I may add:
 * shadows
 
 ## current todo list:
-* copy framebuffers
 * calc fragposition
 * instance light volumes
 * implement skybox from Stopgap
 * render cubemap skybox
+* implement xml assets from Stopgap
+  * ShaderPrograms

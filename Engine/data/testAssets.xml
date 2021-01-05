@@ -1,0 +1,25 @@
+<!DOCTYPE xml>
+<assets>
+    <shader name="geomPass" vertpath="" fragpath="" />
+    <shader name="" vertpath="" fragpath="" />
+
+
+    <Scene name="testScene"> 
+        <gameobject position="12 40 2" scale="1" rotation="1 0 0 0">
+            <components>
+            
+            </components>
+            <gameobject position="0 2 2" scale="1 2 1" rotation="1 0 0 0">
+            </gameobject>
+        </gameobject>
+
+        <gameobject prefab="testPrefab" />
+    </Scene>
+
+    <Prefab name="testPrefab">
+    
+    </Prefab>
+
+
+
+</assets>

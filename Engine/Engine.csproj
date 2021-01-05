@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="./data/**/*" CopyToOutputDirectory="Always" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="./data/**/*" />
   </ItemGroup>
 
