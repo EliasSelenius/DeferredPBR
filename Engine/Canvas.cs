@@ -236,7 +236,7 @@ namespace Engine {
             start((0, height), window_size);
             var c = color.hex(0x004156AF);
             fill(c);
-                displayMembers(Assets.getMaterial("default"));
+                //displayMembers(Assets.getMaterial("default"));
             end();
             
             end();

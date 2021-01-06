@@ -1,7 +1,7 @@
 #version 330 core
-#include "PBR.glsl"
-#include "GBuffer.glsl"
-#include "Window.glsl" 
+#include "Engine.data.shaders.PBR.glsl"
+#include "Engine.data.shaders.GBuffer.glsl"
+#include "Engine.data.shaders.Window.glsl" 
 
 /*
     lightPass_pointlight fragment shader

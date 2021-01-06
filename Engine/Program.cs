@@ -63,9 +63,9 @@ namespace Engine {
             window = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
             window.Size = (1600, 900);
 
-            window.Load += Assets.load;
-            window.Load += Renderer.load;
+            //window.Load += Assets.load;
             window.Load += load;
+            window.Load += Renderer.load;
             window.UpdateFrame += update;
             window.RenderFrame += Renderer.drawframe;
             window.Resize += Renderer.windowResize;
@@ -75,6 +75,11 @@ namespace Engine {
         static void load() {
             window.VSync = VSyncMode.Off;
             window.CursorGrabbed = true;
+
+
+            var resProv = new EmbeddedResourceProvider(typeof(app).Assembly);
+            Assets.load(resProv);
+
         }
 
 

@@ -9,11 +9,7 @@ namespace Engine {
     public class Font {
 
         
-        // Texture2D.fromFile("data/fonts/arial.png")
-        public static readonly Font arial = new Font(
-            EmbeddedResources.getText("DeferredPBR.data.fonts.arial.fnt"),
-            new Texture2D(WrapMode.Repeat, Filter.Nearest, Utils.bitmapToColorArray(EmbeddedResources.getBitmap("DeferredPBR.data.fonts.arial.png")))
-        );//new Font(System.IO.File.ReadAllLines("data/fonts/arial.fnt"), Utils.getEmbeddedTexture("arial"));
+        public static readonly Font arial = Assets.getFont("Engine.data.fonts.arial.fnt");
 
         public readonly Texture2D atlas;
         public readonly List<Glyph> glyphs = new List<Glyph>();

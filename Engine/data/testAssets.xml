@@ -1,7 +1,20 @@
 <!DOCTYPE xml>
 <assets>
-    <shader name="geomPass" vertpath="" fragpath="" />
-    <shader name="" vertpath="" fragpath="" />
+    <shader name="geomPass" 
+            vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
+            fragsrc="Engine.data.shaders.geomPass.frag.glsl" />
+    <shader name="imagePass" 
+            vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
+            fragsrc="Engine.data.shaders.imagePass.frag.glsl" />
+    <shader name="lightPass_dirlight" 
+            vertsrc="Engine.data.shaders.lightPass_dirlight.vert.glsl" 
+            fragsrc="Engine.data.shaders.lightPass_dirlight.frag.glsl" />
+    <shader name="lightPass_pointlight" 
+            vertsrc="Engine.data.shaders.lightPass_pointlight.vert.glsl" 
+            fragsrc="Engine.data.shaders.lightPass_pointlight.frag.glsl" />
+    <shader name="text" 
+            vertsrc="Engine.data.shaders.text.vert.glsl" 
+            fragsrc="Engine.data.shaders.text.frag.glsl" />
 
 
     <Scene name="testScene"> 

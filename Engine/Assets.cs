@@ -13,31 +13,77 @@ namespace Engine {
         static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         static Dictionary<string, PBRMaterial> materials = new Dictionary<string, PBRMaterial>();
 
-        static IResourceProvider provider;
+        static Dictionary<string, Prefab> prefabs = new Dictionary<string, Prefab>();
+
+        static Dictionary<string, Font> fonts = new Dictionary<string, Font>();
+
         public static void load(IResourceProvider provider = null) {
-            Assets.provider = provider;
 
             { // shader source files 
                 foreach (var res in provider.enumerate("glsl")) {
+                    shaderSources.Add(res, provider.getText(res));
+                }
 
+                // process include directives
+                var rgx = new Regex("#include +\"(?<filename>[a-zA-Z._]+)\"");
+                foreach (var source in shaderSources) {
+
+                    if (source.Key.Equals("Engine.data.shaders.lightPass_dirlight.frag.glsl")) {
+                        System.Console.WriteLine("");
+                    }
+
+                    var matches = rgx.Matches(source.Value);
+                    for (int m = 0; m < matches.Count; m++) {
+                        var match = matches[m];
+                        shaderSources[source.Key] = shaderSources[source.Key].Replace(match.Value, shaderSources[match.Groups["filename"].Value]);
+                    }
+                }
+            }
+
+            { // textures
+                foreach (var res in provider.enumerate("png")) {
+                    System.Console.WriteLine("RESOURCE: " + res);
+                    textures[res] = new Texture2D(WrapMode.Repeat, Filter.Nearest, Utils.bitmapToColorArray(provider.getBitmap(res)));
+                }
+            }
+
+            { // fonts
+                foreach (var res in provider.enumerate("fnt")) {
+                    var i = res.LastIndexOf(".");
+                    var atlasName = res.Substring(0, i) + ".png";
+                    fonts.Add(res, new Font(provider.getText(res), getTexture2D(atlasName)));
+                }
+            }
+
+            { // collada
+                foreach (var res in provider.enumerate("dae")) {
+                    var doc = new XmlDocument();
+                    doc.LoadXml(provider.getText(res));
+                    var prefs = new Collada(doc).toPrefabs();
+                    foreach (var p in prefs) {
+                        prefabs.Add(p.Key, p.Value);
+                    }
+                }
+            }
+
+            { // xml assets
+                foreach (var res in provider.enumerate("xml")) {
+                    var doc = new XmlDocument();
+                    doc.LoadXml(provider.getText(res));
+                    loadFromXml(doc);
                 }
             }
 
 
-            loadShaderSources();
 
-            loadShaders();
-            loadTextures();
+            //materials["default"] = PBRMaterial.defaultMaterial;
 
-            materials["default"] = PBRMaterial.defaultMaterial;
-
-            Assets.provider = null;
         }
 
         public static Shader getShader(string name) => shaders[name];
         public static Texture2D getTexture2D(string name) => textures[name];
         public static PBRMaterial getMaterial(string name) => materials[name];
-
+        public static Font getFont(string name) => fonts[name];
 
         static void loadFromXml(XmlDocument doc) {
             foreach (var elm in doc.DocumentElement.ChildNodes) {
@@ -57,65 +103,6 @@ namespace Engine {
                 else if (xml.Name.Equals("scene")) {}
                 // other.... (custom xml asset?)
                 else {}
-            }
-        }
-
-
-        static void loadTextures() {
-            foreach (var file in Directory.EnumerateFiles("data/", "*.png", SearchOption.AllDirectories)) {
-                var fi = new FileInfo(file);
-                textures[fi.Name] = Texture2D.fromFile(file);
-            }
-        }
-
-        static void loadShaderSources() {
-            
-            string includes(string src) {
-                var m = Regex.Match(src, "#include +\"(?<filename>[a-zA-Z._]+)\"");
-                if (m.Success) {
-                    var file = m.Groups["filename"].Value.Trim('\"');
-                    src = src.Replace(m.Value, File.ReadAllText("data/shaders/" + file));
-
-                    src = includes(src);
-                }
-                return src;
-            }
-            
-            foreach (var file in Directory.EnumerateFiles("data/", "*.glsl", SearchOption.AllDirectories)) {
-                
-                //shaderSources.Add(file, )
-            }
-        }
-
-        static void loadShaders() {
-            
-            if (!Directory.Exists("data/shaders/")) return;
-
-
-            string includes(string src) {
-                var m = Regex.Match(src, "#include ?(\".*?\")");
-                if (m.Success) {
-                    var file = m.Groups[1].Value.Trim('\"');
-                    src = src.Replace(m.Value, File.ReadAllText("data/shaders/" + file));
-
-                    src = includes(src);
-                }
-                return src;
-            }
-
-            
-        
-            // create shader programs:
-            foreach (var dir in Directory.EnumerateDirectories("data/shaders")) {
-                var fragsrc = File.ReadAllText(dir + "/frag.glsl");
-                var vertsrc = File.ReadAllText(dir + "/vert.glsl");
-                fragsrc = includes(fragsrc);
-                vertsrc = includes(vertsrc);
-
-                var dirinfo = new DirectoryInfo(dir);
-                var shader = new Shader(fragsrc, vertsrc);
-                System.Console.WriteLine("Shader Program " + shader.id + ": " + dirinfo.Name);
-                shaders.Add(dirinfo.Name, shader);
             }
         }
     } 

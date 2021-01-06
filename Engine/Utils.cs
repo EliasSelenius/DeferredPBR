@@ -81,12 +81,13 @@ namespace Engine {
 
         public static color[,] bitmapToColorArray(System.Drawing.Bitmap bitmap) {
             var pixels = new color[bitmap.Width, bitmap.Height];
-            var data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            // , bitmap.PixelFormat
+            var data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var bytes = new byte[data.Stride * bitmap.Height];
             System.Runtime.InteropServices.Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
 
             float toFloat(byte b) => ((float)b) / 255f;
-
+            
             var bpp = data.Stride / data.Width;
 
             for (int i = 0; i < bytes.Length; i += bpp) {

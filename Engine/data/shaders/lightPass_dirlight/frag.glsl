@@ -1,7 +1,7 @@
 #version 330 core
-#include "Camera.glsl"
-#include "PBR.glsl"
-#include "GBuffer.glsl"
+#include "Engine.data.shaders.Camera.glsl"
+#include "Engine.data.shaders.PBR.glsl"
+#include "Engine.data.shaders.GBuffer.glsl"
 
 /*
     lightPass_dirlight fragment shader

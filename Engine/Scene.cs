@@ -30,14 +30,14 @@ namespace Engine {
 
             {
 
-                var co = Collada.fromFile("data/models/Ships.dae").toPrefabs();
 
+                /*
                 foreach (var item in co) {
                     var inst = item.Value.createInstance();
                     //inst.addComponent(new TestComp());
                     inst.enterScene(this);
                     //item.Value.transform.position.y = - 60;
-                }
+                }*/
 
 
                 
@@ -84,7 +84,7 @@ namespace Engine {
                     g.addComponent(new MeshRenderer {
                         mesh = m,
                         materials = new[] { new PBRMaterial {
-                            albedoMap = Assets.getTexture2D("mossyBrick.png"),
+                            albedoMap = Assets.getTexture2D("Engine.data.textures.mossyBrick.png"),
                             albedo = 1f,
                             roughness = 0.5f,
                             //metallic = 1f
