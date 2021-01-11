@@ -14,7 +14,7 @@ namespace Engine {
 
         public void render() {
             shader.use();
-            invertedCube.render();       
+            invertedCube.render();
         }
 
     }

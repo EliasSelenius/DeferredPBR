@@ -234,11 +234,11 @@ namespace Engine {
 
             // window content
             start((0, height), window_size);
-            var c = color.hex(0x004156AF);
-            fill(c);
-                //displayMembers(Assets.getMaterial("default"));
+                var c = color.hex(0x004156AF);
+                fill(c);
+                //text("Elias er veldig kul person. -Tobias 2021", 22, color.white);
+
             end();
-            
             end();
         }
 
@@ -255,7 +255,7 @@ namespace Engine {
         List<GuiWindow> windows = new List<GuiWindow>();
 
         public MenuCanvas() {
-            windows.Add(new GuiWindow("My Wind", (500, 200)));
+            //windows.Add(new GuiWindow("My Wind", (500, 200)));
             windows.Add(new GuiWindow("Window", (400, 400)));
             
 
@@ -274,7 +274,7 @@ namespace Engine {
             
 
             foreach (var window in windows) {
-                window.render();
+                //window.render();
             }        
 
 
@@ -348,68 +348,4 @@ namespace Engine {
     }
 
 
-    /*
-
-
-    todo before we start:
-        make project a dll and move current test code in to another exe
-        scene/gameobject/component/prefab stuff
-        collada stuff in assets
-
-
-
-    spore/spaz spacegame idea:
-        level 1:
-            fly simple ship around in asteroid field, and have blasters go pew pew.
-            prerequisits: figure out project structure
-                - from scratch
-                - from library (dll)
-                - from engine (dll + exe)
-
-
-        level 2:
-            spore-like ship editor
-            prerequisits: learn uv stuff in blender
-            and create kitbash of ship parts
-                - cockpit
-                - engine
-                - hull
-                - wings
-                - blaster
-            
-        level 3: 
-            dock with station to create/modify/switch ship
-
-        level 4:
-            
-
-
-    blocky spacegame idea:
-        level 1:
-            build ship out of blocks
-        level 2:
-            bake all blocks into one mesh
-        level 3:
-            place thrusters on ship, and have them thrust
-    
-
-
-    game design principles:
-        - premature optimalization/abstraction
-        - kiss (keep it simple stupid)
-        - feature creep
-
-
-
-    what to use Source Generators for:
-        - Nums
-        - void update() instead of protected override void update()
-        - scripting language transpiler
-        - generating a parser (Pgen)
-        - integrate assets into assembly
-        - reflection (inside Prefab) begone
-
-
-
-    */
 }

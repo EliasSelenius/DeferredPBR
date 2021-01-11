@@ -22,6 +22,14 @@ namespace Engine {
             return g;
         }
 
+        public static Prefab fromInstance(Gameobject gameobject) {
+            Prefab p = new();
+            p.transform.set(gameobject.transform);
+            foreach (var c in gameobject.components) p.addComponent(c.GetType(), new Dictionary<string, object>());
+            foreach (var c in gameobject.children) p.addChild(fromInstance(c));
+            return p;
+        }
+
         class Comp {
             public readonly Type type;
             public readonly Dictionary<string, object> fields;
@@ -36,22 +44,6 @@ namespace Engine {
                 foreach (var item in fields) type.GetField(item.Key).SetValue(res, item.Value);
                 return res;
             }
-        }
-
-        public Prefab fromInstance(Gameobject gameobject) {
-            Prefab res = new();
-
-            res.transform.set(gameobject.transform);
-
-            foreach (var c in gameobject.components) {
-                res.addComponent(c.GetType(), new Dictionary<string, object>());
-            }
-
-            foreach (var c in gameobject.children) {
-                res.addChild(fromInstance(c));
-            }
-
-            return res;
         }
     }
 }

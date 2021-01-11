@@ -8,6 +8,7 @@ using System;
 namespace Engine {
 
     public interface VertexData {
+
         vec3 getPosition();
         void setPosition(vec3 value);
 
@@ -28,6 +29,7 @@ namespace Engine {
         public vec3 normal;
         public vec2 uv;
         //public vec3 color;
+
 
         vec3 VertexData.getPosition() => position;
         void VertexData.setPosition(vec3 value) => position = value;
@@ -62,6 +64,29 @@ namespace Engine {
 
     }
 
+    public class MeshData<VertType> where VertType : struct, VertexData {
+        public List<VertType> vertices { get; private set; } = new List<VertType>();
+        public List<uint> indices { get; private set; } = new List<uint>();
+
+        // groups: <int, int> = <materialIndex, indicesCount>
+        public Dictionary<int, int> groups = new Dictionary<int, int>();
+
+        public void addTriangles(int material, IEnumerable<uint> ind) {
+            var indLength = ind.Count();
+            if (groups.ContainsKey(material)) groups[material] += indLength;
+            else groups[material] = indLength;
+
+            int offset = 0;
+            foreach (var group in groups) {
+                if (group.Key == material) {
+                    this.indices.InsertRange(offset, ind);
+                    break;
+                }
+                offset += group.Value;
+            }
+        }
+
+    }
 
     public class Mesh<VertType> where VertType : struct, VertexData {
 
@@ -205,7 +230,7 @@ namespace Engine {
 
     }
 
-    static class MeshFactory<T> where T : struct, VertexData {
+    public static class MeshFactory<T> where T : struct, VertexData {
         public static Mesh<T> randomMesh() {
             return null;
         }

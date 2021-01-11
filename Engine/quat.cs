@@ -25,7 +25,7 @@ namespace Engine {
         public static vec3 forwardVector(quat q) => new vec3(2 * (q.x*q.z - q.y*q.w), 2 * (q.y*q.z + q.x*q.w), 1 - 2 * (q.x*q.x + q.y*q.y));
 
 
-        // note: assumes axis is normalized
+        /// <summary>note: assumes axis is normalized</summary>
         public static quat fromAxisangle(vec3 axis, float angle) {        
             float ha = angle / 2f,
                 sin = math.sin(ha);

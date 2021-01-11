@@ -26,5 +26,7 @@ additional features I may add:
 * instance light volumes
 * implement skybox from Stopgap
 * render cubemap skybox
-* implement xml assets from Stopgap
-  * ShaderPrograms
+* implement xml assets
+  * materials
+  * prefabs
+  * scenes

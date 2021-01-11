@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Drawing;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Engine {
     public static class Assets {
@@ -17,7 +18,12 @@ namespace Engine {
 
         static Dictionary<string, Font> fonts = new Dictionary<string, Font>();
 
-        public static void load(IResourceProvider provider = null) {
+        static List<IResourceProvider> providers = new List<IResourceProvider>();
+
+
+        public static void load(IResourceProvider provider) {
+
+            providers.Add(provider);
 
             { // shader source files 
                 foreach (var res in provider.enumerate("glsl")) {
@@ -27,10 +33,6 @@ namespace Engine {
                 // process include directives
                 var rgx = new Regex("#include +\"(?<filename>[a-zA-Z._]+)\"");
                 foreach (var source in shaderSources) {
-
-                    if (source.Key.Equals("Engine.data.shaders.lightPass_dirlight.frag.glsl")) {
-                        System.Console.WriteLine("");
-                    }
 
                     var matches = rgx.Matches(source.Value);
                     for (int m = 0; m < matches.Count; m++) {
@@ -42,7 +44,6 @@ namespace Engine {
 
             { // textures
                 foreach (var res in provider.enumerate("png")) {
-                    System.Console.WriteLine("RESOURCE: " + res);
                     textures[res] = new Texture2D(WrapMode.Repeat, Filter.Nearest, Utils.bitmapToColorArray(provider.getBitmap(res)));
                 }
             }
@@ -73,17 +74,13 @@ namespace Engine {
                     loadFromXml(doc);
                 }
             }
-
-
-
-            //materials["default"] = PBRMaterial.defaultMaterial;
-
         }
 
         public static Shader getShader(string name) => shaders[name];
         public static Texture2D getTexture2D(string name) => textures[name];
         public static PBRMaterial getMaterial(string name) => materials[name];
         public static Font getFont(string name) => fonts[name];
+        public static Prefab getPrefab(string name) => prefabs[name];
 
         static void loadFromXml(XmlDocument doc) {
             foreach (var elm in doc.DocumentElement.ChildNodes) {
