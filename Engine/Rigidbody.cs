@@ -24,6 +24,11 @@ namespace Engine {
             angularVelocity *= quat.fromAxisangle(torque.normalized(), torque.length);
         }
 
+        public void addTorque(in quat torque) {
+            //var axisAngle = quat.a
+            throw new System.NotImplementedException();
+        }
+
         protected override void onUpdate() {
             transform.position += velocity * app.deltaTime;
             transform.rotate(angularVelocity);
