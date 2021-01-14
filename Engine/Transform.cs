@@ -30,7 +30,8 @@ namespace Engine {
 
             //m *= Utils.createRotation(rotation.x, rotation.y, rotation.z);
 
-            m *= new mat4(quat.toMatrix(rotation));
+            quat.toMatrix(rotation, out mat3 m3);
+            m *= new mat4(m3);
 
             m.row4.xyz = position;
 
@@ -49,7 +50,7 @@ namespace Engine {
             rm.row2 /= scale.y;
             rm.row3 /= scale.z;
 
-            rotation = quat.fromMatrix(rm);
+            quat.fromMatrix(rm, out rotation);
         }
 
 

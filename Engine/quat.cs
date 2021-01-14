@@ -20,13 +20,13 @@ namespace Engine {
 
         public quat(float _x, float _y, float _z, float _w) => (x, y, z, w) = (_x, _y, _z, _w);
 
-        public static vec3 leftVector(quat q) => new vec3(1 - 2 * (q.y*q.y + q.z*q.z), 2 * (q.x*q.y - q.z*q.w), 2 * (q.x*q.z + q.y*q.w));
-        public static vec3 upVector(quat q) => new vec3(2 * (q.x*q.y + q.z*q.w), 1 - 2 * (q.x*q.x + q.z*q.z), 2 * (q.y*q.z - q.x*q.w));
-        public static vec3 forwardVector(quat q) => new vec3(2 * (q.x*q.z - q.y*q.w), 2 * (q.y*q.z + q.x*q.w), 1 - 2 * (q.x*q.x + q.y*q.y));
+        public static vec3 leftVector(in quat q) => new vec3(1 - 2 * (q.y*q.y + q.z*q.z), 2 * (q.x*q.y - q.z*q.w), 2 * (q.x*q.z + q.y*q.w));
+        public static vec3 upVector(in quat q) => new vec3(2 * (q.x*q.y + q.z*q.w), 1 - 2 * (q.x*q.x + q.z*q.z), 2 * (q.y*q.z - q.x*q.w));
+        public static vec3 forwardVector(in quat q) => new vec3(2 * (q.x*q.z - q.y*q.w), 2 * (q.y*q.z + q.x*q.w), 1 - 2 * (q.x*q.x + q.y*q.y));
 
 
         /// <summary>note: assumes axis is normalized</summary>
-        public static quat fromAxisangle(vec3 axis, float angle) {        
+        public static quat fromAxisangle(in vec3 axis, float angle) {        
             float ha = angle / 2f,
                 sin = math.sin(ha);
             return new quat {
@@ -37,7 +37,7 @@ namespace Engine {
             };
         }
 
-        public static mat3 toMatrix(quat q) {
+        public static void toMatrix(in quat q, out mat3 res) {
             float xx = q.x * q.x,
                 xy = q.x * q.y,
                 xz = q.x * q.z,
@@ -54,16 +54,15 @@ namespace Engine {
                             2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw),
                             2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy));*/
             
-            var res = new mat3( yy + zz, xy - zw, xz + yw,
-                                xy + zw, xx + zz, yz - xw,
-                                xz - yw, yz + xw, xx + yy ) * 2;
+            res = new mat3( yy + zz, xy - zw, xz + yw,
+                            xy + zw, xx + zz, yz - xw,
+                            xz - yw, yz + xw, xx + yy ) * 2;
             res.diagonal = 1 - res.diagonal;
-            return res;
         }
 
-        public static quat fromMatrix(mat3 m) {
+        public static void fromMatrix(in mat3 m, out quat q) {
             var trace = m.trace;
-            var q = new quat();
+            q = new quat();
             if (trace > 0) {
                 float s = 0.5f / math.sqrt(trace + 1.0f);
                 q.w = 0.25f / s;
@@ -91,16 +90,13 @@ namespace Engine {
                     q.z = 0.25f * s;
                 }
             }
-
-            return q;
         }
 
         public quat conj() => new quat(-x, -y, -z, w);
 
 
-        public static quat operator *(quat l, quat r) {
+        public static quat operator *(in quat l, in quat r) {
             // (a + ib + jc + kd) * (e + if + jg + kh)
-            
             float a = l.w,
                 b = l.x,
                 c = l.y,
