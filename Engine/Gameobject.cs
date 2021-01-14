@@ -28,10 +28,12 @@ namespace Engine {
             components = _components.AsReadOnly();
         }
 
-        public mat4 calcModelMatrix() {
-            var m = transform.getMatrix();
-            if (parent != null) m *= parent.calcModelMatrix();
-            return m;
+        public void calcModelMatrix(out mat4 m) {
+            transform.getMatrix(out m);
+            if (parent != null) {
+                parent.calcModelMatrix(out mat4 p);
+                m *= p;
+            }
         }
 
 #region add/get components 

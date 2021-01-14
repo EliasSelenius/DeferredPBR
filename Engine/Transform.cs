@@ -21,8 +21,8 @@ namespace Engine {
             this.scale = transform.scale;
         }
 
-        public mat4 getMatrix() {
-            var m = mat4.identity;
+        public void getMatrix(out mat4 m) {
+            m = mat4.identity;
             
             m.m11 = scale.x;
             m.m22 = scale.y;
@@ -34,10 +34,8 @@ namespace Engine {
             m *= new mat4(m3);
 
             m.row4.xyz = position;
-
-            return m;
         }
-        public void setMatrix(mat4 m) {
+        public void setMatrix(in mat4 m) {
             position = m.row4.xyz;
 
             scale.x = m.row1.xyz.length;

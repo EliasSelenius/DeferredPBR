@@ -355,7 +355,7 @@ namespace Engine {
         public PBRMaterial[] materials;
 
         internal void render() {
-            var mat = gameobject.calcModelMatrix();
+            gameobject.calcModelMatrix(out mat4 mat);
             GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
             mesh.render(materials);
         }
