@@ -17,13 +17,54 @@ namespace Engine.Voxels {
             return chunks[pos];
         }
 
+        private ivec3 worldToLocal(in ivec3 world) {
+            return world - getChunkCoord(in world) * chunkSize;
+        }
+
+        /*
+            voxel grid pos  (world)
+            voxel chunk pos (local)
+            chunk coords
+
+            gridpos => chunkCoord
+            worldpos => localpos
+
+        */
+
+        public ref voxel voxelAt(in ivec3 pos) {
+            var cc = getChunkCoord(in pos);
+            var chunk = getChunk(in cc);
+            return ref chunk.voxelAt(worldToLocal(in pos));
+        }
         
+
+        static Mesh<Vertex> cube;
+        static Voxelgrid() {
+            cube = MeshFactory<Vertex>.genCube(1, 1f);
+        }
+
+        public void render() {
+            foreach(var chunk in chunks) {
+                for (int x = 0; x < Voxelgrid.chunkSize; x++) {
+                    for (int y = 0; y < Voxelgrid.chunkSize; y++) {
+                        for (int z = 0; z < Voxelgrid.chunkSize; z++) {
+                            var voxel = chunk.Value.voxels[x,y,z];
+                            if (!voxel.isSolid) continue;     
+                            
+                            var pos = new vec3(x, y, z);
+                            cube.render();
+                        }
+                    }
+                }
+            }
+        }
+
 
     }
 
     public class Chunk {
 
-        public readonly Voxel[,,] voxels = new Voxel[Voxelgrid.chunkSize,Voxelgrid.chunkSize,Voxelgrid.chunkSize];
+        public readonly voxel[,,] voxels = new voxel[Voxelgrid.chunkSize,Voxelgrid.chunkSize,Voxelgrid.chunkSize];
         
         Mesh<Vertex> mesh;
         
@@ -38,12 +79,14 @@ namespace Engine.Voxels {
             ( .5f,  .5f,  .5f)
         };
 
+        public ref voxel voxelAt(ivec3 pos) => ref voxels[pos.x, pos.y, pos.z];
+
         void genMesh() {
             for (int x = 0; x < Voxelgrid.chunkSize; x++) {
                 for (int y = 0; y < Voxelgrid.chunkSize; y++) {
                     for (int z = 0; z < Voxelgrid.chunkSize; z++) {
                         var voxel = voxels[x,y,z];
-                        if (voxel.isAir) continue;     
+                        if (!voxel.isSolid) continue;     
                         
                         var pos = new vec3(x, y, z);
 
@@ -62,8 +105,29 @@ namespace Engine.Voxels {
 
     }
 
-    public struct Voxel {
-        public bool isAir;
+    public struct voxel {
+        public bool isSolid;
     }
+
+    public class VoxelgridComponent : Component, IRenderer {
+
+        public Voxelgrid grid;
+
+        public void render() {
+            gameobject.calcModelMatrix(out mat4 mat);
+            GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
+            grid.render();
+        }
+
+        protected override void onEnter() {
+            scene.renderers.Add(this);
+        }
+
+        protected override void onLeave() {
+            scene.renderers.Remove(this);
+        }
+
+
+    } 
 
 }
