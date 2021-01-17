@@ -56,10 +56,10 @@ namespace Engine {
 
             Console.ForegroundColor = color;
             msg += " severity: " + sev;
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
 
             var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
-            System.Console.WriteLine("    " + m);
+            //System.Console.WriteLine("    " + m);
 
             Console.ResetColor();
         }

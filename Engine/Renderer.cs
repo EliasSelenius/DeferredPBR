@@ -4,7 +4,6 @@ using System.IO;
 using Nums;
 
 namespace Engine {
-
     public static class Renderer {
 
         public static int windowWidth => app.window.Size.X;

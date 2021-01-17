@@ -24,6 +24,17 @@ namespace Engine {
             Renderer.textShader.bindUBO(ubo);
         }
 
+        public void screenToRay(vec2 ndc, out vec3 raydir) {
+            var screenPoint = new Vector4(ndc.x, ndc.y, -1, 1);
+            screenPoint = screenPoint * Utils.toOpenTK(projectionMatrix).Inverted();
+            screenPoint.Z = -1;
+            screenPoint.W = 0;
+
+            var point = (screenPoint * Utils.toOpenTK(viewMatrix).Inverted()).Xyz;
+            point.Normalize();
+            raydir = Utils.toNums(point);
+        }
+
         public void move() {
             
 
@@ -60,7 +71,14 @@ namespace Engine {
                 transform.rotate(transform.left, -mdy);
             }
 
-        
+
+            if (Mouse.isPressed(MouseButton.left)) {
+                screenToRay(Mouse.ndcPosition, out vec3 raydir);
+                var col = Scene.active.colliders.raycast(in transform.position, raydir);
+                if (col is not null) {
+                    col.gameobject.getComponent<Rigidbody>()?.addForce(raydir * 10f);
+                }
+            }
             
 
         }

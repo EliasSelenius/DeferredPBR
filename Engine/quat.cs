@@ -115,6 +115,6 @@ namespace Engine {
             };
         }
 
-        public override string ToString() => $"{w} + {x} + {y} + {z}";
+        public override string ToString() => $"{w} + {x}i + {y}j + {z}k";
     }
 }

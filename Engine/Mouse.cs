@@ -18,7 +18,15 @@ namespace Engine {
     public static class Mouse {
         
         public static vec2 position => new vec2(app.window.MousePosition.X, app.window.MousePosition.Y);
-        
+        public static vec2 ndcPosition {
+            get {
+                var p = position / new vec2(Renderer.windowWidth, Renderer.windowHeight) * 2f - vec2.one;
+                p.y = -p.y;
+                return p;
+            }
+        }
+
+
         private static MouseState _state;
         public static MouseState state {
             get => _state;

@@ -6,6 +6,10 @@ using Nums;
 
 namespace Engine {
 
+    public interface IRenderer {
+        void render();
+    }
+
     public class Scene {
 
         public static Scene active = new Scene();
@@ -19,12 +23,14 @@ namespace Engine {
         public readonly List<Pointlight> pointlights = new List<Pointlight>();
         public readonly List<Dirlight> dirlights = new List<Dirlight>();
 
-        internal readonly List<MeshRenderer> renderers = new List<MeshRenderer>();
+        internal readonly List<IRenderer> renderers = new List<IRenderer>();
 
         internal event System.Action update_event;
 
+        internal ColliderCollection colliders = new ColliderCollection();
+
         public Scene() {
-            gameobjects = _gameobjects.AsReadOnly();           
+            gameobjects = _gameobjects.AsReadOnly();
         }
 
         internal void _addGameobject(Gameobject obj) => _gameobjects.Add(obj);
@@ -59,6 +65,9 @@ namespace Engine {
         internal void update() {
             camera.move();
             update_event?.Invoke();
+
+            colliders.testCollisions(colliders);
         }
+
     }
 }

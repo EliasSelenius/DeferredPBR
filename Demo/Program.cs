@@ -114,6 +114,10 @@ namespace Demo {
                             mesh = mesh,
                             materials = new[] { mat }
                         });
+                        
+                        // { velocity = (math.rand(), math.rand(), math.rand()) }
+                        g.addComponent(new Rigidbody());
+                        g.addComponent(new SphereCollider());
 
                         g.transform.position.xy = new Nums.vec2(r, m) * 25;
                         g.enterScene(Scene.active);
@@ -181,6 +185,16 @@ namespace Demo {
 
                 prefab.createInstance().enterScene(Scene.active);
 
+            }
+
+            { // voxelgrid
+                var g = new Gameobject();
+                g.transform.position = (-20, 30, 20);
+                var vg = new Engine.Voxels.VoxelgridComponent();
+                vg.grid = new Engine.Voxels.Voxelgrid();
+                vg.grid.voxelAt(0).isSolid = true;
+                g.addComponent(vg);
+                g.enterScene(Scene.active);
             }
 
         }

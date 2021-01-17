@@ -350,11 +350,11 @@ namespace Engine {
     }
 
 
-    public class MeshRenderer : Component {
+    public class MeshRenderer : Component, IRenderer {
         public Mesh<Vertex> mesh;
         public PBRMaterial[] materials;
 
-        internal void render() {
+        public void render() {
             gameobject.calcModelMatrix(out mat4 mat);
             GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
             mesh.render(materials);

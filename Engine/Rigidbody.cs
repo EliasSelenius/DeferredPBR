@@ -34,5 +34,9 @@ namespace Engine {
             transform.rotate(angularVelocity);
         }
 
+        internal void handleCollision(in collision collision) {
+            
+        }
+
     }
 }

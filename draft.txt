@@ -6,6 +6,7 @@ to research:
     - order independent transparancy
     - transform feedback
     - compute shaders
+    - SSAO
 
 spore/spaz spacegame idea:
     level 1:
@@ -55,6 +56,5 @@ what to use Source Generators for:
     - void update() instead of protected override void update()
     - scripting language transpiler
     - generating a parser (Pgen)
-    - integrate assets into assembly
     - reflection (inside Prefab) begone
 
