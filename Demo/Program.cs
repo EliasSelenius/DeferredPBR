@@ -58,7 +58,7 @@ namespace Demo {
             }
 
             { // textured plane
-                var m = MeshFactory<Vertex>.genPlane(10, 10f, 10);
+                var m = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(10, 10f, 10));
 
                 var tex = new Texture2D(WrapMode.MirroredRepeat, Filter.Nearest, 1000, 1000);
                 for (int i = 0; i < tex.width; i++) {
@@ -93,13 +93,13 @@ namespace Demo {
             }
 
             { // material spectrum
-                var mesh = MeshFactory<Vertex>.genSphere(100, 1f);
+                var mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(100, 1f));
 
-                mesh.mutate((v, i) => {
+                mesh.data.mutate((v, i) => {
                     v.position += v.position * Nums.math.range(0, 0.01f);
                     return v;
                 });
-                mesh.genNormals();
+                mesh.data.genNormals();
                 //mesh.bufferdata();
 
                 for (float r = 0; r <= 1f; r += 0.1f) {
@@ -127,8 +127,8 @@ namespace Demo {
 
         
             { // planets
-                var mesh = MeshFactory<Vertex>.genSphere(100, 1f);
-                mesh.mutate((v, i) => {
+                var mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(100, 1f));
+                mesh.data.mutate((v, i) => {
                     var p = v.position;
                     v.position *= 100f;
 
@@ -139,8 +139,8 @@ namespace Demo {
                     return v;
                 });
                 //mesh.flipIndices();
-                mesh.genNormals();
-                mesh.bufferdata();
+                mesh.data.genNormals();
+                mesh.updateBuffers();
 
 
                 for (int i = 0; i < 100; i++) {
@@ -166,7 +166,7 @@ namespace Demo {
 
                 var g = new Gameobject();
                 g.addComponent(new MeshRenderer {
-                    mesh = MeshFactory<Vertex>.genQuad(),
+                    mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genQuad()),
                     materials = new[] { PBRMaterial.defaultMaterial }
                 });
 
@@ -179,7 +179,7 @@ namespace Demo {
                 var prefab = new Prefab();
                 prefab.transform.position = 4;
                 prefab.addComponent<MeshRenderer>(new Dictionary<string, object> { 
-                    { "mesh", MeshFactory<Vertex>.genCube(1, 1f) },
+                    { "mesh", new Mesh<Vertex>(MeshFactory<Vertex>.genCube(1, 1f)) },
                     { "materials", new[] { PBRMaterial.defaultMaterial }}
                 });
 

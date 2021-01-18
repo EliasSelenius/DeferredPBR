@@ -13,18 +13,17 @@ namespace Engine.Gui {
     }
 
 
+
+    
     public abstract class View {
 
         static readonly Dictionary<string, Textbox> cachedTextMeshes = new Dictionary<string, Textbox>();
         static Mesh<posUvVertex> rectMesh;
         static View() {
             //activeCanvas = new MenuCanvas();
-            rectMesh = MeshFactory<posUvVertex>.genQuad();
+            rectMesh = new Mesh<posUvVertex>(MeshFactory<posUvVertex>.genQuad());
 
         }
-
-
-
 
 
         protected vec2 canvasSize => new vec2(Renderer.windowWidth, Renderer.windowHeight);

@@ -64,7 +64,8 @@ namespace Engine {
         public Dictionary<string, Prefab> toPrefabs() {
             var geoms = new Dictionary<string, (Mesh<Vertex>, PBRMaterial[])>();
             foreach (var g in geometries) {
-                geoms.Add(g.id, g.genMesh());
+                var t = g.genMesh();
+                geoms.Add(g.id, (new Mesh<Vertex>(t.Item1), t.Item2));
             }
 
             Prefab node(XmlElement xml) {
@@ -251,10 +252,10 @@ namespace Engine {
                 triangles = xml.GetElementsByTagName("triangles").Cast<XmlElement>().Select(x => new TriangleCollection(this, x)).ToArray();
             }
 
-            public (Mesh<Vertex>, PBRMaterial[]) genMesh() {
-                var mesh = new Mesh<Vertex>();
+            public (Meshdata<Vertex>, PBRMaterial[]) genMesh() {
+                var mesh = new Meshdata<Vertex>();
 
-                static int add_vertex(Vertex v, Mesh<Vertex> mesh) {
+                static int add_vertex(Vertex v, Meshdata<Vertex> mesh) {
                     //if (mesh.vertices.Contains(v)) return mesh.vertices.IndexOf(v);
                     //var index = mesh.vertices.IndexOf(v);
                     //if (index != -1) return index;
@@ -291,7 +292,7 @@ namespace Engine {
                     materials[groupIndex] = collada.get_material(trcollection.material_name).pbrMaterial;
                     groupIndex++;
                 }
-                mesh.bufferdata();
+                //mesh.bufferdata();
 
                 return (mesh, materials);
             }

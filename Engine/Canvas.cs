@@ -15,7 +15,7 @@ namespace Engine {
         static Mesh<posUvVertex> rectMesh;
         static Canvas() {
             activeCanvas = new MenuCanvas();
-            rectMesh = MeshFactory<posUvVertex>.genQuad();
+            rectMesh = new Mesh<posUvVertex>(MeshFactory<posUvVertex>.genQuad());
         }
 
 

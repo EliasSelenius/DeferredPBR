@@ -7,104 +7,16 @@ using System;
 
 namespace Engine {
 
-    public interface VertexData {
-
-        vec3 getPosition();
-        void setPosition(vec3 value);
-
-        vec3 getNormal() => vec3.zero;
-        void setNormal(vec3 value) { }
-
-        vec2 getTexcoord() => vec2.zero;
-        void setTexcoord(vec2 value) { }
-
-        vec4 getColor() => vec4.zero;
-        void setColor(vec4 value) { } 
-    } 
-
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Vertex : VertexData {
-        public vec3 position;
-        public vec3 normal;
-        public vec2 uv;
-        //public vec3 color;
-
-
-        vec3 VertexData.getPosition() => position;
-        void VertexData.setPosition(vec3 value) => position = value;
-
-        vec3 VertexData.getNormal() => normal;
-        void VertexData.setNormal(vec3 value) => normal = value;
-
-        vec2 VertexData.getTexcoord() => uv;
-        void VertexData.setTexcoord(vec2 value) => uv = value;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct posVertex : VertexData {
-        public vec3 position;
-        public posVertex(float x, float y, float z) => position = (x, y, z);
-
-        vec3 VertexData.getPosition() => position;
-        void VertexData.setPosition(vec3 value) => position = value;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct posUvVertex : VertexData {
-        public vec3 position;
-        public vec2 uv;
-
-
-        vec3 VertexData.getPosition() => position;
-        void VertexData.setPosition(vec3 value) => position = value;
-
-        vec2 VertexData.getTexcoord() => uv;
-        void VertexData.setTexcoord(vec2 value) => uv = value;
-
-    }
-
-    public class MeshData<VertType> where VertType : struct, VertexData {
+    public class Meshdata<VertType> where VertType : struct, VertexData {
         public List<VertType> vertices { get; private set; } = new List<VertType>();
         public List<uint> indices { get; private set; } = new List<uint>();
 
         // groups: <int, int> = <materialIndex, indicesCount>
         public Dictionary<int, int> groups = new Dictionary<int, int>();
 
-        public void addTriangles(int material, IEnumerable<uint> ind) {
-            var indLength = ind.Count();
-            if (groups.ContainsKey(material)) groups[material] += indLength;
-            else groups[material] = indLength;
+        public Meshdata() {}
 
-            int offset = 0;
-            foreach (var group in groups) {
-                if (group.Key == material) {
-                    this.indices.InsertRange(offset, ind);
-                    break;
-                }
-                offset += group.Value;
-            }
-        }
-
-    }
-
-    public class Mesh<VertType> where VertType : struct, VertexData {
-
-        public List<VertType> vertices { get; private set; } = new List<VertType>();
-        public List<uint> indices { get; private set; } = new List<uint>();
-
-        // groups: <int, int> = <materialIndex, indicesCount>
-        public Dictionary<int, int> groups = new Dictionary<int, int>();
-
-        int vbo, ebo, vao;
-
-        public Mesh() {
-            vbo = GLUtils.createBuffer();
-            ebo = GLUtils.createBuffer();
-            vao = GLUtils.createVertexArray<VertType>(vbo, ebo);
-        }
-
-        public Mesh(IEnumerable<VertType> verts, IEnumerable<uint> inds) : this() {
+        public Meshdata(IEnumerable<VertType> verts, IEnumerable<uint> inds) {
             vertices.AddRange(verts);
             indices.AddRange(inds);
         }
@@ -115,8 +27,6 @@ namespace Engine {
             indices.Clear();
         }
 
-        public static Mesh<VertType> copy(Mesh<VertType> other) => new Mesh<VertType>(other.vertices, other.indices);
-        //public static Mesh<VertType> copy<V, O>(Mesh<O> other, Func<O, V> castFunc) where V : struct where O : struct => new Mesh<V>(other.vertices.Select(x => castFunc(x)).ToArray(), other.indices);
 
         public void mutate(Func<VertType, int, VertType> f) {
             for (int i = 0; i < vertices.Count; i++) vertices[i] = f(vertices[i], i);   
@@ -187,23 +97,45 @@ namespace Engine {
                 indices[i + 2] = a;
             }
         }
+    }
 
-        public void bufferdata() {
-            GLUtils.bufferdata(vbo, vertices.ToArray());
-            GLUtils.bufferdata(ebo, indices.ToArray());
+
+    public class Mesh<VertType> where VertType : struct, VertexData {
+        public Meshdata<VertType> data;
+        int vbo, ebo, vao;
+
+        private void initBuffers() {
+            vbo = GLUtils.createBuffer();
+            ebo = GLUtils.createBuffer();
+            vao = GLUtils.createVertexArray<VertType>(vbo, ebo);
+        }
+
+        public Mesh() {
+            this.data = new Meshdata<VertType>();
+            this.initBuffers();
+        }
+
+        public Mesh(Meshdata<VertType> data) {
+            this.data = data;
+            this.initBuffers();
+            this.updateBuffers();
+        }
+
+        public void updateBuffers() {
+            GLUtils.bufferdata(vbo, data.vertices.ToArray());
+            GLUtils.bufferdata(ebo, data.indices.ToArray());
         }
 
         public void render() {
             GL.BindVertexArray(vao);
-            GL.DrawElements(PrimitiveType.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, data.indices.Count, DrawElementsType.UnsignedInt, 0);
         }
 
         public void render(PBRMaterial[] materials) {
             GL.BindVertexArray(vao);
-            //GL.DrawElements(PrimitiveType.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
 
             int offset = 0;
-            foreach (var group in groups) {
+            foreach (var group in data.groups) {
                 materials[group.Key].updateUniforms();
                 GL.DrawElements(PrimitiveType.Triangles, group.Value, DrawElementsType.UnsignedInt, offset * sizeof(uint));
                 offset += group.Value;
@@ -211,15 +143,13 @@ namespace Engine {
         }
 
         private void delete() {
-
             if (vao == 0) return;
 
             GL.DeleteVertexArray(vao);
             GL.DeleteBuffer(vbo);
             GL.DeleteBuffer(ebo);
 
-            vertices = null;
-            indices = null;
+            data = null;
 
             vao = 0;
         }
@@ -227,15 +157,18 @@ namespace Engine {
         ~Mesh() {
             if (vao != 0) System.Console.WriteLine("Memory leak detected! vao:" + vao);
         }
-
     }
 
+
+
+
+
     public static class MeshFactory<T> where T : struct, VertexData {
-        public static Mesh<T> randomMesh() {
+        public static Meshdata<T> randomMesh() {
             return null;
         }
 
-        public static Mesh<T> genQuad() {
+        public static Meshdata<T> genQuad() {
             var res = genPlane(1, 1);
             res.mutate(v => {
                 v.setPosition(v.getPosition().xzy);
@@ -243,19 +176,19 @@ namespace Engine {
             });
             res.flipIndices();
             res.genNormals();
-            res.bufferdata();
+            //res.bufferdata();
             return res;
         }
 
-        public static Mesh<T> genCube(int res, float scale) {
+        public static Meshdata<T> genCube(int res, float scale) {
             var r = _genCube(res, scale);
             r.genNormals();
-            r.bufferdata();
+            //r.bufferdata();
             return r;
         }
 
-        private static Mesh<T> _genCube(int res, float scale) {
-            var m = new Mesh<T>();
+        private static Meshdata<T> _genCube(int res, float scale) {
+            var m = new Meshdata<T>();
 
             res += 1;
 
@@ -302,7 +235,7 @@ namespace Engine {
             return m;
         }
 
-        public static Mesh<T> genSphere(int res, float scale) {
+        public static Meshdata<T> genSphere(int res, float scale) {
             var m = _genCube(res, 1f);
             m.mutate((v, i) => {
                 v.setPosition(v.getPosition().normalized() * scale);
@@ -310,12 +243,12 @@ namespace Engine {
             });
 
             m.genNormals();
-            m.bufferdata();
+            //m.bufferdata();
             return m;
         }
 
-        public static Mesh<T> genPlane(int res, float scale, float uvScale = 1f) {
-            var mesh = new Mesh<T>();
+        public static Meshdata<T> genPlane(int res, float scale, float uvScale = 1f) {
+            var mesh = new Meshdata<T>();
             var ind = new List<uint>();
             int i = 0;
             for (int ix = 0; ix <= res; ix++) {
@@ -344,10 +277,14 @@ namespace Engine {
 
             mesh.addTriangles(0, ind);
             mesh.genNormals();
-            mesh.bufferdata();
+            //mesh.bufferdata();
             return mesh;
         }
     }
+
+
+
+
 
 
     public class MeshRenderer : Component, IRenderer {

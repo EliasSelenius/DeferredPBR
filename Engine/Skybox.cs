@@ -5,9 +5,9 @@ namespace Engine {
         private static Mesh<posVertex> invertedCube;
 
         static Skybox() {
-            invertedCube = MeshFactory<posVertex>.genCube(1, 1f);
-            invertedCube.flipIndices();
-            invertedCube.bufferdata();
+            invertedCube = new Mesh<posVertex>(MeshFactory<posVertex>.genCube(1, 1f));
+            invertedCube.data.flipIndices();
+            invertedCube.updateBuffers();
         }
 
         public Shader shader;

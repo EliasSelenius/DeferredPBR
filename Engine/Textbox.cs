@@ -41,22 +41,22 @@ namespace Engine {
         }
 
         public void setText(string text) {
-            mesh.clear();
+            mesh.data.clear();
             vec2 pos = vec2.zero;
             for(int i = 0; i < text.Length; i++) {
                 var g = font.getGlyph(text[i]);
                 addChar(g, i, pos);
                 pos.x += g.advance;
             }
-            mesh.genNormals();
-            mesh.bufferdata();
+            mesh.data.genNormals();
+            mesh.updateBuffers();
         }
 
         private void addChar(Font.Glyph glyph, int charIndex, vec2 offset) {
             void addv(vec2 pos, vec2 uv) {
                 pos += offset;
                 pos /= font.lineHeight;
-                mesh.vertices.Add(new posUvVertex {
+                mesh.data.vertices.Add(new posUvVertex {
                     position = new vec3(pos.x, pos.y, 0),
                     uv = uv 
                 });
@@ -80,7 +80,7 @@ namespace Engine {
 
             uint i = (uint)charIndex * 4;
 
-            mesh.addTriangles(new uint[] {
+            mesh.data.addTriangles(new uint[] {
                 i + 0, i + 1, i + 2,
                 i + 1, i + 3, i + 2
             });
