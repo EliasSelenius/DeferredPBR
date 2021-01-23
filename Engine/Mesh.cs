@@ -6,7 +6,6 @@ using System.Linq;
 using System;
 
 namespace Engine {
-
     public class Meshdata<VertType> where VertType : struct, VertexData {
         public List<VertType> vertices { get; private set; } = new List<VertType>();
         public List<uint> indices { get; private set; } = new List<uint>();
@@ -14,7 +13,7 @@ namespace Engine {
         // groups: <int, int> = <materialIndex, indicesCount>
         public Dictionary<int, int> groups = new Dictionary<int, int>();
 
-        public Meshdata() {}
+        public Meshdata() { }
 
         public Meshdata(IEnumerable<VertType> verts, IEnumerable<uint> inds) {
             vertices.AddRange(verts);
@@ -35,7 +34,6 @@ namespace Engine {
             for (int i = 0; i < vertices.Count; i++) vertices[i] = f(vertices[i]);   
         }
 
-
         public void addTriangles(IEnumerable<uint> ind) => addTriangles(0, ind);
         public void addTriangles(int material, IEnumerable<uint> ind) {
             var indLength = ind.Count();
@@ -51,6 +49,26 @@ namespace Engine {
                 offset += group.Value;
             }
         }
+
+
+        public void add(Meshdata<VertType> addition, in vec3 offset) {
+            uint vertCount = (uint)this.vertices.Count;
+
+            // add vertices
+            for (int i = 0; i < addition.vertices.Count; i++) {
+                var v = addition.vertices[i];
+                v.setPosition(v.getPosition() + offset);
+                this.vertices.Add(v);
+            }
+
+            // add triangles
+            foreach (var g in addition.groups) {
+                this.addTriangles(g.Key, addition.indices.Select(x => vertCount + x));
+            }
+
+
+        }
+
 
         public void genNormals() {
             // set all normals to zero

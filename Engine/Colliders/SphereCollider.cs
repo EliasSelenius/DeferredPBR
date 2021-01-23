@@ -16,7 +16,7 @@ namespace Engine {
         }
 
         public override void intersects(AABBCollider other, out intersection intersection) {
-            throw new NotImplementedException();
+            Physics.sphere2AABB_Intersection(in transform.position, radius, in other.transform.position, in other.size, out intersection);
         }
 
         public override void intersects(BoxCollider other, out intersection intersection) {

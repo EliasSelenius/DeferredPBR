@@ -26,7 +26,7 @@ namespace Demo {
             { // lights
 
                 Scene.active.dirlights.Add(new Dirlight {
-                    dir = new Nums.vec3(1,1,1).normalized(),
+                    dir = new Nums.vec3(2,5,3).normalized(),
                     color = Nums.vec3.one * 1f
                 });
 
@@ -84,6 +84,9 @@ namespace Demo {
                         //metallic = 1f
                 } }
                 });
+                g.addComponent(new AABBCollider() {
+                    size = (1,1,1)
+                });
 
                 g.transform.position.z += 20;
                 g.transform.scale.xz *= 2000;
@@ -100,7 +103,7 @@ namespace Demo {
                     return v;
                 });
                 mesh.data.genNormals();
-                //mesh.bufferdata();
+                mesh.updateBuffers();
 
                 for (float r = 0; r <= 1f; r += 0.1f) {
                     for (float m = 0; m <= 1f; m += 0.1f) {
@@ -192,10 +195,24 @@ namespace Demo {
                 g.transform.position = (-20, 30, 20);
                 var vg = new Engine.Voxels.VoxelgridComponent();
                 vg.grid = new Engine.Voxels.Voxelgrid();
-                vg.grid.voxelAt(0).isSolid = true;
+
+                for (int x = 0; x < 10; x++) {
+                    for (int y = 0; y < 20; y++) {
+                        for (int z = 0; z < 40; z++) {
+                            var p = new ivec3(x, y, z);
+                            if (math.rand() > 0.9f) {
+                                vg.grid.voxelAt(p).isSolid = true;
+                            }
+                        }
+                    }
+                }
+
+                vg.grid.updateMesh();
                 g.addComponent(vg);
                 g.enterScene(Scene.active);
             }
+
+
 
         }
     }

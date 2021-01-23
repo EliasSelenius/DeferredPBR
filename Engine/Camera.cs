@@ -35,6 +35,9 @@ namespace Engine {
             raydir = Utils.toNums(point);
         }
 
+        Collider lastInteractedWith;
+        vec2 lastMousePos;
+
         public void move() {
             
 
@@ -71,14 +74,24 @@ namespace Engine {
                 transform.rotate(transform.left, -mdy);
             }
 
-
+            
             if (Mouse.isPressed(MouseButton.left)) {
                 screenToRay(Mouse.ndcPosition, out vec3 raydir);
                 var col = Scene.active.colliders.raycast(in transform.position, raydir);
                 if (col is not null) {
-                    col.gameobject.getComponent<Rigidbody>()?.addForce(raydir * 10f);
+                    //col.gameobject.getComponent<Rigidbody>()?.addForce(raydir * 10f);
+                    lastInteractedWith = col;
+                    lastMousePos = Mouse.ndcPosition;   
                 }
             }
+
+            if (Mouse.isReleased(MouseButton.left)) {
+                if (lastInteractedWith != null) {
+                    var v = Mouse.ndcPosition - lastMousePos;
+                    lastInteractedWith.gameobject.getComponent<Rigidbody>()?.addForce(10 * (transform.up * v.y + transform.right * v.x));
+                }
+            }
+
             
 
         }

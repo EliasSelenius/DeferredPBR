@@ -30,13 +30,19 @@ namespace Engine {
         }
 
         protected override void onUpdate() {
+
+            velocity.y -= 10 * app.deltaTime;
+
             transform.position += velocity * app.deltaTime;
             transform.rotate(angularVelocity);
         }
 
-        internal void handleCollision(in collision collision) {
+        internal void handleCollisionDynamics(in collision collision) {            
+            var normal = collision.intersection.point2 - collision.intersection.point1;
+            transform.position += normal;
+            normal /= collision.intersection.depth;
             
+            velocity = velocity.reflect(normal);
         }
-
     }
 }
