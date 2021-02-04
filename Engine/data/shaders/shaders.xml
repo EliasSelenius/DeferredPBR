@@ -14,4 +14,7 @@
     <shader name="text" 
             vertsrc="Engine.data.shaders.text.vert.glsl" 
             fragsrc="Engine.data.shaders.text.frag.glsl" />
+    <shader name="CubemapSkybox" 
+            vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
+            fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />
 </assets>

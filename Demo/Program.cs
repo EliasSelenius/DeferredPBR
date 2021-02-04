@@ -23,6 +23,9 @@ namespace Demo {
 
             Assets.getPrefab("Frigate").createInstance().enterScene(Scene.active);
 
+            var camera = new Gameobject(new CameraFlyController());
+            camera.enterScene(Scene.active);
+
             { // lights
 
                 Scene.active.dirlights.Add(new Dirlight {
@@ -122,7 +125,7 @@ namespace Demo {
                         g.addComponent(new Rigidbody());
                         g.addComponent(new SphereCollider());
 
-                        g.transform.position.xy = new Nums.vec2(r, m) * 25;
+                        g.transform.position.xy = new Nums.vec2(r, m + 1) * 25;
                         g.enterScene(Scene.active);
                     }
                 }

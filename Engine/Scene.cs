@@ -14,8 +14,8 @@ namespace Engine {
 
         public static Scene active = new Scene();
 
-        public Skybox skybox;
-        public Camera camera = new Camera();
+        public Skybox skybox = new CubemapSkybox();
+        public Camera camera { get; internal set; }
 
         List<Gameobject> _gameobjects = new List<Gameobject>();
         public readonly ReadOnlyCollection<Gameobject> gameobjects;
@@ -63,9 +63,7 @@ namespace Engine {
         }
 
         internal void update() {
-            camera.move();
             update_event?.Invoke();
-
             colliders.testCollisions(colliders);
         }
 

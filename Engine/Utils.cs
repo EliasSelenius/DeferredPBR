@@ -16,6 +16,10 @@ namespace Engine {
         public static mat4 toNums(this Matrix4 m) => new mat4(m.Row0.toNums(), m.Row1.toNums(), m.Row2.toNums(), m.Row3.toNums());
 
 
+        public static bool insideBounds(vec2 v, vec2 bounds) => v.x < bounds.x && v.x > 0 && v.y < bounds.y && v.y > 0;
+        
+
+
         private static readonly List<mat4> matrixStack = new List<mat4> { mat4.identity }; 
         public static mat4 currentMatrix => matrixStack[matrixStack.Count - 1];
         public static void pushMatrix() {

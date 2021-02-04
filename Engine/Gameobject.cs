@@ -23,9 +23,11 @@ namespace Engine {
         public bool isParent => children.Count > 0;
         public bool isChild => parent != null;
 
-        public Gameobject() {
+        public Gameobject(params Component[] comps) {
             children = _children.AsReadOnly();
             components = _components.AsReadOnly();
+
+            addComponents(comps);
         }
 
         public void calcModelMatrix(out mat4 m) {
@@ -36,13 +38,32 @@ namespace Engine {
             }
         }
 
-#region add/get components 
+#region add/get/require components 
 
-        public void addComponent(Component comp) {
+        private void attachComponent(Component comp) {
             if (comp.gameobject != null) throw new System.Exception("Component is already attached to a object");
 
             _components.Add(comp);
             comp.gameobject = this;
+        }
+
+        public void addComponent(Component comp) {
+            attachComponent(comp);
+            comp.start();
+        }
+
+        public void addComponents(params Component[] comps) {
+            foreach (var c in comps) attachComponent(c);
+            foreach (var c in comps) c.start();
+        }
+
+        public T requireComponent<T>() where T : Component, new() {
+            var c = getComponent<T>();
+            if (c is null) {
+                c = new T();
+                addComponent(c);
+            }
+            return c;
         }
 
         public T getComponent<T>() where T : Component => (T)_components.Find(c => c is T);
@@ -119,6 +140,10 @@ namespace Engine {
         public Transform transform => gameobject.transform;
         public Scene scene => gameobject.scene;
 
+        internal void start() {
+            onStart();
+        }
+
         internal void enter() {
             scene.update_event += onUpdate;
             onEnter();
@@ -129,6 +154,7 @@ namespace Engine {
         }
 
 
+        protected virtual void onStart() {}
         protected virtual void onUpdate() {}
         protected virtual void onEnter() {}
         protected virtual void onLeave() {}

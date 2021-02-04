@@ -27,6 +27,7 @@ namespace Engine {
 
         private static UBO windowInfoUBO;
 
+        public static Gui.View userInterfaceView;
 
         public static void load() {
 
@@ -96,6 +97,8 @@ namespace Engine {
 
             whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
 
+            Gui.WindowingSystem.test();
+
         }
 
         public static Texture2D whiteTexture;
@@ -116,6 +119,7 @@ namespace Engine {
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 
                 Scene.active.renderGeometry();
+                Scene.active.skybox.render();
             }
 
             { // light pass
@@ -151,7 +155,7 @@ namespace Engine {
                 Camera.updateProjection(ref p);
                 whiteTexture.bind(TextureUnit.Texture0);
 
-                Canvas.activeCanvas.render();
+                userInterfaceView?.render();
             }
 
 
@@ -163,6 +167,11 @@ namespace Engine {
         }
 
         public static void windowResize(ResizeEventArgs e) {
+            
+            System.Console.WriteLine("window resize: " + e.Width + " * " + e.Height);
+
+            if (e.Width < 1 || e.Height < 1) return;
+
             GL.Viewport(0,0, e.Width, e.Height);
             
             gBuffer.resize(e.Width, e.Height);
@@ -170,6 +179,8 @@ namespace Engine {
 
             vec2 s = new vec2(e.Width, e.Height);
             GLUtils.buffersubdata(windowInfoUBO.id, 0, ref s);
+
+
         }
     }
     /*

@@ -31,7 +31,8 @@ namespace Engine {
 
         protected override void onUpdate() {
 
-            velocity.y -= 10 * app.deltaTime;
+            // gravity
+            //velocity.y -= 10 * app.deltaTime;
 
             transform.position += velocity * app.deltaTime;
             transform.rotate(angularVelocity);
@@ -43,6 +44,7 @@ namespace Engine {
             normal /= collision.intersection.depth;
             
             velocity = velocity.reflect(normal);
+            //addForce(-momentum * app.deltaTime, in collision.intersection.point1);
         }
     }
 }

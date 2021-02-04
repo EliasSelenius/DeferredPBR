@@ -25,7 +25,7 @@ namespace Engine {
                 (rgba & 0x000000ff) / 255f);
 
         
-
+        public static color operator *(in color c, float s) => new color(c.red * s, c.green * s, c.blue * s, c.alpha);
 
 
         public static implicit operator color(float rgb) => new color(rgb);
@@ -49,5 +49,22 @@ namespace Engine {
     }
 
     public class ColorPalette {
+    }
+
+    public class ColorTheme {
+
+        // var c = color.hex(0x004156AF);
+
+        public static readonly ColorTheme darkGreenish = new ColorTheme {
+            primaryColor = color.hex(0x84A98CFF),
+            backgroundColor = color.hex(0x52796FDF),
+            textColor = color.hex(0xCAD2C5FF)
+        };
+
+
+        public color primaryColor { get; init; }
+        public color backgroundColor { get; init; }
+        public color textColor { get; init; }
+        
     }
 }

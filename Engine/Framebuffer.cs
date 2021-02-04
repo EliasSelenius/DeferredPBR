@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Engine {
-
     public class Framebuffer {
         private List<(int, PixelInternalFormat)> textureAttachments = new List<(int, PixelInternalFormat)>();
         private List<(int, FramebufferAttachment, RenderbufferStorage)> renderbufferAttachments = new List<(int, FramebufferAttachment, RenderbufferStorage)>();
@@ -16,8 +15,8 @@ namespace Engine {
         public Framebuffer(int w, int h, (FramebufferAttachment, RenderbufferStorage)[] rbos, PixelInternalFormat[] texs) {
             (width, height) = (w, h);
             id = GL.GenFramebuffer();
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);      
-            
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);
+
             for (int i = 0; i < rbos.Length; i++) {
                 int r = GLUtils.createRenderbuffer(rbos[i].Item2, width, height);
                 renderbufferAttachments.Add((r, rbos[i].Item1, rbos[i].Item2));
@@ -48,6 +47,9 @@ namespace Engine {
         }
     
         public void resize(int w, int h) {
+            if (w < 1) throw new System.ArgumentOutOfRangeException(nameof(w));
+            if (h < 1) throw new System.ArgumentOutOfRangeException(nameof(h));
+
             (width, height) = (w, h);
             
             for (int i = 0; i < textureAttachments.Count; i++) {

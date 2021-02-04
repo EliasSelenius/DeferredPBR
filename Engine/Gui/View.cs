@@ -5,6 +5,32 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Engine.Gui {
 
+
+    /*
+
+        
+
+        ui elements:
+            Basics:
+            - buttons
+            - sliders
+            - checkboxes
+            - dropdowns
+            - textinput
+            - images
+            - icons
+            - scrollbar
+            - collapsing elements
+
+            Advanced:
+            - windows
+                - tabs
+                - docking
+            - color picker
+            - curve editor
+
+    */
+
     public struct rectTransform {
         public vec2 pos;
         public vec2 size;
@@ -13,8 +39,6 @@ namespace Engine.Gui {
     }
 
 
-
-    
     public abstract class View {
 
         static readonly Dictionary<string, Textbox> cachedTextMeshes = new Dictionary<string, Textbox>();
@@ -22,7 +46,11 @@ namespace Engine.Gui {
         static View() {
             //activeCanvas = new MenuCanvas();
             rectMesh = new Mesh<posUvVertex>(MeshFactory<posUvVertex>.genQuad());
+        }
 
+
+        public View() {
+            
         }
 
 
@@ -56,21 +84,64 @@ namespace Engine.Gui {
                 box.displacement.x = 0;
                 box.displacement.y += box.max_displacement_y;
                 box.max_displacement_y = 0;
-            } 
+            }
             start(box.displacement, size);
             box.displacement.x += size.x;
             box.max_displacement_y = math.max(box.max_displacement_y, size.y);
         }
 
-        public void fill(color c) {
+        
+        public void end() {
+            boxStack.Pop();
+        }
+
+        public void fill(in color c) {
             var b = currentBox;  
             rect(b.pos, b.size, c);
         }
 
-        public void text(string text, int fontSize, color c) {
+        #region text
+
+        public void text(string text, int fontSize, in color c) {
             var b = currentBox;
             this.text(text, b.pos, fontSize, c);
         }
+        public void text(Textbox tb, int fontSize, in color c) {
+            var b = currentBox;
+            this.text(tb, b.pos, fontSize, c);
+        }
+        public void text(string text, vec2 pos, int fontSize, in color color) {
+            if (!cachedTextMeshes.ContainsKey(text)) cachedTextMeshes.Add(text, new Textbox(text));
+            this.text(cachedTextMeshes[text], pos, fontSize, color);
+        }
+
+        public void text(Textbox tb, vec2 pos, int fontSize, color color) {
+            
+            pos -= canvasSize / 2f;
+            pos *= (1, -1);
+
+            var one = vec2.one * fontSize;
+            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "size"), 1, ref one.x);
+            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "pos"), 1, ref pos.x);
+            GL.Uniform4(GL.GetUniformLocation(Renderer.textShader.id, "color"), 1, ref color.red);
+            tb.render();
+        }
+
+
+        // TODO: there needs to be a mesh per font
+        Mesh<posUvVertex> textmesh = new Mesh<posUvVertex>();
+
+        public void newtext(string text, int fontSize) {
+            var pos = currentBox.pos;
+
+            pos -= canvasSize / 2f;
+            pos *= (1, -1);
+
+            Text.genText(text, pos, fontSize, Font.arial, textmesh.data);
+        }
+
+        #endregion
+
 
         public void checkbox(vec2 size, ref bool state) {
             start(size);
@@ -91,26 +162,7 @@ namespace Engine.Gui {
             return res;
         }
 
-        /*public void displayMembers(object obj) {
-            var type = obj.GetType();
-            var members = type.FindMembers(MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null);
-            
-            var colors = new[] {color.silver, color.black};
 
-            foreach (var member in members) {
-                start((width, 18));
-                if (member is FieldInfo f) {
-                    text(member.Name + ": " + f.GetValue(obj), 18, color.white);
-                } else if (member is PropertyInfo p) {
-                    text(member.Name + ": " + p.GetValue(obj), 18, color.white);
-                }
-                end();
-            }
-        }*/
-
-        public void end() {
-            boxStack.Pop();
-        }
 
         #endregion
 
@@ -125,22 +177,7 @@ namespace Engine.Gui {
             Renderer.whiteTexture.bind(TextureUnit.Texture0);
             rectMesh.render();
         }
-        public void text(Textbox tb, vec2 pos, int fontSize, color color) {
-            
-            pos -= canvasSize / 2f;
-            pos *= (1, -1);
 
-            var one = vec2.one * fontSize;
-            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "size"), 1, ref one.x);
-            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "pos"), 1, ref pos.x);
-            GL.Uniform4(GL.GetUniformLocation(Renderer.textShader.id, "color"), 1, ref color.red);
-            tb.render();
-        }
-
-        public void text(string text, vec2 pos, int fontSize, color color) {
-            if (!cachedTextMeshes.ContainsKey(text)) cachedTextMeshes.Add(text, new Textbox(text));
-            this.text(cachedTextMeshes[text], pos, fontSize, color);
-        }
 
 
         public bool clicking() {
@@ -148,13 +185,29 @@ namespace Engine.Gui {
         }
 
         public bool hovering() {
-            var o = currentBox.pos;
-            var c = o + size;
-            return Mouse.position.x < c.x && Mouse.position.x > o.x && Mouse.position.y < c.y && Mouse.position.y > o.y && Mouse.state == MouseState.free;
+            return Utils.insideBounds(Mouse.position - currentBox.pos, size) && Mouse.state == MouseState.free;
         }
 
         
-        public abstract void render();
+        protected abstract void renderBody();
+
+        internal void render() {
+
+            textmesh.data.clear();
+
+            renderBody();
+
+            textmesh.updateBuffers();
+            Font.arial.atlas.bind(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0);
+            var one = vec2.one;
+            var zero = vec2.zero;
+            var c = color.white;
+            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "size"), 1, ref one.x);
+            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "pos"), 1, ref zero.x);
+            GL.Uniform4(GL.GetUniformLocation(Renderer.textShader.id, "color"), 1, ref c.red);
+            textmesh.render();
+
+        }
 
 
 

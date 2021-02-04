@@ -13,6 +13,7 @@ out V2F {
 } v2f;
 
 
+// NOTE: this is not set anywhere
 uniform mat4 view;
 
 

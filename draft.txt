@@ -8,30 +8,18 @@ to research:
     - compute shaders
     - SSAO
 
-spore/spaz spacegame idea:
+
+
+pirate game idea:
     level 1:
-        fly simple ship around in asteroid field, and have blasters go pew pew.
-        prerequisits: figure out project structure
-            - from scratch
-            - from library (dll)
-            - from engine (dll + exe)
-
-
+        
     level 2:
-        spore-like ship editor
-        prerequisits: learn uv stuff in blender
-        and create kitbash of ship parts
-            - cockpit
-            - engine
-            - hull
-            - wings
-            - blaster
-        
-    level 3: 
-        dock with station to create/modify/switch ship
+    level 3:
 
-    level 4:
-        
+    
+
+
+
 
 
 blocky spacegame idea:
