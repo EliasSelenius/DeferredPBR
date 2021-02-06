@@ -79,7 +79,7 @@ namespace Engine {
         protected override void onUpdate() {    
 
             var t = vec3.zero;
-            var speed = 1.5f;
+            var speed = 2.5f;
 
             if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A)) {
                 t += transform.left;

@@ -56,7 +56,7 @@ namespace Engine.Gui {
             var sys = new WindowingSystem();
             Renderer.userInterfaceView = sys;
 
-            //sys.addWindow(new DebugWindow());
+            sys.addWindow(new DebugWindow());
             //sys.addWindow(new Window("Test", 300));
         }
     }

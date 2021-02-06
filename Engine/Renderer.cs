@@ -34,8 +34,11 @@ namespace Engine {
             GLUtils.enableDebug();
 
             GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Lequal);
+
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
+
 
 
             { // init framebuffers
@@ -47,7 +50,9 @@ namespace Engine {
                     PixelInternalFormat.Rgb16f // fragpos
                 });
 
-                hdrBuffer = new Framebuffer(windowWidth, windowHeight, new (FramebufferAttachment, RenderbufferStorage)[] {}, new[] {
+                hdrBuffer = new Framebuffer(windowWidth, windowHeight, new (FramebufferAttachment, RenderbufferStorage)[] {
+                    (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
+                }, new[] {
                     PixelInternalFormat.Rgba16f
                 });
             }
@@ -113,27 +118,34 @@ namespace Engine {
             { // geom pass
                 GL.Disable(EnableCap.Blend);
                 GL.Enable(EnableCap.DepthTest);
+                GL.DepthMask(true);
+
 
                 geomPass.use();
                 gBuffer.writeMode();
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 
                 Scene.active.renderGeometry();
-                Scene.active.skybox.render();
             }
 
             { // light pass
                 GL.Disable(EnableCap.DepthTest);
+                //GL.DepthMask(false);
                 GL.Enable(EnableCap.Blend);
                 GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
                 GL.BlendEquation(BlendEquationMode.FuncAdd);
 
+                // copy depthbuffer from the gbuffer to the hdr buffer
+                gBuffer.blit(hdrBuffer, ClearBufferMask.DepthBufferBit, Filter.Nearest);
+
                 hdrBuffer.writeMode();
                 gBuffer.readMode();
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-                //gBuffer.blit(0, windowWidth, windowHeight, ClearBufferMask.DepthBufferBit, Filter.Nearest);
+                GL.Clear(ClearBufferMask.ColorBufferBit);
 
                 Scene.active.renderLights();
+                
+                GL.Enable(EnableCap.DepthTest);
+                Scene.active.skybox.render();
             }
 
             { // image pass
