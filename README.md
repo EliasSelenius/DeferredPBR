@@ -24,7 +24,6 @@ additional features I may add:
 ## current todo list:
 * calc fragposition
 * instance light volumes
-* implement skybox from Stopgap
 * render cubemap skybox
 * implement xml assets
   * materials

@@ -1,12 +1,14 @@
 
 
 to research:
+    - normal mapping
     - IBL
     - tesselation shaders 
     - order independent transparancy
     - transform feedback
     - compute shaders
     - SSAO
+    - MSAA / FXAA
 
 
 
