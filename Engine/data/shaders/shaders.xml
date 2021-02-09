@@ -17,4 +17,7 @@
     <shader name="CubemapSkybox" 
             vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
             fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />
+
+    <shader name="genCubemap" vertsrc="Engine.data.shaders.imagePass.vert.glsl" fragsrc="Engine.data.shaders.genTexture2Dfrag.glsl" />
+
 </assets>

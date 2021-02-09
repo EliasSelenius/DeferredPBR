@@ -12,6 +12,7 @@ namespace Engine {
 
         public void updateUniforms() {
             (albedoMap ?? Renderer.whiteTexture).bind(TextureUnit.Texture0);
+
             GL.Uniform3(GL.GetUniformLocation(Renderer.geomPass.id, "material.albedo"), albedo.x, albedo.y, albedo.z);
             GL.Uniform1(GL.GetUniformLocation(Renderer.geomPass.id, "material.metallic"), metallic);
             GL.Uniform1(GL.GetUniformLocation(Renderer.geomPass.id, "material.roughness"), roughness);

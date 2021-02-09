@@ -5,14 +5,13 @@
 
 */
 
-//uniform samplerCube skybox;
+uniform samplerCube skybox;
 
 in vec3 texCoords;
-
 out vec4 FragColor;
 
 
 void main() {
-    FragColor.rgb = (texCoords + 0.5);
-    FragColor.a = 1.0;
+    vec3 dir = normalize(texCoords);
+    FragColor = texture(skybox, dir);
 }

@@ -23,8 +23,6 @@ namespace Engine {
         private static Framebuffer gBuffer;
         private static Framebuffer hdrBuffer;
 
-        static int screenQuadVAO;
-
         private static UBO windowInfoUBO;
 
         public static Gui.View userInterfaceView;
@@ -56,16 +54,6 @@ namespace Engine {
                     PixelInternalFormat.Rgba16f
                 });
             }
-
-            screenQuadVAO = GLUtils.createVertexArray<posVertex>(GLUtils.createBuffer(new[] {
-                new posVertex(-1, -1, 0),
-                new posVertex(1, -1, 0),
-                new posVertex(-1, 1, 0),
-                new posVertex(1, 1, 0)
-            }), GLUtils.createBuffer(new uint[] {
-                0, 1, 2,
-                2, 1, 3
-            }));
 
 
             textShader = Assets.getShader("text");
@@ -153,8 +141,7 @@ namespace Engine {
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 hdrBuffer.readMode();
-                GL.BindVertexArray(screenQuadVAO);
-                GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+                GLUtils.renderScreenQuad();
             }
             
             { // Gui pass

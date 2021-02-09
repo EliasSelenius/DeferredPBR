@@ -14,7 +14,7 @@ namespace Engine {
 
         public static Scene active = new Scene();
 
-        public Skybox skybox = new CubemapSkybox();
+        public Skybox skybox = CubemapSkybox.generate(Assets.getShader("genCubemap"));
         public Camera camera { get; internal set; }
 
         List<Gameobject> _gameobjects = new List<Gameobject>();

@@ -76,6 +76,7 @@ namespace Engine {
             }
         }
 
+
         public static Shader getShader(string name) => shaders[name];
         public static Texture2D getTexture2D(string name) => textures[name];
         public static PBRMaterial getMaterial(string name) => materials[name];

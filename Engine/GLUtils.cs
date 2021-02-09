@@ -33,6 +33,23 @@ namespace Engine {
 
     static class GLUtils {
 
+        static GLUtils() {
+            texture_generator_fbo = GL.GenFramebuffer();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, texture_generator_fbo);
+            GL.DrawBuffers(1, new[] { DrawBuffersEnum.ColorAttachment0 } );
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            screenQuadVao = createVertexArray<posVertex>(createBuffer(new[] {
+                new posVertex(-1, -1, 0),
+                new posVertex(1, -1, 0),
+                new posVertex(-1, 1, 0),
+                new posVertex(1, 1, 0)
+            }), createBuffer(new uint[] {
+                0, 1, 2,
+                2, 1, 3
+            }));
+        }
+
     #region GL DEBUG
 
         static DebugProc dbcallback;
@@ -74,7 +91,6 @@ namespace Engine {
             if (error != ErrorCode.NoError) throw new System.Exception("GLERROR: " + error.ToString());
         }
     #endregion
-
 
     #region buffers
         public static int createBuffer() => GL.GenBuffer();
@@ -307,6 +323,90 @@ namespace Engine {
         }
 
     #endregion
+
+    #region Cubemap
+
+        public static void bindCubemap(TextureUnit unit, int t) {
+            GL.ActiveTexture(unit);
+            GL.BindTexture(TextureTarget.TextureCubeMap, t);
+        }
+
+        public static int createCubemap(int width, int height, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter) {
+            int cubemap = GL.GenTexture();
+            GL.BindTexture(TextureTarget.TextureCubeMap, cubemap);
+            for (int i = 0; i < 6; i++) {
+                GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, internalFormat, width, height, 0, PixelFormat.Rgb, PixelType.Float, System.IntPtr.Zero);
+            }
+
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)wrap);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)wrap);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)wrap);
+
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)filter);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)filter);
+
+            return cubemap;
+        }
+
+        public static int createCubemap(System.Drawing.Bitmap[] faces, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter) {
+            if (faces.Length != 6) throw new ArgumentException();
+
+            (int width, int height) = (faces[0].Width, faces[0].Height);
+            int cubemap = GL.GenTexture();
+            GL.BindTexture(TextureTarget.TextureCubeMap, cubemap);
+            for (int i = 0; i < 6; i++) {
+                GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, internalFormat, width, height, 0, PixelFormat.Rgba, PixelType.Float, Utils.bitmapToColorArray(faces[i]));
+            }
+
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)wrap);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)wrap);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)wrap);
+
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)filter);
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)filter);
+
+            return cubemap;
+        }
+
+    #endregion
+
+    #region generators
+
+        static int texture_generator_fbo, texture_generator_depthbuffer;
+
+        public static int generateTexture2D(Shader shader, int width, int height, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter, bool genMipmap) {
+            int texture = createTexture2D(width, height, internalFormat, wrap, filter, genMipmap);
+            shader.use();
+            GL.Viewport(0, 0, width, height);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, texture_generator_fbo);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, texture, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            renderScreenQuad();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            return texture;
+        }
+
+        public static int generateCubemap(Shader shader, int width, int height, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter) {
+            int cubemap = createCubemap(width, height, internalFormat, wrap, filter);
+            shader.use();
+            GL.Viewport(0, 0, width, height);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, texture_generator_fbo);
+            for (int i = 0; i < 6; i++) {
+                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapPositiveX + i, cubemap, 0);
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+                renderScreenQuad();
+            }
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            return cubemap;
+        }
+
+    #endregion
+
+        static int screenQuadVao;
+        public static void renderScreenQuad() {
+            GL.BindVertexArray(screenQuadVao);
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+        }
 
     }
 
