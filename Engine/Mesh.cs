@@ -51,7 +51,7 @@ namespace Engine {
         }
 
 
-        public void add(Meshdata<VertType> addition, in vec3 offset) {
+        public void add(Meshdata<VertType> addition, in vec3 offset, int materialIndexOffset = 0) {
             uint vertCount = (uint)this.vertices.Count;
 
             // add vertices
@@ -63,7 +63,7 @@ namespace Engine {
 
             // add triangles
             foreach (var g in addition.groups) {
-                this.addTriangles(g.Key, addition.indices.Select(x => vertCount + x));
+                this.addTriangles(g.Key + materialIndexOffset, addition.indices.Select(x => vertCount + x));
             }
 
 

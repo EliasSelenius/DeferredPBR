@@ -210,6 +210,9 @@ namespace Demo {
                     }
                 }
 
+                vg.grid.voxelAt(new ivec3(-10, -20, -25)).isSolid = true;
+                vg.grid.voxelAt(new ivec3(-1, -1, -1)).id = 3;
+
                 vg.grid.updateMesh();
                 g.addComponent(vg);
                 g.enterScene(Scene.active);

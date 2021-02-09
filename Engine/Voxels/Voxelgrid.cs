@@ -17,8 +17,18 @@ namespace Engine.Voxels {
         readonly Dictionary<ivec3, Chunk> chunks = new Dictionary<ivec3, Chunk>();
 
         //return new ivec3(pos.x % chunkSize, pos.y % chunkSize, pos.z % chunkSize);
-        private ivec3 getChunkCoord(in ivec3 worldPos) => worldPos / chunkSize;
-        private ivec3 worldToLocal(in ivec3 worldPos) => new ivec3(worldPos.x % chunkSize, worldPos.y % chunkSize, worldPos.z % chunkSize);
+        private ivec3 getChunkCoord(in ivec3 worldPos) {
+            var v = worldPos / chunkSize;
+            return v;
+        }
+        private ivec3 worldToLocal(in ivec3 worldPos) {
+            var v = new ivec3(worldPos.x % chunkSize, worldPos.y % chunkSize, worldPos.z % chunkSize);
+            //System.Console.WriteLine(v);
+            if (v.x < 0) v.x = chunkSize + v.x;
+            if (v.y < 0) v.y = chunkSize + v.y;
+            if (v.z < 0) v.z = chunkSize + v.z;
+            return v;
+        }
 
         private Chunk getChunk(in ivec3 pos) {
             if (!chunks.ContainsKey(pos)) chunks[pos] = new Chunk();
@@ -30,14 +40,21 @@ namespace Engine.Voxels {
         
 
         static Meshdata<Vertex> cube;
+        static PBRMaterial[] materials = new[] {
+            PBRMaterial.defaultMaterial,
+            new PBRMaterial { albedo = (1, 0, 0) },
+            new PBRMaterial { albedo = (0, 1, 0) },
+            new PBRMaterial { albedo = (0, 0, 1) }
+        };
         static Voxelgrid() {
+            
             cube = MeshFactory<Vertex>.genCube(1, 1f);
         }
 
         Mesh<Vertex> mesh = new Mesh<Vertex>();
         public void render() {
-            PBRMaterial.defaultMaterial.updateUniforms();
-            mesh.render();
+            //PBRMaterial.defaultMaterial.updateUniforms();
+            mesh.render(materials);
         }
 
         public void updateMesh() {
@@ -49,9 +66,9 @@ namespace Engine.Voxels {
                             if (!voxel.isSolid) continue;     
                             
                             var voxelLocalPos = new vec3(x, y, z);
-                            var voxelWorldPos = chunk.Key + voxelLocalPos;
+                            var voxelWorldPos = chunk.Key * chunkSize + voxelLocalPos;
                             //cube.render();
-                            mesh.data.add(cube, in voxelWorldPos);
+                            mesh.data.add(cube, in voxelWorldPos, voxel.id - 1);
 
                         }
                     }
@@ -72,12 +89,16 @@ namespace Engine.Voxels {
             
             Mesh<Vertex> mesh;
 
-            public ref voxel voxelAt(ivec3 localPos) => ref voxels[localPos.x, localPos.y, localPos.z];
+            public ref voxel voxelAt(ivec3 localPos) {
+                return ref voxels[localPos.x, localPos.y, localPos.z];
+            } 
             
             public Chunk() {
                 for (int x = 0; x < chunkSize; x++) for (int y = 0; y < chunkSize; y++) for (int z = 0; z < chunkSize; z++) {
                     voxels[x,y,z] = new voxel();
                 }
+
+                voxels[0,0,0].id = 2;
             }
             
             static vec3[] vertexOffsets = new vec3[] {
