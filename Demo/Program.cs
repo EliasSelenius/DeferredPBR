@@ -21,10 +21,11 @@ namespace Demo {
 
         static void test() {
 
-            Assets.getPrefab("Frigate").createInstance().enterScene(Scene.active);
+            Assets.getPrefab("Engine.data.models.Ships.Frigate").createInstance().enterScene(Scene.active);
 
             var camera = new Gameobject(new CameraFlyController());
             camera.enterScene(Scene.active);
+
 
             { // lights
 
@@ -33,25 +34,19 @@ namespace Demo {
                     color = Nums.vec3.one * 1f
                 });
 
-                /*
-                dirlights.Add(new Dirlight {
-                    color = (0.2f, 0.2f, 1)
-                });
+                
 
-                dirlights.Add(new Dirlight {
-                    dir = new Nums.vec3(0,0,-1),
-                    color = (0,1,0)
-                });
-
-                dirlights.Add(new Dirlight {
-                    dir = new Nums.vec3(-1,1,-1).normalized(),
-                    color = (1,0.2f,0.2f)
-                });*/
 
                 Scene.active.pointlights.Add(new Pointlight {
                     position = (3, 3, 3),
                     color = 100 
                 });
+
+                Scene.active.pointlights.Add(new Pointlight {
+                    position = (30, 3, 3),
+                    color = new vec3(1.0f, 0.3f, 0.5f) * 100
+                });
+
 
     /*
                 pointlights.Add(new Pointlight {

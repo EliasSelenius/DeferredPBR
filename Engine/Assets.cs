@@ -4,6 +4,7 @@ using System.Xml;
 using System.Drawing;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System;
 
 namespace Engine {
     public static class Assets {
@@ -62,7 +63,8 @@ namespace Engine {
                     doc.LoadXml(provider.getText(res));
                     var prefs = new Collada(doc).toPrefabs();
                     foreach (var p in prefs) {
-                        prefabs.Add(p.Key, p.Value);
+                        var prefabName = res.Substring(0, res.LastIndexOf('.')) + "." + p.Key;
+                        prefabs.Add(prefabName, p.Value);
                     }
                 }
             }

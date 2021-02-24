@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Engine {
+
+    public enum FramebufferFormat {
+        rgba8,
+        rgba16f,
+        rgb16f,
+        int32
+    }
+
+
     public class Framebuffer {
-        private List<(int, PixelInternalFormat)> textureAttachments = new List<(int, PixelInternalFormat)>();
+        private List<(int id, FramebufferFormat format)> textureAttachments = new List<(int, FramebufferFormat)>();
         private List<(int, FramebufferAttachment, RenderbufferStorage)> renderbufferAttachments = new List<(int, FramebufferAttachment, RenderbufferStorage)>();
 
         private int id;
@@ -12,19 +21,31 @@ namespace Engine {
         public int width { get; private set; }
         public int height { get; private set; }
 
-        public Framebuffer(int w, int h, (FramebufferAttachment, RenderbufferStorage)[] rbos, PixelInternalFormat[] texs) {
+        static (PixelInternalFormat internalFormat, PixelFormat format, PixelType type) getGLformat(FramebufferFormat format) => format switch {
+            FramebufferFormat.rgba8 => (PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte),
+            FramebufferFormat.rgba16f => (PixelInternalFormat.Rgba16f, PixelFormat.Rgba, PixelType.Float),
+            FramebufferFormat.rgb16f => (PixelInternalFormat.Rgb16f, PixelFormat.Rgb, PixelType.Float),
+            FramebufferFormat.int32 => (PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int),
+            _ => throw new System.Exception("Framebuffer format not supported")
+        };
+
+        public Framebuffer(int w, int h, (FramebufferAttachment, RenderbufferStorage)[] rbos, FramebufferFormat[] texs) {
             (width, height) = (w, h);
             id = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);
 
-            for (int i = 0; i < rbos.Length; i++) {
-                int r = GLUtils.createRenderbuffer(rbos[i].Item2, width, height);
-                renderbufferAttachments.Add((r, rbos[i].Item1, rbos[i].Item2));
-                GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, rbos[i].Item1, RenderbufferTarget.Renderbuffer, r);
+            if (rbos != null) {
+                for (int i = 0; i < rbos.Length; i++) {
+                    int r = GLUtils.createRenderbuffer(rbos[i].Item2, width, height);
+                    renderbufferAttachments.Add((r, rbos[i].Item1, rbos[i].Item2));
+                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, rbos[i].Item1, RenderbufferTarget.Renderbuffer, r);
+                }
             }
 
             for (int i = 0; i < texs.Length; i++) {
-                int t = GLUtils.createTexture2D(width, height, texs[i], WrapMode.ClampToEdge, Filter.Nearest, false);
+                var f = getGLformat(texs[i]);
+
+                int t = GLUtils.createTexture2D(width, height, f.internalFormat, f.format, f.type, WrapMode.ClampToEdge, Filter.Nearest, false);
                 textureAttachments.Add((t, texs[i]));
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0 + i, TextureTarget.Texture2D, t, 0);
             }
@@ -54,7 +75,8 @@ namespace Engine {
             
             for (int i = 0; i < textureAttachments.Count; i++) {
                 GL.BindTexture(TextureTarget.Texture2D, textureAttachments[i].Item1);
-                GLUtils.applyTextureData(textureAttachments[i].Item2, width, height);
+                var f = getGLformat(textureAttachments[i].format);
+                GLUtils.texImage2D(f.internalFormat, f.format, f.type, width, height);
             }
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
@@ -91,6 +113,10 @@ namespace Engine {
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, id);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, target);
             GL.BlitFramebuffer(0, 0, width, height, 0, 0, targetWidth, targetHeight, mask, (BlitFramebufferFilter)filter);
+        }
+
+        public static void read(int x, int y, int w, int h) {
+            throw new System.NotImplementedException();
         }
 
     }

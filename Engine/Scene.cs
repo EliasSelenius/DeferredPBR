@@ -8,6 +8,8 @@ namespace Engine {
 
     public interface IRenderer {
         void render();
+        void render(PBRMaterial material) {}
+        void renderId();
     }
 
     public class Scene {

@@ -23,6 +23,7 @@ namespace Engine {
             Renderer.lightPass_pointlight.bindUBO(ubo);
             Renderer.textShader.bindUBO(ubo);
             Assets.getShader("CubemapSkybox").bindUBO(ubo);
+            Assets.getShader("mousePicking").bindUBO(ubo);
         }
 
         protected override void onEnter() {

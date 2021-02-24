@@ -204,7 +204,10 @@ namespace Engine {
     #region uniforms 
 
         public static void setUniformMatrix4(int loc, ref mat4 m) => GL.UniformMatrix4(loc, 1, false, ref m.row1.x);
-        public static void setUniformMatrix4(int shader, string name, ref mat4 m) => GL.UniformMatrix4(GL.GetUniformLocation(shader, name), 1, false, ref m.row1.x);
+        public static void setUniformMatrix4(int shader, string name, ref mat4 m) {
+            var loc = GL.GetUniformLocation(shader, name);
+            GL.UniformMatrix4(loc, 1, false, ref m.row1.x);
+        }
 
     #endregion
 
@@ -296,30 +299,30 @@ namespace Engine {
             GL.BindTexture(TextureTarget.Texture2D, t);
             tex2DWrap(wrap);
             tex2DFilter(filter);
-            applyTextureData(internalFormat, pixels);
+            texImage2D(internalFormat, pixels);
             if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             return t;
         }
-        public static int createTexture2D(int width, int height, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter, bool genMipmap) {
+        public static int createTexture2D(int width, int height, PixelInternalFormat internalFormat, PixelFormat format, PixelType pixelType, WrapMode wrap, Filter filter, bool genMipmap) {
             int t = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, t);
             tex2DWrap(wrap);
             tex2DFilter(filter);
-            applyTextureData(internalFormat, width, height);
+            texImage2D(internalFormat, format, pixelType, width, height);
             if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             return t;
         }
 
-        public static void applyTextureData(PixelInternalFormat internalformat, color[,] pixels) {
+        public static void texImage2D(PixelInternalFormat internalformat, color[,] pixels) {
             GL.TexImage2D(TextureTarget.Texture2D, 0, internalformat, pixels.GetLength(0), pixels.GetLength(1), 0, PixelFormat.Rgba, PixelType.Float, pixels);
         }
-        public static void applyTextureData(PixelInternalFormat internalformat, int width, int height) {
-            GL.TexImage2D(TextureTarget.Texture2D, 0, internalformat, width, height, 0, PixelFormat.Rgba, PixelType.Float, System.IntPtr.Zero);
+        public static void texImage2D(PixelInternalFormat internalformat, PixelFormat format, PixelType pixelType, int width, int height) {
+            GL.TexImage2D(TextureTarget.Texture2D, 0, internalformat, width, height, 0, format, pixelType, System.IntPtr.Zero);
         }
-        public static void applyTextureData(PixelInternalFormat internalformat, System.Drawing.Bitmap bitmap) {
-            applyTextureData(internalformat, Utils.bitmapToColorArray(bitmap));
+        public static void texImage2D(PixelInternalFormat internalformat, System.Drawing.Bitmap bitmap) {
+            texImage2D(internalformat, Utils.bitmapToColorArray(bitmap));
         }
 
     #endregion
@@ -374,8 +377,8 @@ namespace Engine {
 
         static int texture_generator_fbo, texture_generator_depthbuffer;
 
-        public static int generateTexture2D(Shader shader, int width, int height, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter, bool genMipmap) {
-            int texture = createTexture2D(width, height, internalFormat, wrap, filter, genMipmap);
+        public static int generateTexture2D(Shader shader, int width, int height, PixelInternalFormat internalFormat, PixelFormat format, PixelType pixelType, WrapMode wrap, Filter filter, bool genMipmap) {
+            int texture = createTexture2D(width, height, internalFormat, format, pixelType, wrap, filter, genMipmap);
             shader.use();
             GL.Viewport(0, 0, width, height);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, texture_generator_fbo);

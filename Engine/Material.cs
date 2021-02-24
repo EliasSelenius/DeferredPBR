@@ -21,5 +21,11 @@ namespace Engine {
         public static readonly PBRMaterial defaultMaterial = new PBRMaterial {
             roughness = 0.2f
         };
+
+        public static readonly PBRMaterial redPlastic = new PBRMaterial {
+            albedo = (1.0f, 0, 0),
+            metallic = 0,
+            roughness = 0.05f
+        };
     }
 }

@@ -35,7 +35,7 @@ namespace Engine {
 
         public void applyChanges() {
             GL.BindTexture(TextureTarget.Texture2D, id);
-            GLUtils.applyTextureData(PixelInternalFormat.Rgba, pixels);
+            GLUtils.texImage2D(PixelInternalFormat.Rgba, pixels);
             if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }

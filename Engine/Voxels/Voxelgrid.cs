@@ -154,6 +154,11 @@ namespace Engine.Voxels {
             GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
             grid.render();
         }
+        public void renderId() {
+            /*gameobject.calcModelMatrix(out mat4 mat);
+            GLUtils.setUniformMatrix4(Mousepicking.shader.id, "model", ref mat);
+            grid.render();*/
+        }
 
         protected override void onEnter() {
             scene.renderers.Add(this);

@@ -11,6 +11,14 @@ to research:
     - MSAA / FXAA
 
 
+mouse picking:
+    - shader to draw object id to framebuffer (and possibly depth value)
+    - reading pixels from framebuffer
+    - gizmo
+    - highlight    
+
+
+
 
 pirate game idea:
     level 1:

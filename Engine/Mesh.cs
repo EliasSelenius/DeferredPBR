@@ -315,6 +315,19 @@ namespace Engine {
             mesh.render(materials);
         }
 
+        public void render(PBRMaterial material) {
+            gameobject.calcModelMatrix(out mat4 mat);
+            GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
+            material.updateUniforms();
+            mesh.render();
+        }
+
+        public void renderId() {
+            gameobject.calcModelMatrix(out mat4 mat);
+            GLUtils.setUniformMatrix4(Mousepicking.shader.id, "model", ref mat);
+            mesh.render();
+        }
+
         protected override void onEnter() {
             scene.renderers.Add(this);
         }

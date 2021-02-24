@@ -43,15 +43,15 @@ namespace Engine {
                 gBuffer = new Framebuffer(windowWidth, windowHeight, new[] {
                     (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
                 }, new[] {
-                    PixelInternalFormat.Rgba8, // albedo metallic
-                    PixelInternalFormat.Rgba16f, // normal roughness
-                    PixelInternalFormat.Rgb16f // fragpos
+                    FramebufferFormat.rgba8, // albedo metallic
+                    FramebufferFormat.rgba16f, // normal roughness
+                    FramebufferFormat.rgb16f // fragpos
                 });
 
                 hdrBuffer = new Framebuffer(windowWidth, windowHeight, new (FramebufferAttachment, RenderbufferStorage)[] {
                     (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
                 }, new[] {
-                    PixelInternalFormat.Rgba16f
+                    FramebufferFormat.rgba16f
                 });
             }
 
@@ -114,7 +114,13 @@ namespace Engine {
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 
                 Scene.active.renderGeometry();
+                Mousepicking.hovering?.render(PBRMaterial.defaultMaterial);
+                Mousepicking.selected?.render(PBRMaterial.redPlastic);
             }
+
+
+            Mousepicking.render();
+
 
             { // light pass
                 GL.Disable(EnableCap.DepthTest);
@@ -173,73 +179,79 @@ namespace Engine {
 
             GL.Viewport(0,0, e.Width, e.Height);
             
+            // update framebuffers
             gBuffer.resize(e.Width, e.Height);
             hdrBuffer.resize(e.Width, e.Height);
+            Mousepicking.resize(e.Width, e.Height);
 
+            // update window info ubo:
             vec2 s = new vec2(e.Width, e.Height);
             GLUtils.buffersubdata(windowInfoUBO.id, 0, ref s);
 
 
         }
     }
+
     /*
 
+    GBuffer:
     RT0    DiffuseColor.R   DiffuseColor.G   DiffuseColor.B   Metallic
     RT1    Normal.x         Normal.y         Normal.z         Roughness
 
     */
-    class GBuffer {
-        int fbo, rt0, rt1, rbo;
+    
+    public static class Mousepicking {
+        static Framebuffer framebuffer;
+        public static Shader shader;
 
-        int width, height;
 
-        public GBuffer() {
+        public static IRenderer selected;
+        public static IRenderer hovering;
 
-            (width, height) = (app.window.Size.X,app.window.Size.Y);
-
-            fbo = GLUtils.createFramebuffer(new[] { 
-                rt0 = GLUtils.createTexture2D(width, height, PixelInternalFormat.Rgba8, WrapMode.ClampToEdge, Filter.Nearest, false),
-                rt1 = GLUtils.createTexture2D(width, height, PixelInternalFormat.Rgba16f, WrapMode.ClampToEdge, Filter.Nearest, false)
-            }, rbo = GLUtils.createRenderbuffer(RenderbufferStorage.DepthComponent, width, height));
-
+        static Mousepicking() {
+            framebuffer = new Framebuffer(Renderer.windowWidth, Renderer.windowHeight, 
+            new (FramebufferAttachment, RenderbufferStorage)[] {
+                (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
+            },
             
+            new[] {
+                FramebufferFormat.int32
+            });
+
+            shader = Assets.getShader("mousePicking");
         }
 
-        public void writeMode() {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
-            //GL.Viewport(0,0, app.window.Size.X / w,h);
-        }
-        public void readMode() {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            GLUtils.bindTex2D(TextureUnit.Texture0, rt0);
-            GLUtils.bindTex2D(TextureUnit.Texture1, rt1);
-        }
+        public static void render() {
+            GL.Disable(EnableCap.Blend);
+            GL.Enable(EnableCap.DepthTest);
 
-        public void resize(int w, int h) {
-            (width, height) = (w, h);
+            shader.use();
+            framebuffer.writeMode();
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GLUtils.reinitRenderbuffer(rbo, RenderbufferStorage.DepthComponent, width, height);
-            GL.BindTexture(TextureTarget.Texture2D, rt0);
-            GLUtils.applyTextureData(PixelInternalFormat.Rgba8, width, height);
-            GL.BindTexture(TextureTarget.Texture2D, rt1);
-            GLUtils.applyTextureData(PixelInternalFormat.Rgba16f, width, height);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-        }
+            for (int i = 1; i <= Scene.active.renderers.Count; i++) {
+                var loc = GL.GetUniformLocation(shader.id, "ObjectID");
+                GL.Uniform1(loc, 1, ref i);
+                Scene.active.renderers[i-1].renderId();
+            }
 
-        public void delete() {
+            var mousePos = Mouse.position;
+            var p = read((int)mousePos.x, framebuffer.height - (int)mousePos.y, 1, 1)[0,0]-1;
             
-            if (fbo == 0) return;
+            if (p == -1) hovering = null;    
+            else hovering = Scene.active.renderers[p];
+            if (Mouse.isPressed(MouseButton.left)) selected = hovering;
 
-            GL.DeleteFramebuffer(fbo);
-            GL.DeleteTexture(rt0);
-            GL.DeleteTexture(rt1);
-            GL.DeleteRenderbuffer(rbo);
 
-            fbo = 0;
+        }
+        
+
+        static int[,] read(int x, int y, int w, int h) {
+            int[,] pixels = new int[w, h];
+            GL.ReadPixels<int>(x, y, w, h, PixelFormat.RedInteger, PixelType.Int, pixels);
+            return pixels;
         }
 
-        ~GBuffer() {
-            if (fbo != 0) System.Console.WriteLine("Memory leak detected! g-Buffer: " + fbo);
-        }
+        public static void resize(int w, int h) => framebuffer.resize(w, h);
     }
 }
