@@ -9,7 +9,13 @@ in V2F {
 } v2f;
 
 void main() {
+    
+    vec3 dir = normalize(vec3(v2f.uv * 2.0 - 1.0, 1.0));
+    
+    float n = noise(dir * 100.0);
+
+
+
     FragColor.a = 1.0;
-    float n = noise(vec3(v2f.uv * 100.0, 0.0));
     FragColor.rgb = vec3(n);
 }
