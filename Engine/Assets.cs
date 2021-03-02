@@ -58,6 +58,7 @@ namespace Engine {
             }
 
             { // collada
+                // TODO: load materials aswell
                 foreach (var res in provider.enumerate("dae")) {
                     var doc = new XmlDocument();
                     doc.LoadXml(provider.getText(res));

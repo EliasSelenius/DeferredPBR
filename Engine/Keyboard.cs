@@ -1,4 +1,4 @@
-
+using System;
 
 namespace Engine {
     public static class Keyboard {
@@ -6,9 +6,12 @@ namespace Engine {
 
         }
 
-        public static bool isDown(key key) => app.window.IsKeyDown((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
-        public static bool isPressed(key key) => app.window.IsKeyPressed((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
-        public static bool isReleased(key key) => app.window.IsKeyReleased((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
+        public static bool isDown(key key) => Application.window.IsKeyDown((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
+        public static bool isPressed(key key) => Application.window.IsKeyPressed((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
+        public static bool isReleased(key key) => Application.window.IsKeyReleased((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
+
+        public static float getAxis(key k1, key k2) => Convert.ToSingle(isDown(k1)) * -1f + Convert.ToSingle(isDown(k2)); 
+        
 
     }
 

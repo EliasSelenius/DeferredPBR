@@ -11,19 +11,21 @@ to research:
     - MSAA / FXAA
 
 
-mouse picking:
-    - shader to draw object id to framebuffer (and possibly depth value)
-    - reading pixels from framebuffer
+Editor: 
+    - camera controller
+        - Keyboard axis
+    - mouse picking
+    - user interface
     - gizmo
-    - highlight    
-
+    - highlight
 
 
 
 pirate game idea:
     level 1:
-        
+        basic bouyancy physics
     level 2:
+        water waves
     level 3:
 
     

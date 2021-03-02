@@ -50,15 +50,6 @@ namespace Engine.Gui {
             }
 
         }
-
-
-        public static void test() {
-            var sys = new WindowingSystem();
-            Renderer.userInterfaceView = sys;
-
-            sys.addWindow(new DebugWindow());
-            //sys.addWindow(new Window("Test", 300));
-        }
     }
 
     public class Window : View {
@@ -151,7 +142,7 @@ namespace Engine.Gui {
             start(new vec2(0, 16), new vec2(width / 2f, 16));
             if (button("fullscreen", size)) {
                 
-                app.window.WindowState = app.window.WindowState == OpenTK.Windowing.Common.WindowState.Fullscreen ?
+                Application.window.WindowState = Application.window.WindowState == OpenTK.Windowing.Common.WindowState.Fullscreen ?
                     OpenTK.Windowing.Common.WindowState.Maximized : OpenTK.Windowing.Common.WindowState.Fullscreen; 
             }
             end();

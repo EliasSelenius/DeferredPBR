@@ -6,8 +6,8 @@ using Nums;
 namespace Engine {
     public static class Renderer {
 
-        public static int windowWidth => app.window.Size.X;
-        public static int windowHeight => app.window.Size.Y;
+        public static int windowWidth => Application.window.Size.X;
+        public static int windowHeight => Application.window.Size.Y;
         public static float windowAspect => (float)windowWidth / windowHeight;
 
         public static double time;
@@ -24,8 +24,28 @@ namespace Engine {
         private static Framebuffer hdrBuffer;
 
         private static UBO windowInfoUBO;
+        private static UBO cameraUBO;
 
-        public static Gui.View userInterfaceView;
+        internal static Texture2D whiteTexture;
+
+
+        internal static mat4 viewMatrix;
+        internal static mat4 projectionMatrix;
+        
+        public static void updateCamera(ref mat4 view, ref mat4 projection) {
+            updateCameraView(ref view);
+            updateCameraProjection(ref projection);
+            //GLUtils.buffersubdata(cameraUBO.id, 0, ref view);
+            //GLUtils.buffersubdata(cameraUBO.id, mat4.bytesize, ref projection);
+        }
+        public static void updateCameraView(ref mat4 view) {
+            viewMatrix = view;
+            GLUtils.buffersubdata(cameraUBO.id, 0, ref view);
+        }
+        public static void updateCameraProjection(ref mat4 projection) {
+            projectionMatrix = projection;
+            GLUtils.buffersubdata(cameraUBO.id, mat4.bytesize, ref projection);
+        }
 
         public static void load() {
 
@@ -85,20 +105,31 @@ namespace Engine {
             }
 
 
-            windowInfoUBO = new UBO("Window", vec4.bytesize);
-            lightPass_pointlight.bindUBO(windowInfoUBO);
+            { // init UBOs
+                windowInfoUBO = new UBO("Window", vec4.bytesize);
+                lightPass_pointlight.bindUBO(windowInfoUBO);
+
+                cameraUBO = new UBO("Camera", 2 * mat4.bytesize);
+                geomPass.bindUBO(cameraUBO);
+                lightPass_dirlight.bindUBO(cameraUBO);
+                lightPass_pointlight.bindUBO(cameraUBO);
+                textShader.bindUBO(cameraUBO);
+                Assets.getShader("CubemapSkybox").bindUBO(cameraUBO);
+                Assets.getShader("mousePicking").bindUBO(cameraUBO);
+            }
+
+
+
 
             whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
 
-            Gui.WindowingSystem.test();
-
         }
-
-        public static Texture2D whiteTexture;
 
         public static void drawframe(FrameEventArgs e) {
 
             time += deltaTime = e.Time;
+
+            var scene = Application.scene;
 
             //System.Console.WriteLine("frame: " + e.Time);
             GL.ClearColor(0, 0, 0, 1);
@@ -113,13 +144,14 @@ namespace Engine {
                 gBuffer.writeMode();
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 
-                Scene.active.renderGeometry();
-                Mousepicking.hovering?.render(PBRMaterial.defaultMaterial);
-                Mousepicking.selected?.render(PBRMaterial.redPlastic);
+                scene.updateCamera();
+                scene.renderGeometry();
+                //Mousepicking.hovering?.render(PBRMaterial.defaultMaterial);
+                //Mousepicking.selected?.render(PBRMaterial.redPlastic);
             }
 
 
-            Mousepicking.render();
+            //Mousepicking.render();
 
 
             { // light pass
@@ -136,10 +168,7 @@ namespace Engine {
                 gBuffer.readMode();
                 GL.Clear(ClearBufferMask.ColorBufferBit);
 
-                Scene.active.renderLights();
-                
-                GL.Enable(EnableCap.DepthTest);
-                Scene.active.skybox.render();
+                scene.renderLights();
             }
 
             { // image pass
@@ -157,15 +186,15 @@ namespace Engine {
 
                 OpenTK.Mathematics.Matrix4.CreateOrthographic(windowWidth, windowHeight, 0, 10, out OpenTK.Mathematics.Matrix4 res);
                 var p = res.toNums();
-                Camera.updateProjection(ref p);
+                updateCameraProjection(ref p);
                 whiteTexture.bind(TextureUnit.Texture0);
 
-                userInterfaceView?.render();
+                scene.renderGui();
             }
 
 
             GL.Flush();
-            app.window.SwapBuffers();
+            Application.window.SwapBuffers();
 
             GLUtils.assertNoError();
 
@@ -173,9 +202,11 @@ namespace Engine {
 
         public static void windowResize(ResizeEventArgs e) {
             
-            System.Console.WriteLine("window resize: " + e.Width + " * " + e.Height);
 
             if (e.Width < 1 || e.Height < 1) return;
+            
+            System.Console.WriteLine("window resize: " + e.Width + " * " + e.Height);
+
 
             GL.Viewport(0,0, e.Width, e.Height);
             

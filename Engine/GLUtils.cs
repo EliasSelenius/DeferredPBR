@@ -145,7 +145,8 @@ namespace Engine {
                 else if (fieldType == typeof(vec4)) (compSize, type) = (4, VertexAttribPointerType.Float);
                 else if (fieldType == typeof(dvec4)) (compSize, type) = (4, VertexAttribPointerType.Double);
                 else if (fieldType == typeof(ivec4)) (compSize, type) = (4, VertexAttribPointerType.Int);
-                
+                else throw new System.Exception("Type not supported");
+
                 normalized = norm;
                 stride = str;
                 offset = ofs;
@@ -386,6 +387,10 @@ namespace Engine {
             GL.Clear(ClearBufferMask.ColorBufferBit);
             renderScreenQuad();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            // HACK: set viewport back to what it probably was:
+            GL.Viewport(0, 0, Renderer.windowWidth, Renderer.windowHeight);
+
             return texture;
         }
 
@@ -400,6 +405,10 @@ namespace Engine {
                 renderScreenQuad();
             }
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            // HACK: set viewport back to what it probably was:
+            GL.Viewport(0, 0, Renderer.windowWidth, Renderer.windowHeight);
+
             return cubemap;
         }
 

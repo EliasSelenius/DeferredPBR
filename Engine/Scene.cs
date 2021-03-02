@@ -6,17 +6,31 @@ using Nums;
 
 namespace Engine {
 
+    public abstract class SceneBase {
+        internal abstract void update();
+        internal abstract void updateCamera();
+        internal abstract void renderGeometry();
+        internal abstract void renderLights();
+        internal abstract void renderGui();
+    }
+
     public interface IRenderer {
         void render();
         void render(PBRMaterial material) {}
         void renderId();
     }
 
-    public class Scene {
+    public class Scene : SceneBase {
 
-        public static Scene active = new Scene();
+        public static Scene active { get; private set; }
+        public static void load(Scene scene) {
+            Application.scene = Scene.active = scene;
+        }
+        static Scene() {
+            load(new Scene());
+        }
 
-        public Skybox skybox = CubemapSkybox.generate(Assets.getShader("genCubemap"));
+        public Skybox skybox;
         public Camera camera { get; internal set; }
 
         List<Gameobject> _gameobjects = new List<Gameobject>();
@@ -38,12 +52,20 @@ namespace Engine {
         internal void _addGameobject(Gameobject obj) => _gameobjects.Add(obj);
         internal void _removeGameobject(Gameobject obj) => _gameobjects.Remove(obj);
 
-        internal void renderGeometry() {
-            camera.updateUniforms();
+        internal override void update() {
+            update_event?.Invoke();
+            colliders.testCollisions(colliders);
+        }
+
+        internal override void updateCamera() {
+            camera.updateUniformBuffer();
+        }
+        
+        internal override void renderGeometry() {
             foreach (var r in renderers) r.render();
         }
 
-        internal void renderLights() {
+        internal override void renderLights() {
             Renderer.lightPass_dirlight.use();
             foreach (var light in dirlights) {
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "lightDir"), light.dir.x, light.dir.y, light.dir.z);
@@ -55,18 +77,22 @@ namespace Engine {
             Renderer.lightPass_pointlight.use();
             foreach (var light in pointlights) {
 
-                vec3 v = (camera.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
+                //vec3 v = (camera.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
+                vec3 v = (Renderer.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightPosition"), 1, ref v.x);
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
                 var m = light.calcModelMatrix();
                 GLUtils.setUniformMatrix4(Renderer.lightPass_pointlight.id, "model", ref m);
                 Lights.pointlightMesh.render();
             }
+
+            
+            GL.Enable(EnableCap.DepthTest);
+            skybox?.render();
         }
 
-        internal void update() {
-            update_event?.Invoke();
-            colliders.testCollisions(colliders);
+        internal override void renderGui() {
+
         }
 
     }

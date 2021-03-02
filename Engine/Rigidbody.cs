@@ -34,7 +34,7 @@ namespace Engine {
             // gravity
             //velocity.y -= 10 * app.deltaTime;
 
-            transform.position += velocity * app.deltaTime;
+            transform.position += velocity * Application.deltaTime;
             transform.rotate(angularVelocity);
         }
 

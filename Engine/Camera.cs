@@ -14,18 +14,6 @@ namespace Engine {
         public mat4 projectionMatrix = mat4.identity;
         public mat4 viewMatrix = mat4.identity;
 
-        public static UBO ubo;
-
-        static Camera() {
-            ubo = new UBO("Camera", 2 * mat4.bytesize);
-            Renderer.geomPass.bindUBO(ubo);
-            Renderer.lightPass_dirlight.bindUBO(ubo);
-            Renderer.lightPass_pointlight.bindUBO(ubo);
-            Renderer.textShader.bindUBO(ubo);
-            Assets.getShader("CubemapSkybox").bindUBO(ubo);
-            Assets.getShader("mousePicking").bindUBO(ubo);
-        }
-
         protected override void onEnter() {
             scene.camera = this;
         }
@@ -43,24 +31,15 @@ namespace Engine {
 
 
 
-
-        public static void updateProjection(ref mat4 p) {
-            GLUtils.buffersubdata(ubo.id, mat4.bytesize, ref p);
-        }
-
-        public void updateUniforms() {
+        public void updateUniformBuffer() {
 
             viewMatrix = math.lookAt(transform.position, transform.position + transform.forward, transform.up);
             //viewMatrix = Matrix4.LookAt(transform.position.toOpenTK(), (transform.position + transform.forward).toOpenTK(), transform.up.toOpenTK()).toNums();
 
-            Matrix4.CreatePerspectiveFieldOfView(fieldOfView * math.deg2rad, (float)app.window.Size.X / app.window.Size.Y, nearPlane, farPlane, out Matrix4 res);
+            Matrix4.CreatePerspectiveFieldOfView(fieldOfView * math.deg2rad, (float)Application.window.Size.X / Application.window.Size.Y, nearPlane, farPlane, out Matrix4 res);
             projectionMatrix = res.toNums(); 
 
-            GLUtils.buffersubdata(ubo.id, 0, ref viewMatrix);
-            GLUtils.buffersubdata(ubo.id, mat4.bytesize, ref projectionMatrix);
-
-            //GLUtils.setUniformMatrix4("projection", ref projectionMatrix);
-            //GLUtils.setUniformMatrix4("view", ref viewMatrix);
+            Renderer.updateCamera(ref viewMatrix, ref projectionMatrix);
         }
 
     }
@@ -82,35 +61,35 @@ namespace Engine {
             var t = vec3.zero;
             var speed = 2.5f;
 
-            if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A)) {
+            if (Application.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A)) {
                 t += transform.left;
             } 
 
-            if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D)) {
+            if (Application.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D)) {
                 t += transform.right;
             }
 
-            if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W)) {
+            if (Application.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W)) {
                 t += transform.forward;
             }
             
-            if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S)) {
+            if (Application.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S)) {
                 t += transform.backward;
             }
             
-            if (app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftShift)) {
+            if (Application.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftShift)) {
                 speed *= 4.0f;
             }
 
 
-            transform.position += t * speed * app.deltaTime;
+            transform.position += t * speed * Application.deltaTime;
 
 
-            var alt = app.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftAlt);        
+            var alt = Application.window.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.LeftAlt);        
             Mouse.state = alt ? MouseState.free : MouseState.disabled;
                     
             if (Mouse.state == MouseState.disabled) {
-                (float mdx, float mdy) = app.window.MouseState.Delta / 100f;
+                (float mdx, float mdy) = Application.window.MouseState.Delta / 100f;
                 //System.Console.WriteLine(transform.rotation);
                 transform.rotate(vec3.unity, mdx);
                 transform.rotate(transform.left, -mdy);
@@ -120,7 +99,7 @@ namespace Engine {
             
             if (Mouse.isPressed(MouseButton.left)) {
                 camera.screenToRay(Mouse.ndcPosition, out vec3 raydir);
-                var col = Scene.active.colliders.raycast(in transform.position, raydir);
+                var col = scene.colliders.raycast(in transform.position, raydir);
                 if (col is not null) {
                     //col.gameobject.getComponent<Rigidbody>()?.addForce(raydir * 10f);
                     lastInteractedWith = col;

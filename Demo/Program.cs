@@ -9,7 +9,7 @@ namespace Demo {
     class Program {
         
 
-        static void Main(string[] args) => app.run(load);
+        static void Main(string[] args) => Application.run(load);
         
 
         static void load() {
@@ -25,6 +25,8 @@ namespace Demo {
 
             var camera = new Gameobject(new CameraFlyController());
             camera.enterScene(Scene.active);
+
+            Scene.active.skybox = CubemapSkybox.generate(Assets.getShader("genCubemap"));
 
 
             { // lights

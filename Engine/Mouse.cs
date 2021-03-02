@@ -17,7 +17,7 @@ namespace Engine {
 
     public static class Mouse {
         
-        public static vec2 position => new vec2(app.window.MousePosition.X, app.window.MousePosition.Y);
+        public static vec2 position => new vec2(Application.window.MousePosition.X, Application.window.MousePosition.Y);
         public static vec2 ndcPosition {
             get {
                 var p = position / new vec2(Renderer.windowWidth, Renderer.windowHeight) * 2f - vec2.one;
@@ -35,21 +35,21 @@ namespace Engine {
                 // NOTE: OpenTKs CursorVisible/CursorGrabbed api is silly.
                 switch (_state) {
                     case MouseState.free:
-                        app.window.CursorVisible = true;
+                        Application.window.CursorVisible = true;
                         break;
                     case MouseState.disabled:
-                        app.window.CursorGrabbed = true;
+                        Application.window.CursorGrabbed = true;
                         break;
                     case MouseState.hidden:
-                        app.window.CursorVisible = false;
+                        Application.window.CursorVisible = false;
                         break;
                 }
             }
         }
 
 
-        public static bool isDown(MouseButton btn) => app.window.IsMouseButtonDown((OpenTK.Windowing.GraphicsLibraryFramework.MouseButton)btn);
-        public static bool isPressed(MouseButton btn) => app.window.IsMouseButtonPressed((OpenTK.Windowing.GraphicsLibraryFramework.MouseButton)btn);
-        public static bool isReleased(MouseButton btn) => app.window.IsMouseButtonReleased((OpenTK.Windowing.GraphicsLibraryFramework.MouseButton)btn);
+        public static bool isDown(MouseButton btn) => Application.window.IsMouseButtonDown((OpenTK.Windowing.GraphicsLibraryFramework.MouseButton)btn);
+        public static bool isPressed(MouseButton btn) => Application.window.IsMouseButtonPressed((OpenTK.Windowing.GraphicsLibraryFramework.MouseButton)btn);
+        public static bool isReleased(MouseButton btn) => Application.window.IsMouseButtonReleased((OpenTK.Windowing.GraphicsLibraryFramework.MouseButton)btn);
     }
 }

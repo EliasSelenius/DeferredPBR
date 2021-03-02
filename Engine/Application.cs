@@ -7,9 +7,10 @@ using System.Xml;
 using System;
 
 namespace Engine {
-
-    public static class app {
+    public static class Application {
         public static GameWindow window { get; private set; }
+        public static SceneBase scene;
+
 
         public static float deltaTime;
 
@@ -30,21 +31,23 @@ namespace Engine {
             window.Run();
         }
 
+        
+
         static void load() {
-
-
-            var resProv = new EmbeddedResourceProvider(typeof(app).Assembly);
-            Assets.load(resProv);
-
-
-            
-
+            Assets.load(new EmbeddedResourceProvider(typeof(Application).Assembly));
         }
 
 
         static void update(FrameEventArgs e) {
             deltaTime = (float)e.Time;
-            Scene.active.update();
+
+            
+            scene.update();
+
+            if (Keyboard.isPressed(key.F1)) {
+                if (Editor.isOpen) Editor.close();
+                else Editor.open();
+            }
         }
     }
 }
