@@ -909,8 +909,8 @@
           <bind_material>
             <technique_common>
               <instance_material symbol="Hull3-material" target="#Hull3-material"/>
-              <instance_material symbol="Deck3-material" target="#Deck3-material"/>
               <instance_material symbol="Rope-material" target="#Rope-material"/>
+              <instance_material symbol="Deck3-material" target="#Deck3-material"/>
             </technique_common>
           </bind_material>
         </instance_geometry>

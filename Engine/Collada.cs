@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nums;
 using System.Xml;
+using System;
 
 namespace Engine {
 
@@ -62,10 +63,10 @@ namespace Engine {
         public Material get_material(string id) => materials.Find(x => x.id.Equals(id));
 
         public Dictionary<string, Prefab> toPrefabs() {
-            var geoms = new Dictionary<string, (Mesh<Vertex>, PBRMaterial[])>();
+            var geoms = new Dictionary<string, (Mesh<Vertex> mesh, string[] materialNames)>();
             foreach (var g in geometries) {
                 var t = g.genMesh();
-                geoms.Add(g.id, (new Mesh<Vertex>(t.Item1), t.Item2));
+                geoms.Add(g.id, (new Mesh<Vertex>(t.mesh), t.materialNames));
             }
 
             Prefab node(XmlElement xml) {
@@ -102,14 +103,33 @@ namespace Engine {
 
                 //g.AddComp(new AdvMeshRenderer { mesh = geoms[xml["instance_geometry"].GetAttribute("url").TrimStart('#')] });
 
-                
 
                 var inst_geom = xml["instance_geometry"];
                 if (inst_geom != null) {
-                    var t = geoms[inst_geom.GetAttribute("url").TrimStart('#')];
+                    var geom = geoms[inst_geom.GetAttribute("url").TrimStart('#')];
+
+                    var inst_materials = inst_geom["bind_material"]?["technique_common"]?.GetElementsByTagName("instance_material");
+
+                    var finalMaterials = new PBRMaterial[geom.materialNames.Length];
+                    if (inst_materials != null) {
+                        foreach (var material in inst_materials) {
+                            var mat = material as XmlElement;
+                            var symbol = mat.GetAttribute("symbol");
+                            var target = mat.GetAttribute("target").TrimStart('#');
+                            // target is material name
+                            // symbol is group name                                            
+                            var matIndex = Array.FindIndex(geom.materialNames, s => s.Equals(symbol));
+                            if (matIndex > -1) {
+                                finalMaterials[matIndex] = get_material(target).pbrMaterial;
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < finalMaterials.Length; i++) finalMaterials[i] ??= PBRMaterial.defaultMaterial;
+
                     g.addComponent<MeshRenderer>(new Dictionary<string, object> {
-                        { "mesh", t.Item1 },
-                        { "materials", t.Item2 }
+                        { "mesh", geom.mesh },
+                        { "materials", finalMaterials }
                     });
                 }
 
@@ -252,7 +272,7 @@ namespace Engine {
                 triangles = xml.GetElementsByTagName("triangles").Cast<XmlElement>().Select(x => new TriangleCollection(this, x)).ToArray();
             }
 
-            public (Meshdata<Vertex>, PBRMaterial[]) genMesh() {
+            public (Meshdata<Vertex> mesh, string[] materialNames) genMesh() {
                 var mesh = new Meshdata<Vertex>();
 
                 static int add_vertex(Vertex v, Meshdata<Vertex> mesh) {
@@ -271,7 +291,8 @@ namespace Engine {
 
 
                 int groupIndex = 0;
-                var materials = new PBRMaterial[triangles.Length];
+                //var materials = new PBRMaterial[triangles.Length];
+                var materials = new string[triangles.Length];
                 foreach (var trcollection in triangles) {
                     var indices = new uint[trcollection.indices.Length];
                     vec3[] positions = trcollection.pos_input.source.as_vector_array<vec3>();
@@ -289,7 +310,8 @@ namespace Engine {
                     }
 
                     mesh.addTriangles(groupIndex, indices);
-                    materials[groupIndex] = collada.get_material(trcollection.material_name).pbrMaterial;
+                    //materials[groupIndex] = collada.get_material(trcollection.material_name).pbrMaterial;
+                    materials[groupIndex] = trcollection.material_name;
                     groupIndex++;
                 }
                 //mesh.bufferdata();

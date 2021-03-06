@@ -18,6 +18,7 @@ namespace Engine {
 
 
             sys.addWindow(new Gui.DebugWindow());
+            sys.addWindow(new SceneViewWindow());
 
             var cam = new Gameobject(
                 new Camera(),
@@ -27,14 +28,18 @@ namespace Engine {
 
 
 
-            var transformGizmo = new Gameobject(
+            /*var transformGizmo = new Gameobject(
                 new MeshRenderer {
                     mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(10, 0.5f)),
                     materials = new[] {
                         PBRMaterial.defaultMaterial
                     }
                 }
-            );
+            );*/
+
+            var transformGizmoPrefab = Assets.getPrefab("Engine.data.models.TransformGizmo.pivot");
+            var transformGizmo = transformGizmoPrefab.createInstance();
+
             transformGizmo.enterScene(editorScene);
 
 
@@ -52,9 +57,10 @@ namespace Engine {
         internal override void renderGeometry() {
             Scene.active.renderGeometry();
 
-            //GL.Clear(ClearBufferMask.DepthBufferBit);
-            GL.Disable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Always);
             editorScene.renderGeometry();
+            GL.DepthFunc(DepthFunction.Lequal);
+
         }
 
         internal override void renderLights() {
@@ -70,4 +76,23 @@ namespace Engine {
         public static void close() => Application.scene = Scene.active;
         
     }
+
+
+
+    class SceneViewWindow : Gui.Window {
+        
+        public SceneViewWindow() : base("Scene", (200, 400)) {
+
+        }
+
+        protected override void onAttached() {
+            base.onAttached();
+        }
+
+        protected override void renderContent() {
+            
+        }
+    }
+
+
 }
