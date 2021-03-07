@@ -9,6 +9,7 @@ to research:
     - compute shaders
     - SSAO
     - MSAA / FXAA
+    - sdfgi
 
 
 Editor: 

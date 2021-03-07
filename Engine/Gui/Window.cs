@@ -21,6 +21,7 @@ namespace Engine.Gui {
         public void addWindow(Window window) {
             windows.AddLast(window);
             currentWindow = window;
+            window.canvas = this.canvas;
             window.attach(this);
         }
 
@@ -108,8 +109,8 @@ namespace Engine.Gui {
             // window title:
             //start((100, 22));
             //fill(color.silver);
+            //text(title, 22, system.theme.textColor);
             text(title, 22, system.theme.textColor);
-            //newtext(title, 22);
             //end();
 
 
@@ -125,20 +126,15 @@ namespace Engine.Gui {
     }
 
 
-    class DebugWindow : Window {
-
-        Textbox fps;
-        
+    class DebugWindow : Window {        
 
         public DebugWindow() : base("Debug Info", (300, 100)) {
-            fps = new Textbox();
         }
 
         protected override void renderContent() {
         
-            fps.setText("Time: " + (Renderer.deltaTime * 1000.0).ToString("##.#") + "ms, fps: " + Renderer.fps.ToString());
-            text(fps, 16, system.theme.textColor);
-        
+            text("Time: " + (Renderer.deltaTime * 1000.0).ToString("##.#") + "ms, fps: " + Renderer.fps.ToString(), 16, system.theme.textColor);
+
             start(new vec2(0, 16), new vec2(width / 2f, 16));
             if (button("fullscreen", size)) {
                 

@@ -9,12 +9,15 @@ namespace Engine {
         static Editor() { }
         
 
-        Gui.View gui;
+        Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
 
         private Editor() {
+
+            Application.window.Resize += onWindowResize;
+
             var sys = new Gui.WindowingSystem();
-            gui = sys;
+            canvas.addView(sys);
 
 
             sys.addWindow(new Gui.DebugWindow());
@@ -45,6 +48,10 @@ namespace Engine {
 
         }
 
+        private void onWindowResize(OpenTK.Windowing.Common.ResizeEventArgs args) {
+            canvas.resize(args.Width, args.Height);
+        }
+
 
         internal override void update() {
             editorScene.update();
@@ -68,7 +75,7 @@ namespace Engine {
         }
 
         internal override void renderGui() {
-            gui.render();
+            canvas.render();
         }
 
 
@@ -86,11 +93,10 @@ namespace Engine {
         }
 
         protected override void onAttached() {
-            base.onAttached();
         }
 
         protected override void renderContent() {
-            
+            text("Hello World", 13, system.theme.textColor);
         }
     }
 

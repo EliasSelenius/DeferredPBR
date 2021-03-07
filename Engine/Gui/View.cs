@@ -30,11 +30,21 @@ namespace Engine.Gui {
 
     */
 
+    public enum ContentOverflowBehaviour {
+        hidden,
+        wrap,
+        scrollbar,
+        expand
+    }
+
     public struct rectTransform {
         public vec2 pos;
         public vec2 size;
         public vec2 displacement;
         public float max_displacement_y;
+
+        public ContentOverflowBehaviour horizontalOverflow;
+        public ContentOverflowBehaviour verticalOverflow;
     }
 
 
@@ -48,14 +58,11 @@ namespace Engine.Gui {
         }
 
 
-        public View() {
-            
-        }
+        public Canvas canvas { get; internal set; }
+        protected vec2 canvasSize => new vec2(canvas.width, canvas.height);
+        protected int canvasWidth => canvas.width;
+        protected int canvasHeight => canvas.height;
 
-
-        protected vec2 canvasSize => new vec2(Renderer.windowWidth, Renderer.windowHeight);
-        protected int canvasWidth => Renderer.windowWidth;
-        protected int canvasHeight => Renderer.windowHeight;
         protected vec2 size => currentBox.size;
         protected float width => size.x;
         protected float height => size.y;
@@ -101,36 +108,11 @@ namespace Engine.Gui {
 
         #region text
 
-        public void text(string text, int fontSize, in color c) {
-            var b = currentBox;
-            this.text(text, b.pos, fontSize, c);
-        }
-        public void text(Textbox tb, int fontSize, in color c) {
-            var b = currentBox;
-            this.text(tb, b.pos, fontSize, c);
-        }
-        public void text(string text, vec2 pos, int fontSize, in color color) {
-            if (!cachedTextMeshes.ContainsKey(text)) cachedTextMeshes.Add(text, new Textbox(text));
-            this.text(cachedTextMeshes[text], pos, fontSize, color);
-        }
-
-        public void text(Textbox tb, vec2 pos, int fontSize, color color) {
-            
-            pos -= canvasSize / 2f;
-            pos *= (1, -1);
-
-            var one = vec2.one * fontSize;
-            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "size"), 1, ref one.x);
-            GL.Uniform2(GL.GetUniformLocation(Renderer.textShader.id, "pos"), 1, ref pos.x);
-            GL.Uniform4(GL.GetUniformLocation(Renderer.textShader.id, "color"), 1, ref color.red);
-            tb.render();
-        }
-
 
         // TODO: there needs to be a mesh per font
         Mesh<posUvVertex> textmesh = new Mesh<posUvVertex>();
 
-        public void newtext(string text, int fontSize) {
+        public void text(string text, int fontSize, in color color) {
             var pos = currentBox.pos;
 
             pos -= canvasSize / 2f;

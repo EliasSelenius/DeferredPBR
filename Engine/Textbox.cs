@@ -13,10 +13,21 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Engine {
 
-    public static class Text {
-        public static void genText(string text, vec2 offset, int fontSize, Font font, Meshdata<posUvVertex> meshdata) {
 
-            vec2 pos = offset;
+
+    public struct text {
+        public string value;
+        public Font font;
+        public int fontSize;
+        public color color;
+    }
+
+    public static class Text {
+        public static void genText(string text, vec2 textOffset, int fontSize, Font font, Meshdata<posUvVertex> meshdata) {
+
+            uint initialVertCount = (uint)meshdata.vertices.Count;
+
+            vec2 pos = vec2.zero;
             for(int i = 0; i < text.Length; i++) {
                 var g = font.getGlyph(text[i]);
                 addChar(g, i, pos);
@@ -27,8 +38,11 @@ namespace Engine {
             void addChar(Font.Glyph glyph, int charIndex, vec2 offset) {
                 void addv(vec2 pos, vec2 uv) {
                     pos += offset;
-                    pos *= fontSize;
                     pos /= font.lineHeight;
+                    
+                    pos *= fontSize;
+                    pos += textOffset;
+
                     meshdata.vertices.Add(new posUvVertex {
                         position = new vec3(pos.x, pos.y, 0),
                         uv = uv 
@@ -51,7 +65,7 @@ namespace Engine {
                 addv((glyph.offset + (glyph.size.x, 0)) * new vec2(1, -1), (p.y, pn.x));
 
 
-                uint i = (uint)charIndex * 4;
+                uint i = initialVertCount + (uint)charIndex * 4;
 
                 meshdata.addTriangles(new uint[] {
                     i + 0, i + 1, i + 2,
