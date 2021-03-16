@@ -62,7 +62,8 @@ namespace Engine {
                 foreach (var res in provider.enumerate("dae")) {
                     var doc = new XmlDocument();
                     doc.LoadXml(provider.getText(res));
-                    var prefs = new Collada(doc).toPrefabs();
+                    var collada = new Collada(doc);
+                    var prefs = collada.toPrefabs();
                     foreach (var p in prefs) {
                         var prefabName = res.Substring(0, res.LastIndexOf('.')) + "." + p.Key;
                         prefabs.Add(prefabName, p.Value);

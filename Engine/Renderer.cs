@@ -183,10 +183,6 @@ namespace Engine {
                 GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
                 textShader.use();
-
-                OpenTK.Mathematics.Matrix4.CreateOrthographic(windowWidth, windowHeight, 0, 10, out OpenTK.Mathematics.Matrix4 res);
-                var p = res.toNums();
-                updateCameraProjection(ref p);
                 whiteTexture.bind(TextureUnit.Texture0);
 
                 scene.renderGui();

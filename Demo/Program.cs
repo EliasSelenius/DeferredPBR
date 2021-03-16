@@ -108,7 +108,7 @@ namespace Demo {
                 for (float r = 0; r <= 1f; r += 0.1f) {
                     for (float m = 0; m <= 1f; m += 0.1f) {
                         var mat = new PBRMaterial {
-                            albedo = Nums.vec3.one,
+                            albedo = (vec3.one + new vec3(math.rand(), math.rand(), math.rand())) / 2f,
                             roughness = r,
                             metallic = m
                         };

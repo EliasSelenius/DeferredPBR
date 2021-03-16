@@ -5,7 +5,7 @@
 
 */
 
-uniform sampler2D input;
+uniform sampler2D tex_input;
 
 in V2F {
     vec2 uv;
@@ -15,7 +15,7 @@ out vec4 FragColor;
 
 void main() {
 
-    vec3 color = texture(input, v2f.uv).rgb;
+    vec3 color = texture(tex_input, v2f.uv).rgb;
 
     // reinhard tone mapping
     //color = color / (color + vec3(1.0));

@@ -23,9 +23,10 @@ namespace Engine {
     }
 
     public static class Text {
-        public static void genText(string text, vec2 textOffset, int fontSize, Font font, Meshdata<posUvVertex> meshdata) {
+        internal static void genText(string text, vec2 textOffset, int fontSize, in color color, Font font, Meshdata<Gui.textVertex> meshdata) {
 
             uint initialVertCount = (uint)meshdata.vertices.Count;
+            color.color2vec(color, out vec4 vertColor);
 
             vec2 pos = vec2.zero;
             for(int i = 0; i < text.Length; i++) {
@@ -43,9 +44,10 @@ namespace Engine {
                     pos *= fontSize;
                     pos += textOffset;
 
-                    meshdata.vertices.Add(new posUvVertex {
-                        position = new vec3(pos.x, pos.y, 0),
-                        uv = uv 
+                    meshdata.vertices.Add(new Gui.textVertex {
+                        position = new vec2(pos.x, pos.y),
+                        uv = uv,
+                        color = vertColor
                     });
                 }
 

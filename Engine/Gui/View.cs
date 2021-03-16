@@ -118,7 +118,7 @@ namespace Engine.Gui {
             pos -= canvasSize / 2f;
             pos *= (1, -1);
 
-            Text.genText(text, pos, fontSize, Font.arial, textmesh.data);
+            //Text.genText(text, pos, fontSize, Font.arial, textmesh.data);
         }
 
         #endregion

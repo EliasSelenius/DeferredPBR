@@ -125,7 +125,7 @@ namespace Engine {
                         }
                     }
 
-                    for (int i = 0; i < finalMaterials.Length; i++) finalMaterials[i] ??= PBRMaterial.defaultMaterial;
+                    for (int i = 0; i < finalMaterials.Length; i++) finalMaterials[i] ??= new PBRMaterial { albedo = (1, 0, 1) }; //PBRMaterial.defaultMaterial;
 
                     g.addComponent<MeshRenderer>(new Dictionary<string, object> {
                         { "mesh", geom.mesh },

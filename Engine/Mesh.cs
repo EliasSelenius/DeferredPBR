@@ -17,7 +17,7 @@ namespace Engine {
 
         public Meshdata(IEnumerable<VertType> verts, IEnumerable<uint> inds) {
             vertices.AddRange(verts);
-            indices.AddRange(inds);
+            addTriangles(inds);
         }
 
         public void clear() {
@@ -173,7 +173,7 @@ namespace Engine {
         }
 
         ~Mesh() {
-            if (vao != 0) System.Console.WriteLine("Memory leak detected! vao:" + vao);
+            if (vao != 0) throw new Exception("Memory leak detected! vao: " + vao);
         }
     }
 

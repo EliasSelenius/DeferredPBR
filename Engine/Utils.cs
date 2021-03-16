@@ -19,6 +19,9 @@ namespace Engine {
         public static bool insideBounds(vec2 v, vec2 bounds) => v.x < bounds.x && v.x > 0 && v.y < bounds.y && v.y > 0;
         
 
+        public static void invert(in mat4 m, out mat4 inv) => inv = toNums(toOpenTK(m).Inverted());
+
+
 
         private static readonly List<mat4> matrixStack = new List<mat4> { mat4.identity }; 
         public static mat4 currentMatrix => matrixStack[matrixStack.Count - 1];

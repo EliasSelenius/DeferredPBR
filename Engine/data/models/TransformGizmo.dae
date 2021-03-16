@@ -172,7 +172,7 @@
         <vertices id="translationArrow-mesh-vertices">
           <input semantic="POSITION" source="#translationArrow-mesh-positions"/>
         </vertices>
-        <triangles material="x-material" count="48">
+        <triangles material="mainMat" count="48">
           <input semantic="VERTEX" source="#translationArrow-mesh-vertices" offset="0"/>
           <input semantic="NORMAL" source="#translationArrow-mesh-normals" offset="1"/>
           <input semantic="TEXCOORD" source="#translationArrow-mesh-map-0" offset="2" set="0"/>
@@ -245,7 +245,7 @@
           <instance_geometry url="#translationArrow-mesh" name="z">
             <bind_material>
               <technique_common>
-                <instance_material symbol="z-material" target="#z-material">
+                <instance_material symbol="mainMat" target="#z-material">
                   <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
                 </instance_material>
               </technique_common>
@@ -257,7 +257,7 @@
           <instance_geometry url="#translationArrow-mesh" name="y">
             <bind_material>
               <technique_common>
-                <instance_material symbol="y-material" target="#y-material">
+                <instance_material symbol="mainMat" target="#y-material">
                   <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
                 </instance_material>
               </technique_common>
@@ -269,7 +269,7 @@
           <instance_geometry url="#translationArrow-mesh" name="x">
             <bind_material>
               <technique_common>
-                <instance_material symbol="x-material" target="#x-material">
+                <instance_material symbol="mainMat" target="#x-material">
                   <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
                 </instance_material>
               </technique_common>

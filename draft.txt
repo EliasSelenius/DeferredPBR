@@ -22,6 +22,10 @@ Editor:
     
 
 
+add "Render targets" 
+    api that render to screen or off-screen buffers can now be agnostic
+
+
 
 pirate game idea:
     level 1:

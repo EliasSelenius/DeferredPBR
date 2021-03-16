@@ -13,15 +13,7 @@ namespace Engine {
         Scene editorScene = new();
 
         private Editor() {
-
             Application.window.Resize += onWindowResize;
-
-            var sys = new Gui.WindowingSystem();
-            canvas.addView(sys);
-
-
-            sys.addWindow(new Gui.DebugWindow());
-            sys.addWindow(new SceneViewWindow());
 
             var cam = new Gameobject(
                 new Camera(),
@@ -42,8 +34,13 @@ namespace Engine {
 
             var transformGizmoPrefab = Assets.getPrefab("Engine.data.models.TransformGizmo.pivot");
             var transformGizmo = transformGizmoPrefab.createInstance();
-
             transformGizmo.enterScene(editorScene);
+
+            int i = 0;
+            foreach (var c in transformGizmo.children) {
+                i += 3;
+                c.transform.position += i; 
+            }
 
 
         }
@@ -96,7 +93,27 @@ namespace Engine {
         }
 
         protected override void renderContent() {
-            text("Hello World", 13, system.theme.textColor);
+            
+            for (int i = 0; i < Scene.active.gameobjects.Count; i++) {
+                var o = Scene.active.gameobjects[i];
+                if (o.isRootObject) {
+                    obj(i, o);
+                }
+            }
+        }
+        
+
+        void obj(int i, Gameobject o) {
+            start((width, 16));
+            text("Gameobject " + i, 16, system.theme.textColor);
+            if (o.isParent) {
+                start((20, 0), (width - 20, 0));
+                for (int j = 0; j < o.children.Count; j++) {
+                    obj(i, o.children[j]);
+                }
+                end();
+            }
+            end();
         }
     }
 

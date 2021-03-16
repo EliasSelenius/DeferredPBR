@@ -11,9 +11,14 @@
     <shader name="lightPass_pointlight" 
             vertsrc="Engine.data.shaders.lightPass_pointlight.vert.glsl" 
             fragsrc="Engine.data.shaders.lightPass_pointlight.frag.glsl" />
+            
     <shader name="text" 
             vertsrc="Engine.data.shaders.text.vert.glsl" 
             fragsrc="Engine.data.shaders.text.frag.glsl" />
+	<shader name="guirect" 
+            vertsrc="Engine.data.shaders.guirect.vert.glsl" 
+            fragsrc="Engine.data.shaders.guirect.frag.glsl" />
+
     <shader name="CubemapSkybox" 
             vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
             fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />

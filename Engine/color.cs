@@ -36,6 +36,8 @@ namespace Engine {
 
         public override string ToString() => $"({red}, {green}, {blue}, {alpha})";
 
+        public static void color2vec(in color color, out Nums.vec4 v) => v = new Nums.vec4(color.red, color.green, color.blue, color.alpha);
+
         #region colors
 
         public static readonly color white = new color(1f);
