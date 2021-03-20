@@ -7,7 +7,7 @@
 
 */
 
-uniform sampler2D backgroundImage
+uniform sampler2D backgroundImage;
 
 in V2F {
     vec2 uv;

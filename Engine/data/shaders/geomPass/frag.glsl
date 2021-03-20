@@ -32,8 +32,8 @@ uniform int ObjectID = 12;
 
 
 void main() {
-    g_Albedo_Metallic = vec4(material.albedo * texture(albedoMap, v2f.uv).rgb, material.metallic);
-    g_Normal_Roughness = vec4(v2f.normal, material.roughness);
+    g_Albedo_Metallic = vec4(material.albedo * texture(albedoMap, v2f.uv).rgb, material.metallic);    
+    g_Normal_Roughness = vec4(normalize(v2f.normal), material.roughness);
     g_Fragpos = vec4(v2f.fragPos, 1.0);
 
     #ifdef MOUSE_PICKING
