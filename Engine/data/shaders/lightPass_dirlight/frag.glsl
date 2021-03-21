@@ -67,7 +67,7 @@ void main() {
     vec3 light = CalcDirlight(ld, lightColor, F0, fragdata.normal, V, fragdata.albedo, fragdata.roughness, fragdata.metallic);
 
     // ambient  
-    light += fragdata.albedo * ambientScale;
+    light += ambientScale * lightColor * fragdata.albedo;
 
     FragColor = vec4(light, 1.0);
 }

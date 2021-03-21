@@ -33,7 +33,7 @@ namespace Demo {
 
                 Scene.active.dirlights.Add(new Dirlight {
                     dir = new Nums.vec3(2,5,3).normalized(),
-                    color = Nums.vec3.one * 1f
+                    color = Nums.vec3.one * 8f
                 });
             }
 
