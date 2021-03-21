@@ -16,6 +16,7 @@ namespace Engine {
         List<Gameobject> _children = new List<Gameobject>();
         public readonly ReadOnlyCollection<Gameobject> children;
 
+
         List<Component> _components = new List<Component>();
         public readonly ReadOnlyCollection<Component> components;
 

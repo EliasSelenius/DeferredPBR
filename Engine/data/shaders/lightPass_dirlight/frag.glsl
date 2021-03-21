@@ -17,7 +17,7 @@ in V2F {
 
 uniform vec3 lightDir;
 uniform vec3 lightColor;
-
+uniform float ambientScale;
 
 out vec4 FragColor;
 
@@ -67,7 +67,7 @@ void main() {
     vec3 light = CalcDirlight(ld, lightColor, F0, fragdata.normal, V, fragdata.albedo, fragdata.roughness, fragdata.metallic);
 
     // ambient  
-    light += fragdata.albedo * 0.1;
+    light += fragdata.albedo * ambientScale;
 
     FragColor = vec4(light, 1.0);
 }

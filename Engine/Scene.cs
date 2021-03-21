@@ -36,7 +36,9 @@ namespace Engine {
         List<Gameobject> _gameobjects = new List<Gameobject>();
         public readonly ReadOnlyCollection<Gameobject> gameobjects;
         
-        public readonly List<Pointlight> pointlights = new List<Pointlight>();
+        internal List<Pointlight> _pointlights = new List<Pointlight>();
+        public readonly ReadOnlyCollection<Pointlight> pointlights;
+
         public readonly List<Dirlight> dirlights = new List<Dirlight>();
 
         internal readonly List<IRenderer> renderers = new List<IRenderer>();
@@ -47,6 +49,7 @@ namespace Engine {
 
         public Scene() {
             gameobjects = _gameobjects.AsReadOnly();
+            pointlights = _pointlights.AsReadOnly();
         }
 
         internal void _addGameobject(Gameobject obj) => _gameobjects.Add(obj);
@@ -70,19 +73,21 @@ namespace Engine {
             foreach (var light in dirlights) {
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "lightDir"), light.dir.x, light.dir.y, light.dir.z);
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
+                GL.Uniform1(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "ambientScale"), light.ambientScale);
                 Lights.dirlightMesh.render();
             }
             
 
             Renderer.lightPass_pointlight.use();
-            foreach (var light in pointlights) {
+            foreach (var light in _pointlights) {
+                light.calcLightVolumeModelMatrix(out mat4 model);
+                GLUtils.setUniformMatrix4(Renderer.lightPass_pointlight.id, "model", ref model);
 
-                //vec3 v = (camera.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
-                vec3 v = (Renderer.viewMatrix.transpose * new vec4(light.position.x, light.position.y, light.position.z, 1.0f)).xyz;
+                var lightWorldPos = model.row4.xyz;
+                vec3 v = (Renderer.viewMatrix.transpose * new vec4(lightWorldPos.x, lightWorldPos.y, lightWorldPos.z, 1.0f)).xyz;
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightPosition"), 1, ref v.x);
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_pointlight.id, "lightColor"), light.color.x, light.color.y, light.color.z);
-                var m = light.calcModelMatrix();
-                GLUtils.setUniformMatrix4(Renderer.lightPass_pointlight.id, "model", ref m);
+                
                 Lights.pointlightMesh.render();
             }
 

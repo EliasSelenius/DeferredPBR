@@ -35,26 +35,6 @@ namespace Demo {
                     dir = new Nums.vec3(2,5,3).normalized(),
                     color = Nums.vec3.one * 1f
                 });
-
-                
-
-
-                Scene.active.pointlights.Add(new Pointlight {
-                    position = (3, 3, 3),
-                    color = 100 
-                });
-
-                Scene.active.pointlights.Add(new Pointlight {
-                    position = (30, 3, 3),
-                    color = new vec3(1.0f, 0.3f, 0.5f) * 100
-                });
-
-
-    /*
-                pointlights.Add(new Pointlight {
-                    position = (6, 6, 3),
-                    color = (3, 30, 3)
-                });*/
             }
 
             { // textured plane
@@ -121,6 +101,7 @@ namespace Demo {
                         // { velocity = (math.rand(), math.rand(), math.rand()) }
                         g.addComponent(new Rigidbody());
                         g.addComponent(new SphereCollider());
+                        //g.addComponent(new Pointlight() { color = mat.albedo * 3f });
 
                         g.transform.position.xy = new Nums.vec2(r, m + 1) * 25;
                         g.enterScene(Scene.active);
@@ -129,7 +110,7 @@ namespace Demo {
             }
 
         
-            { // planets
+            if (false) { // planets
                 var mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(100, 1f));
                 mesh.data.mutate((v, i) => {
                     var p = v.position;
