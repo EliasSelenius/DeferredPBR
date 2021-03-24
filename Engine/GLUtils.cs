@@ -402,6 +402,7 @@ namespace Engine {
             for (int i = 0; i < 6; i++) {
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapPositiveX + i, cubemap, 0);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
+                GL.Uniform1(GL.GetUniformLocation(shader.id, "cubemapSide"), i);
                 renderScreenQuad();
             }
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

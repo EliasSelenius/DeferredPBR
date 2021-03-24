@@ -41,8 +41,19 @@ namespace Engine {
             skymesh.render();
         }
 
-        public static CubemapSkybox generate(Shader shader) {
-            int c = GLUtils.generateCubemap(shader, 1024, 1024, OpenTK.Graphics.OpenGL4.PixelInternalFormat.Rgba16f, WrapMode.ClampToBorder, Filter.Linear);
+        public static CubemapSkybox generate(Shader shader, int size = 512, Filter filter = Filter.Linear) {
+            int c = GLUtils.generateCubemap(
+                shader, 
+                
+                width: size, 
+                height: size, 
+                
+                internalFormat: OpenTK.Graphics.OpenGL4.PixelInternalFormat.Rgba16f, 
+                
+                wrap: WrapMode.ClampToEdge, // NOTE: wrap is hardcoded to ClampToEdge since ClampToBorder makes border artifacts, and any Reapeat option does not make sence for a skybox
+                filter: filter
+                );
+
             return new CubemapSkybox(c);
         }
 
