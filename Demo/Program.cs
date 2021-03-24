@@ -33,7 +33,7 @@ namespace Demo {
 
                 Scene.active.dirlights.Add(new Dirlight {
                     dir = new Nums.vec3(2,5,3).normalized(),
-                    color = Nums.vec3.one * 8f
+                    color = Nums.vec3.one * 4f
                 });
             }
 
@@ -165,6 +165,9 @@ namespace Demo {
                 prefab.addComponent<MeshRenderer>(new Dictionary<string, object> { 
                     { "mesh", new Mesh<Vertex>(MeshFactory<Vertex>.genCube(1, 1f)) },
                     { "materials", new[] { PBRMaterial.defaultMaterial }}
+                });
+                prefab.addComponent<Pointlight>(new Dictionary<string, object> {
+                    { "color", (object)(vec3.one * 100f) }
                 });
 
                 prefab.createInstance().enterScene(Scene.active);

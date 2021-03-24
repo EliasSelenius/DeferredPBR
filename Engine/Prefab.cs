@@ -41,7 +41,11 @@ namespace Engine {
 
             public Component create() {
                 var res = type.GetConstructor(Array.Empty<Type>()).Invoke(null) as Component;
-                foreach (var item in fields) type.GetField(item.Key).SetValue(res, item.Value);
+                foreach (var item in fields) {
+                    var f = type.GetField(item.Key);
+                    if (f == null) throw new Exception("The field \"" + item.Key + "\" does not exist on type \"" + type.Name + "\"");
+                    f.SetValue(res, item.Value);
+                }
                 return res;
             }
         }

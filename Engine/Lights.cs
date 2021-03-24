@@ -46,7 +46,7 @@ namespace Engine {
     */
 
     public class Pointlight : Component {
-        public vec3 color { get; set; } = vec3.one;
+        public vec3 color = vec3.one;
 
         const float minRadiance = 1f / 1000f;
 
