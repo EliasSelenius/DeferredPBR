@@ -146,12 +146,7 @@ namespace Engine {
                 
                 scene.updateCamera();
                 scene.renderGeometry();
-                //Mousepicking.hovering?.render(PBRMaterial.defaultMaterial);
-                //Mousepicking.selected?.render(PBRMaterial.redPlastic);
             }
-
-
-            //Mousepicking.render();
 
 
             { // light pass
@@ -189,6 +184,8 @@ namespace Engine {
             }
 
 
+
+
             GL.Flush();
             Application.window.SwapBuffers();
 
@@ -209,7 +206,6 @@ namespace Engine {
             // update framebuffers
             gBuffer.resize(e.Width, e.Height);
             hdrBuffer.resize(e.Width, e.Height);
-            Mousepicking.resize(e.Width, e.Height);
 
             // update window info ubo:
             vec2 s = new vec2(e.Width, e.Height);
@@ -232,9 +228,6 @@ namespace Engine {
         public static Shader shader;
 
 
-        public static IRenderer selected;
-        public static IRenderer hovering;
-
         static Mousepicking() {
             framebuffer = new Framebuffer(Renderer.windowWidth, Renderer.windowHeight, 
             new (FramebufferAttachment, RenderbufferStorage)[] {
@@ -248,28 +241,32 @@ namespace Engine {
             shader = Assets.getShader("mousePicking");
         }
 
-        public static void render() {
+        public static void render(Scene scene) {
             GL.Disable(EnableCap.Blend);
             GL.Enable(EnableCap.DepthTest);
+
+            if (framebuffer.width != Renderer.windowWidth || framebuffer.height != Renderer.windowHeight) {
+                framebuffer.resize(Renderer.windowWidth, Renderer.windowHeight);
+            }
 
             shader.use();
             framebuffer.writeMode();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            for (int i = 1; i <= Scene.active.renderers.Count; i++) {
+            for (int i = 1; i <= scene.renderers.Count; i++) {
                 var loc = GL.GetUniformLocation(shader.id, "ObjectID");
                 GL.Uniform1(loc, 1, ref i);
-                Scene.active.renderers[i-1].renderId();
+
+                scene.renderers[i-1].render(shader.id);
             }
+        }
+
+        public static IRenderer select(Scene scene, ivec2 coord) {
+            render(scene);
 
             var mousePos = Mouse.position;
-            var p = read((int)mousePos.x, framebuffer.height - (int)mousePos.y, 1, 1)[0,0]-1;
-            
-            if (p == -1) hovering = null;    
-            else hovering = Scene.active.renderers[p];
-            if (Mouse.isPressed(MouseButton.left)) selected = hovering;
-
-
+            var p = read(coord.x, framebuffer.height - coord.y, 1, 1)[0,0] - 1;
+            return p < 0 ? null : scene.renderers[p];
         }
         
 
@@ -279,6 +276,5 @@ namespace Engine {
             return pixels;
         }
 
-        public static void resize(int w, int h) => framebuffer.resize(w, h);
     }
 }

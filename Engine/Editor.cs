@@ -1,9 +1,20 @@
 using OpenTK.Graphics.OpenGL4;
+using Nums;
+using System.Collections.Generic;
 
 namespace Engine {
+
+    public enum EditorRenderMode {
+        lights,
+        wireframe,
+        solid
+    }
+
     public class Editor : SceneBase {
 
         public static bool isOpen => Application.scene == instance;
+        public static EditorRenderMode renderMode;
+        public static LinkedList<Gameobject> selection = new();
 
         static Editor instance = new(); 
         static Editor() { }
@@ -52,19 +63,41 @@ namespace Engine {
 
         internal override void update() {
             editorScene.update();
+
+            if (Keyboard.isPressed(key.M)) renderMode = EditorRenderMode.wireframe;
         }
 
-        internal override void updateCamera() {
+        internal override void updateCamera() {            
             editorScene.camera.updateUniformBuffer();
         }
 
         internal override void renderGeometry() {
+            GL.LineWidth(2);
+            if (renderMode == EditorRenderMode.wireframe) GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+
             Scene.active.renderGeometry();
+
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+
 
             GL.DepthFunc(DepthFunction.Always);
             editorScene.renderGeometry();
             GL.DepthFunc(DepthFunction.Lequal);
 
+
+            // handle selections
+            if (Mouse.isPressed(MouseButton.left)) {
+                var r = Mousepicking.select(Scene.active, (ivec2)Mouse.position);
+                
+                if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
+                if (r is null) selection.Clear();
+                else if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
+                else selection.AddLast(r.gameobject);
+            }
+
+            foreach (var g in selection) {
+                g.transform.rotate(vec3.unity, 0.05f);
+            }
         }
 
         internal override void renderLights() {
@@ -81,6 +114,16 @@ namespace Engine {
         
     }
 
+    public static class Gizmo {
+        static Shader shader;
+
+        public static void point(vec3 pos) {}
+        public static void line(vec3 start, vec3 end) {}
+
+        internal static void dispatchFrame() {
+            shader.use();
+        }
+    }
 
 
     class SceneViewWindow : Gui.Window {

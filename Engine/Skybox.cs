@@ -18,14 +18,6 @@ namespace Engine {
 
     }
 
-    /*
-        step 1: render CubemapSkybox
-        step 2: render with cubemap
-        step 3: generate cubemap from shader 
-
-
-    */
-
     public class CubemapSkybox : Skybox {
         
         int cubemap;

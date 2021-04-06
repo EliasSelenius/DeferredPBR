@@ -15,9 +15,11 @@ namespace Engine {
     }
 
     public interface IRenderer {
+        Gameobject gameobject { get; }
+        Transform transform { get; }
+
         void render();
-        void render(PBRMaterial material) {}
-        void renderId();
+        void render(int shaderID);
     }
 
     public class Scene : SceneBase {

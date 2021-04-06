@@ -5,7 +5,7 @@
 
 */
 
-uniform int ObjectID = 36;
+uniform int ObjectID;
 
 out int outputID;
 

@@ -57,6 +57,8 @@ namespace Engine {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
+        //public void initDrawBuffers(params FramebufferFormat[] formats) { }
+
         
         public void writeMode() {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);

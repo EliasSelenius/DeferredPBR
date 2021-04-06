@@ -26,6 +26,15 @@ add "Render targets"
     api that render to screen or off-screen buffers can now be agnostic
 
 
+upcomming todos:
+    transform gizmo 
+    mousepick objects
+    object highlight
+    gizmos
+        - point
+        - line
+        
+
 
 pirate game idea:
     level 1:
