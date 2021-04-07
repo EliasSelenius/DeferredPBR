@@ -39,6 +39,19 @@ namespace Engine {
             }
         }
 
+        public void calcWorldPosition(out vec3 wpos) {
+            if (parent == null) {
+                wpos = transform.position;
+                return;
+            }
+
+            var pos = new vec4(transform.position.x, transform.position.y, transform.position.z, 1);
+            parent.calcModelMatrix(out mat4 p);
+            wpos.x = p.col1.dot(pos);
+            wpos.y = p.col2.dot(pos);
+            wpos.z = p.col3.dot(pos);
+        }
+
 #region add/get/require components 
 
         private void attachComponent(Component comp) {

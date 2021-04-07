@@ -11,6 +11,7 @@ namespace Engine {
         internal abstract void updateCamera();
         internal abstract void renderGeometry();
         internal abstract void renderLights();
+        internal abstract void renderFrame();
         internal abstract void renderGui();
     }
 
@@ -96,6 +97,10 @@ namespace Engine {
             
             GL.Enable(EnableCap.DepthTest);
             skybox?.render();
+        }
+
+        internal override void renderFrame() {
+
         }
 
         internal override void renderGui() {

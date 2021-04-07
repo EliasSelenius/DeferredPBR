@@ -116,6 +116,7 @@ namespace Engine {
                 textShader.bindUBO(cameraUBO);
                 Assets.getShader("CubemapSkybox").bindUBO(cameraUBO);
                 Assets.getShader("mousePicking").bindUBO(cameraUBO);
+                Assets.getShader("gizmo").bindUBO(cameraUBO);
             }
 
 
@@ -167,11 +168,15 @@ namespace Engine {
             }
 
             { // image pass
-                imagePass.use();
+                GL.Disable(EnableCap.DepthTest);
+
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                imagePass.use();
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 hdrBuffer.readMode();
                 GLUtils.renderScreenQuad();
+
+                scene.renderFrame();
             }
             
             { // Gui pass

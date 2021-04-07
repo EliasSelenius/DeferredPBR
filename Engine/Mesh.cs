@@ -115,6 +115,21 @@ namespace Engine {
                 indices[i + 2] = a;
             }
         }
+
+        public void getBoundaries(out vec3 maxbounds, out vec3 minbounds) {
+            maxbounds = minbounds = vec3.zero;
+
+            for (int i = 0; i < vertices.Count; i++) {
+                var v = vertices[i].getPosition();
+                minbounds.x = math.min(v.x, minbounds.x);
+                minbounds.y = math.min(v.y, minbounds.y);
+                minbounds.z = math.min(v.z, minbounds.z);
+
+                maxbounds.x = math.max(v.x, maxbounds.x);
+                maxbounds.y = math.max(v.y, maxbounds.y);
+                maxbounds.z = math.max(v.z, maxbounds.z);
+            }
+        }
     }
 
 

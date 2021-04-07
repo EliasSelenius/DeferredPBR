@@ -1,31 +1,34 @@
 <assets>
     <shader name="geomPass" 
-            vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
-            fragsrc="Engine.data.shaders.geomPass.frag.glsl" />
+        vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
+        fragsrc="Engine.data.shaders.geomPass.frag.glsl" />
     <shader name="imagePass" 
-            vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
-            fragsrc="Engine.data.shaders.imagePass.frag.glsl" />
+        vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
+        fragsrc="Engine.data.shaders.imagePass.frag.glsl" />
     <shader name="lightPass_dirlight" 
-            vertsrc="Engine.data.shaders.lightPass_dirlight.vert.glsl" 
-            fragsrc="Engine.data.shaders.lightPass_dirlight.frag.glsl" />
+        vertsrc="Engine.data.shaders.lightPass_dirlight.vert.glsl" 
+        fragsrc="Engine.data.shaders.lightPass_dirlight.frag.glsl" />
     <shader name="lightPass_pointlight" 
-            vertsrc="Engine.data.shaders.lightPass_pointlight.vert.glsl" 
-            fragsrc="Engine.data.shaders.lightPass_pointlight.frag.glsl" />
+        vertsrc="Engine.data.shaders.lightPass_pointlight.vert.glsl" 
+        fragsrc="Engine.data.shaders.lightPass_pointlight.frag.glsl" />
             
     <shader name="text" 
-            vertsrc="Engine.data.shaders.text.vert.glsl" 
-            fragsrc="Engine.data.shaders.text.frag.glsl" />
+        vertsrc="Engine.data.shaders.text.vert.glsl" 
+        fragsrc="Engine.data.shaders.text.frag.glsl" />
 	<shader name="guirect" 
-            vertsrc="Engine.data.shaders.guirect.vert.glsl" 
-            fragsrc="Engine.data.shaders.guirect.frag.glsl" />
+        vertsrc="Engine.data.shaders.guirect.vert.glsl" 
+        fragsrc="Engine.data.shaders.guirect.frag.glsl" />
 
     <shader name="CubemapSkybox" 
-            vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
-            fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />
+        vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
+        fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />
     <shader name="mousePicking" 
-            vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
-            fragsrc="Engine.data.shaders.writeObjectID.glsl" />
+        vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
+        fragsrc="Engine.data.shaders.writeObjectID.glsl" />
 
+    <shader name="gizmo" 
+        vertsrc="Engine.data.shaders.gizmo.vert.glsl"
+        fragsrc="Engine.data.shaders.gizmo.frag.glsl" />
 
 
     <shader name="genCubemap" vertsrc="Engine.data.shaders.imagePass.vert.glsl" fragsrc="Engine.data.shaders.genTexture2Dfrag.glsl" />

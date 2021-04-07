@@ -65,6 +65,7 @@ namespace Engine {
             editorScene.update();
 
             if (Keyboard.isPressed(key.M)) renderMode = EditorRenderMode.wireframe;
+
         }
 
         internal override void updateCamera() {            
@@ -72,7 +73,7 @@ namespace Engine {
         }
 
         internal override void renderGeometry() {
-            GL.LineWidth(2);
+            //GL.LineWidth(10);
             if (renderMode == EditorRenderMode.wireframe) GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
 
             Scene.active.renderGeometry();
@@ -97,11 +98,37 @@ namespace Engine {
 
             foreach (var g in selection) {
                 g.transform.rotate(vec3.unity, 0.05f);
+            
+                for (int i = 0; i < 10; i++) {
+                    g.calcWorldPosition(out vec3 wpos);
+
+                    //g.getComponent<MeshRenderer>().mesh.data.getBoundaries(out vec3 max, out vec3 min);
+                    //Gizmo.point((math.range(min.x, max.x), math.range(min.y, max.y), math.range(min.z, max.z)) + wpos);
+
+                    Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
+
+                }
             }
+
+            Gizmo.line(vec3.zero, vec3.one * 10);
+            Gizmo.line(vec3.zero, (10, 10, 0));
+            Gizmo.line((0, 0, 20), (10, 10, 10));
+
+            Gizmo.bezier(vec3.zero, (20, 5, 7), 10);
+
+            //GL.PointParameter(PointParameterName.)
+            GL.PointSize(10);
+
+            
+
         }
 
         internal override void renderLights() {
             Scene.active.renderLights();
+        }
+
+        internal override void renderFrame() {
+            Gizmo.dispatchFrame();
         }
 
         internal override void renderGui() {
@@ -117,11 +144,76 @@ namespace Engine {
     public static class Gizmo {
         static Shader shader;
 
-        public static void point(vec3 pos) {}
-        public static void line(vec3 start, vec3 end) {}
+        static Batch points = new(PrimitiveType.Points);
+        static Batch lines = new(PrimitiveType.Lines);
+
+        static Gizmo() {
+            shader = Assets.getShader("gizmo");
+        }
+
+        public static void point(vec3 pos) {
+            points.vertices.Add(new posVertex { position = pos });
+            points.indices.Add((uint)(points.vertices.Count - 1));
+        }
+        public static void line(vec3 start, vec3 end) {
+            lines.vertices.Add(new posVertex { position = start });
+            lines.vertices.Add(new posVertex { position = end });
+
+            lines.indices.Add((uint)(lines.vertices.Count - 2));
+            lines.indices.Add((uint)(lines.vertices.Count - 1));
+        }
+
+
+        public static void bezier(vec3 p0, vec3 p1, vec3 p2) {
+            float t = 0;
+            
+            for (int i = 0; i < 10; i++) {
+                vec3 s = p0.lerp(p1, t).lerp(p1.lerp(p2, t), t);
+                t += 1f / 10f;
+                line(s, p0.lerp(p1, t).lerp(p1.lerp(p2, t), t));
+            }
+            
+
+        }
+
 
         internal static void dispatchFrame() {
             shader.use();
+
+            points.render();
+            lines.render();
+        }
+
+        class Batch {
+            public PrimitiveType primitiveType;
+            public List<posVertex> vertices = new();
+            public List<uint> indices = new();
+
+            int vao, vbo, ebo;
+
+            public Batch(PrimitiveType pType) {
+                primitiveType = pType;
+
+                vbo = GLUtils.createBuffer();
+                ebo = GLUtils.createBuffer();
+                vao = GLUtils.createVertexArray<posVertex>(vbo, ebo);
+            }
+
+            public void render() {
+                GLUtils.bufferdata(vbo, vertices.ToArray());
+                GLUtils.bufferdata(ebo, indices.ToArray());
+                
+                GL.BindVertexArray(vao);
+                GL.DrawElements(primitiveType, indices.Count, DrawElementsType.UnsignedInt, 0);
+                GL.BindVertexArray(0);
+
+                clear();
+            }
+
+            void clear() {
+                vertices.Clear();
+                indices.Clear();
+            }
         }
     }
 

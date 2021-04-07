@@ -69,7 +69,7 @@ namespace Demo {
                 });
 
                 g.transform.position.z += 20;
-                g.transform.scale.xz *= 2000;
+                //g.transform.scale.xz *= 2000;
 
                 g.enterScene(Scene.active);
 
@@ -110,7 +110,7 @@ namespace Demo {
             }
 
         
-            if (false) { // planets
+            { // planets
                 var mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(100, 1f));
                 mesh.data.mutate((v, i) => {
                     var p = v.position;
