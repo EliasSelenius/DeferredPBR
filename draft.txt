@@ -6,6 +6,7 @@ to research:
     - tesselation shaders 
     - order independent transparancy
     - transform feedback
+    - point sprites
     - compute shaders
     - SSAO
     - MSAA / FXAA
@@ -15,9 +16,10 @@ to research:
 Editor: 
     - camera controller
         - Keyboard axis
-    - mouse picking
+    - <done> mouse picking
     - user interface
-    - gizmo
+    - <done> gizmo
+    - transform gizmo
     - highlight
     
 
@@ -28,12 +30,8 @@ add "Render targets"
 
 upcomming todos:
     transform gizmo 
-    mousepick objects
     object highlight
-    gizmos
-        - point
-        - line
-        
+   
 
 
 pirate game idea:
@@ -72,4 +70,4 @@ what to use Source Generators for:
     - scripting language transpiler
     - generating a parser (Pgen)
     - reflection (inside Prefab) begone
-
+    - auto material class
