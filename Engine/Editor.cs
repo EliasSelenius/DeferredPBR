@@ -101,12 +101,7 @@ namespace Engine {
             
                 for (int i = 0; i < 10; i++) {
                     g.calcWorldPosition(out vec3 wpos);
-
-                    //g.getComponent<MeshRenderer>().mesh.data.getBoundaries(out vec3 max, out vec3 min);
-                    //Gizmo.point((math.range(min.x, max.x), math.range(min.y, max.y), math.range(min.z, max.z)) + wpos);
-
                     Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
-
                 }
             }
 

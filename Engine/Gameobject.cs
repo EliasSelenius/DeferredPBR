@@ -31,6 +31,7 @@ namespace Engine {
             addComponents(comps);
         }
 
+
         public void calcModelMatrix(out mat4 m) {
             transform.getMatrix(out m);
             if (parent != null) {
