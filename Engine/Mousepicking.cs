@@ -1,5 +1,6 @@
 using OpenTK.Graphics.OpenGL4;
 using Nums;
+using System.Collections.Generic;
 
 namespace Engine {
     public static class Mousepicking {
@@ -45,6 +46,18 @@ namespace Engine {
 
             var p = read(coord.x, framebuffer.height - coord.y, 1, 1)[0,0] - 1;
             return p < 0 ? null : scene.renderers[p];
+        }
+
+        public static List<IRenderer> select(Scene scene, ivec2 fromCoord, ivec2 toCoord) {
+            render(scene);
+
+            var size = math.abs(fromCoord - toCoord);
+            var ps = read(fromCoord.x, framebuffer.height - fromCoord.y, size.x, size.y);
+
+            var res = new List<IRenderer>();
+
+            foreach(int i in ps) if (i >= 0) res.Add(scene.renderers[i]);
+            return res;
         }
         
 

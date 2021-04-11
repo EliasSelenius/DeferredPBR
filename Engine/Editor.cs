@@ -22,13 +22,14 @@ namespace Engine {
 
         Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
+        bool isMultiselecting;
 
         private Editor() {
             Application.window.Resize += onWindowResize;
 
             var cam = new Gameobject(
                 new Camera(),
-                new CameraFlyController()
+                new EditorCamera()
             );
             cam.enterScene(editorScene);
 
@@ -87,7 +88,7 @@ namespace Engine {
 
 
             // handle selections
-            if (Mouse.isPressed(MouseButton.left)) {
+            if (Mouse.state == MouseState.free && Mouse.isPressed(MouseButton.left)) {
                 var r = Mousepicking.select(Scene.active, (ivec2)Mouse.position);
                 
                 if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
@@ -95,6 +96,23 @@ namespace Engine {
                 else if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
                 else selection.AddLast(r.gameobject);
             }
+
+            // handle multi-selection
+            if (Mouse.state == MouseState.free) {
+                if (Mouse.isDown(MouseButton.left)) {
+                    isMultiselecting = true;
+
+                } else if (Mouse.isReleased(MouseButton.left)) {
+                    isMultiselecting = false;
+                }
+            }
+            
+
+            if (isMultiselecting) {
+                canvas.rect(400, 200, color.black);
+            }
+
+
 
             foreach (var g in selection) {
                 g.transform.rotate(vec3.unity, 0.05f);
@@ -134,6 +152,36 @@ namespace Engine {
         public static void open() => Application.scene = instance;
         public static void close() => Application.scene = Scene.active;
         
+    }
+
+    public class EditorCamera : Component {
+
+        vec3 velocity;
+        float speedMult = 1000f;
+
+        protected override void onUpdate() {
+
+            transform.position += velocity * Application.deltaTime;
+            velocity *= 0.1f * Application.deltaTime;
+
+            if (Mouse.isDown(MouseButton.right)) {
+                Mouse.state = MouseState.disabled;
+                var d = Mouse.delta / 100f;
+                transform.rotate(vec3.unity, d.x);
+                transform.rotate(transform.left, -d.y);
+
+                velocity += (transform.forward * Keyboard.getAxis(key.S, key.W) + transform.left * Keyboard.getAxis(key.D, key.A)) * speedMult * Application.deltaTime;
+                
+
+            } else {
+                Mouse.state = MouseState.free;
+            }
+        }
+
+        public void focus(in vec3 point) {
+            transform.lookat(point, vec3.unity);
+
+        }
     }
 
     public static class Gizmo {
