@@ -176,19 +176,10 @@ namespace Engine {
                 hdrBuffer.readMode();
                 GLUtils.renderScreenQuad();
 
-                scene.renderFrame();
             }
             
-            { // Gui pass
-                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-                textShader.use();
-                whiteTexture.bind(TextureUnit.Texture0);
-
-                scene.renderGui();
-            }
-
-
+            scene.renderFrame();
 
 
             GL.Flush();

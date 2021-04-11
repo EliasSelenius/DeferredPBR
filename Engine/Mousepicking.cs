@@ -49,14 +49,21 @@ namespace Engine {
         }
 
         public static List<IRenderer> select(Scene scene, ivec2 fromCoord, ivec2 toCoord) {
+
+            throw new System.NotImplementedException();
+
             render(scene);
 
+            //fromCoord.y = framebuffer.height - fromCoord.y;
+            //toCoord.y = framebuffer.height - toCoord.y;
+
+
             var size = math.abs(fromCoord - toCoord);
-            var ps = read(fromCoord.x, framebuffer.height - fromCoord.y, size.x, size.y);
+            var ps = read(fromCoord.x, fromCoord.y, size.x, size.y);
 
             var res = new List<IRenderer>();
 
-            foreach(int i in ps) if (i >= 0) res.Add(scene.renderers[i]);
+            foreach(int i in ps) if (i >= 0 && !res.Contains(scene.renderers[i])) res.Add(scene.renderers[i]);
             return res;
         }
         

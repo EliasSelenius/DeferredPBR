@@ -1,6 +1,7 @@
 using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Engine {
 
@@ -22,7 +23,9 @@ namespace Engine {
 
         Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
+
         bool isMultiselecting;
+        ivec2 multiselectStart;
 
         private Editor() {
             Application.window.Resize += onWindowResize;
@@ -87,41 +90,56 @@ namespace Engine {
             GL.DepthFunc(DepthFunction.Lequal);
 
 
-            // handle selections
-            if (Mouse.state == MouseState.free && Mouse.isPressed(MouseButton.left)) {
-                var r = Mousepicking.select(Scene.active, (ivec2)Mouse.position);
+            { // selections
+
+                // handle selections
+                if (Mouse.state == MouseState.free && Mouse.isPressed(MouseButton.left)) {
+                    var r = Mousepicking.select(Scene.active, (ivec2)Mouse.position);
+                    
+                    if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
+                    if (r is null) selection.Clear();
+                    else if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
+                    else selection.AddLast(r.gameobject);
+                }
+
+                // handle multi-selection
+                if (Mouse.state == MouseState.free) {
+                    if (isMultiselecting == false && Mouse.isDown(MouseButton.left)) {
+                        isMultiselecting = true;
+                        multiselectStart = (ivec2)Mouse.position;
+                    } else if (Mouse.isReleased(MouseButton.left)) {
+                        isMultiselecting = false;
+                        var list = Mousepicking.select(Scene.active, multiselectStart, (ivec2)Mouse.position);
+
+                        if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
+                        if (list.Count == 0) selection.Clear();
+                        else {
+                            foreach(var r in list) {
+                                if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
+                                else selection.AddLast(r.gameobject);
+                            }
+                        }
+                    }
+                }
                 
-                if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
-                if (r is null) selection.Clear();
-                else if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
-                else selection.AddLast(r.gameobject);
-            }
 
-            // handle multi-selection
-            if (Mouse.state == MouseState.free) {
-                if (Mouse.isDown(MouseButton.left)) {
-                    isMultiselecting = true;
+                if (isMultiselecting) {
+                    canvas.rect(multiselectStart, ((ivec2)Mouse.position - multiselectStart), color.rgba(1,1,1,0.3f));
+                }
 
-                } else if (Mouse.isReleased(MouseButton.left)) {
-                    isMultiselecting = false;
+
+
+                foreach (var g in selection) {
+                    g.transform.rotate(vec3.unity, 0.05f);
+                
+                    for (int i = 0; i < 10; i++) {
+                        g.calcWorldPosition(out vec3 wpos);
+                        Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
+                    }
                 }
             }
-            
-
-            if (isMultiselecting) {
-                canvas.rect(400, 200, color.black);
-            }
 
 
-
-            foreach (var g in selection) {
-                g.transform.rotate(vec3.unity, 0.05f);
-            
-                for (int i = 0; i < 10; i++) {
-                    g.calcWorldPosition(out vec3 wpos);
-                    Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
-                }
-            }
 
             Gizmo.line(vec3.zero, vec3.one * 10);
             Gizmo.line(vec3.zero, (10, 10, 0));
@@ -142,10 +160,11 @@ namespace Engine {
 
         internal override void renderFrame() {
             Gizmo.dispatchFrame();
-        }
 
-        internal override void renderGui() {
-            canvas.render();
+
+            canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
+
+            canvas.dispatchFrame();
         }
 
 

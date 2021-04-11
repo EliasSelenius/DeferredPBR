@@ -12,7 +12,6 @@ namespace Engine {
         internal abstract void renderGeometry();
         internal abstract void renderLights();
         internal abstract void renderFrame();
-        internal abstract void renderGui();
     }
 
     public interface IRenderer {
@@ -102,10 +101,5 @@ namespace Engine {
         internal override void renderFrame() {
 
         }
-
-        internal override void renderGui() {
-
-        }
-
     }
 }
