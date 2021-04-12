@@ -21,7 +21,8 @@ namespace Engine {
 
         public static void invert(in mat4 m, out mat4 inv) => inv = toNums(toOpenTK(m).Inverted());
 
-
+        public static color randColor(int seed) => color.rgba(math.range(seed, 0, 1), math.range(seed+1, 0, 1), math.range(seed+2, 0, 1), 1.0f);
+        public static color randColor() => color.rgba(math.range(0, 1), math.range(0, 1), math.range(0, 1), 1.0f);
 
         private static readonly List<mat4> matrixStack = new List<mat4> { mat4.identity }; 
         public static mat4 currentMatrix => matrixStack[matrixStack.Count - 1];

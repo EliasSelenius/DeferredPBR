@@ -9,15 +9,15 @@ using System;
 namespace Engine {
     public static class Assets {
 
-        static Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
+        public static Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
         static Dictionary<string, string> shaderSources = new Dictionary<string, string>();
 
-        static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
-        static Dictionary<string, PBRMaterial> materials = new Dictionary<string, PBRMaterial>();
+        public static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        public static Dictionary<string, PBRMaterial> materials = new Dictionary<string, PBRMaterial>();
 
-        static Dictionary<string, Prefab> prefabs = new Dictionary<string, Prefab>();
+        public static Dictionary<string, Prefab> prefabs = new Dictionary<string, Prefab>();
 
-        static Dictionary<string, Font> fonts = new Dictionary<string, Font>();
+        public static Dictionary<string, Font> fonts = new Dictionary<string, Font>();
 
         static List<IResourceProvider> providers = new List<IResourceProvider>();
 

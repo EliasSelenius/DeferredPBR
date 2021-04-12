@@ -57,4 +57,16 @@ namespace Engine {
         void VertexData.setTexcoord(vec2 value) => uv = value;
 
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct posColorVertex : VertexData {
+        public vec3 position;
+        public vec4 color;
+
+        vec3 VertexData.getPosition() => position;
+        void VertexData.setPosition(vec3 value) => position = value;
+
+        vec4 getColor() => color;
+        void setColor(vec4 value) => color = value;
+    }
 }

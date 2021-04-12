@@ -112,16 +112,19 @@ namespace Demo {
         
             { // planets
                 var mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(100, 1f));
+                float radius = 0;
                 mesh.data.mutate((v, i) => {
                     var p = v.position;
                     v.position *= 100f;
 
                     for (int o = 1; o <= 4; o++) {
                         v.position += p * Nums.math.gradnoise(new Nums.vec3(o,o,o) * 10f + p * 5f * o) * 10f / o;
+                        radius = math.max(radius, v.position.sqlength);
                     }
 
                     return v;
                 });
+                radius = math.sqrt(radius);
                 //mesh.flipIndices();
                 mesh.data.genNormals();
                 mesh.updateBuffers();
@@ -139,6 +142,7 @@ namespace Demo {
                             }
                         }
                     });
+                    planet.addComponents(new Rigidbody(), new SphereCollider() { radius = radius });
                     planet.transform.position = new vec3(math.rand(), math.rand() *.5f+.5f, math.rand()) * 1000f;
 
                     planet.enterScene(Scene.active);

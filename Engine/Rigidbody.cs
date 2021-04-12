@@ -32,7 +32,7 @@ namespace Engine {
         protected override void onUpdate() {
 
             // gravity
-            //velocity.y -= 10 * app.deltaTime;
+            velocity.y -= 10 * Application.deltaTime;
 
             transform.position += velocity * Application.deltaTime;
             transform.rotate(angularVelocity);

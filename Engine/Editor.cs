@@ -104,6 +104,7 @@ namespace Engine {
                     //g.transform.rotate(vec3.unity, 0.05f);
                     for (int i = 0; i < 10; i++) {
                         g.calcWorldPosition(out vec3 wpos);
+                        Gizmo.color(Utils.randColor());
                         Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
                     }
                 }
@@ -185,20 +186,25 @@ namespace Engine {
         static Batch points = new(PrimitiveType.Points);
         static Batch lines = new(PrimitiveType.Lines);
 
+        static vec4 currentColor = vec4.one;
+
         static Gizmo() {
             shader = Assets.getShader("gizmo");
         }
 
+        public static void color(in vec4 color) => currentColor = color;
+        public static void color(in color color) => color.color2vec(in color, out currentColor);
+
         public static void point(vec3 pos) {
-            points.vertices.Add(new posVertex { position = pos });
-            points.indices.Add((uint)(points.vertices.Count - 1));
+            points.vertex(pos, currentColor);
+            points.index(points.vertices.Count - 1);
         }
         public static void line(vec3 start, vec3 end) {
-            lines.vertices.Add(new posVertex { position = start });
-            lines.vertices.Add(new posVertex { position = end });
+            lines.vertex(start, currentColor);
+            lines.vertex(end, currentColor);
 
-            lines.indices.Add((uint)(lines.vertices.Count - 2));
-            lines.indices.Add((uint)(lines.vertices.Count - 1));
+            lines.index(lines.vertices.Count - 2);
+            lines.index(lines.vertices.Count - 1);
         }
 
         public static void bezier(vec3 p0, vec3 p1, vec3 p2) {
@@ -222,7 +228,7 @@ namespace Engine {
 
         class Batch {
             public PrimitiveType primitiveType;
-            public List<posVertex> vertices = new();
+            public List<posColorVertex> vertices = new();
             public List<uint> indices = new();
 
             int vao, vbo, ebo;
@@ -232,7 +238,7 @@ namespace Engine {
 
                 vbo = GLUtils.createBuffer();
                 ebo = GLUtils.createBuffer();
-                vao = GLUtils.createVertexArray<posVertex>(vbo, ebo);
+                vao = GLUtils.createVertexArray<posColorVertex>(vbo, ebo);
             }
 
             public void render() {
@@ -250,6 +256,9 @@ namespace Engine {
                 vertices.Clear();
                 indices.Clear();
             }
+
+            public void vertex(in vec3 pos, in vec4 color) => vertices.Add(new posColorVertex { position = pos, color = color });
+            public void index(int i) => indices.Add((uint)i);
         }
     }
 
