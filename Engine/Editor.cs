@@ -21,11 +21,9 @@ namespace Engine {
         static Editor() { }
         
 
-        Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
+        public static readonly Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
 
-        bool isMultiselecting;
-        ivec2 multiselectStart;
 
         private Editor() {
             Application.window.Resize += onWindowResize;
@@ -102,36 +100,8 @@ namespace Engine {
                     else selection.AddLast(r.gameobject);
                 }
 
-                // handle multi-selection
-                if (Mouse.state == MouseState.free) {
-                    if (isMultiselecting == false && Mouse.isDown(MouseButton.left)) {
-                        isMultiselecting = true;
-                        multiselectStart = (ivec2)Mouse.position;
-                    } else if (Mouse.isReleased(MouseButton.left)) {
-                        isMultiselecting = false;
-                        var list = Mousepicking.select(Scene.active, multiselectStart, (ivec2)Mouse.position);
-
-                        if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
-                        if (list.Count == 0) selection.Clear();
-                        else {
-                            foreach(var r in list) {
-                                if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
-                                else selection.AddLast(r.gameobject);
-                            }
-                        }
-                    }
-                }
-                
-
-                if (isMultiselecting) {
-                    canvas.rect(multiselectStart, ((ivec2)Mouse.position - multiselectStart), color.rgba(1,1,1,0.3f));
-                }
-
-
-
                 foreach (var g in selection) {
-                    g.transform.rotate(vec3.unity, 0.05f);
-                
+                    //g.transform.rotate(vec3.unity, 0.05f);
                     for (int i = 0; i < 10; i++) {
                         g.calcWorldPosition(out vec3 wpos);
                         Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
@@ -141,9 +111,7 @@ namespace Engine {
 
 
 
-            Gizmo.line(vec3.zero, vec3.one * 10);
-            Gizmo.line(vec3.zero, (10, 10, 0));
-            Gizmo.line((0, 0, 20), (10, 10, 10));
+
 
             Gizmo.bezier(vec3.zero, (20, 5, 7), 10);
 
@@ -176,7 +144,7 @@ namespace Engine {
     public class EditorCamera : Component {
 
         vec3 velocity;
-        float speedMult = 1000f;
+        float speedMult = 100f;
 
         protected override void onUpdate() {
 
@@ -189,12 +157,20 @@ namespace Engine {
                 transform.rotate(vec3.unity, d.x);
                 transform.rotate(transform.left, -d.y);
 
-                velocity += (transform.forward * Keyboard.getAxis(key.S, key.W) + transform.left * Keyboard.getAxis(key.D, key.A)) * speedMult * Application.deltaTime;
+                velocity += (transform.forward * Keyboard.getAxis(key.S, key.W) + transform.left * Keyboard.getAxis(key.D, key.A)) * speedMult;
                 
+                
+                float rate = 0.8f * Application.deltaTime;
+                if (Keyboard.isDown(key.LeftShift)) speedMult *= (1f + rate);
+                else if (Keyboard.isDown(key.LeftControl)) speedMult = math.max(1f, speedMult * (1f - rate));
+
 
             } else {
                 Mouse.state = MouseState.free;
             }
+
+            Editor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
+            Editor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
         }
 
         public void focus(in vec3 point) {
@@ -225,17 +201,15 @@ namespace Engine {
             lines.indices.Add((uint)(lines.vertices.Count - 1));
         }
 
-
         public static void bezier(vec3 p0, vec3 p1, vec3 p2) {
+            const int res = 20;
             float t = 0;
             
-            for (int i = 0; i < 10; i++) {
-                vec3 s = p0.lerp(p1, t).lerp(p1.lerp(p2, t), t);
-                t += 1f / 10f;
-                line(s, p0.lerp(p1, t).lerp(p1.lerp(p2, t), t));
+            line(p0, p1);
+            line(p1, p2);
+            for (int i = 0; i < res; i++) {
+                line(math.bezier(p0, p1, p2, t), math.bezier(p0, p1, p2, t += 1f / res));
             }
-            
-
         }
 
 
