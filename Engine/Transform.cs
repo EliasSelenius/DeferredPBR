@@ -59,7 +59,7 @@ namespace Engine {
             Utils.invert(math.lookAt(position, point, up), out mat4 m);
             m.row1.xyz = -m.row1.xyz;
             m.row3.xyz = -m.row3.xyz;
-            throw new System.NotImplementedException();
+            quat.fromMatrix(new mat3(m), out rotation);
         }
 
     }
