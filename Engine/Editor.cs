@@ -24,6 +24,8 @@ namespace Engine {
         public static readonly Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
 
+        ivec2 boxSelectStart;
+        bool isBoxSelecting;
 
         private Editor() {
             Application.window.Resize += onWindowResize;
@@ -68,6 +70,11 @@ namespace Engine {
 
             if (Keyboard.isPressed(key.M)) renderMode = EditorRenderMode.wireframe;
 
+            if (Keyboard.isPressed(key.Delete)) {
+                foreach (var s in selection) s.destroy();
+                selection.Clear();
+            }
+
         }
 
         internal override void updateCamera() {            
@@ -88,18 +95,41 @@ namespace Engine {
             GL.DepthFunc(DepthFunction.Lequal);
 
 
+
             { // selections
 
                 // handle selections
-                if (Mouse.state == MouseState.free && Mouse.isPressed(MouseButton.left)) {
-                    var r = Mousepicking.select(Scene.active, (ivec2)Mouse.position);
+                if (Mouse.state == MouseState.free) {
+                    if (!isBoxSelecting && Mouse.isDown(MouseButton.left)) {
+                        isBoxSelecting = true;
+                        boxSelectStart = (ivec2)Mouse.position;
+                    } else if (isBoxSelecting && Mouse.isReleased(MouseButton.left)) {
+                        isBoxSelecting = false;
+                        var sel = Mousepicking.select(Scene.active, boxSelectStart, (ivec2)Mouse.position);
                     
-                    if (!Keyboard.isDown(key.LeftShift)) selection.Clear();
-                    if (r is null) selection.Clear();
-                    else if (selection.Contains(r.gameobject)) selection.Remove(r.gameobject);
-                    else selection.AddLast(r.gameobject);
+                        if (Keyboard.isDown(key.LeftShift)) {
+                            foreach (var s in sel) if (s.gameobject is not null && !selection.Contains(s.gameobject)) selection.AddLast(s.gameobject);
+                        } else {
+                            selection.Clear();
+                            foreach (var s in sel) if (s.gameobject is not null) selection.AddLast(s.gameobject);
+                        }
+                    } else if (Mouse.isPressed(MouseButton.left)) {
+                        var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
+                        
+                        if (Keyboard.isDown(key.LeftShift)) {
+                            if (selection.Contains(obj)) selection.Remove(obj);
+                            else if (obj is not null) selection.AddLast(obj);
+                        } else {
+                            selection.Clear();
+                            if (obj is not null) selection.AddLast(obj);
+                        }
+                    }
+                    if (isBoxSelecting) {
+                        canvas.rect(boxSelectStart, (Mouse.position - boxSelectStart), color.rgba(1,1,1,0.5f));
+                    }
                 }
 
+                // highlight selection
                 foreach (var g in selection) {
                     //g.transform.rotate(vec3.unity, 0.05f);
                     for (int i = 0; i < 10; i++) {
@@ -120,7 +150,6 @@ namespace Engine {
             GL.PointSize(10);
 
             
-
         }
 
         internal override void renderLights() {
@@ -132,6 +161,7 @@ namespace Engine {
 
 
             canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
+            canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
 
             canvas.dispatchFrame();
         }
