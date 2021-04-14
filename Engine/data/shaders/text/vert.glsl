@@ -22,6 +22,6 @@ void main() {
 
     v2f.uv = a_Uv;
     v2f.color = a_Color;
-
-    gl_Position = camera.projection * vec4(a_Pos.xy, 0, 1.0);
+    
+    gl_Position = camera.projection * vec4(a_Pos, 0, 1.0);
 }

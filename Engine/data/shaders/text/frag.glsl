@@ -9,6 +9,7 @@
 
 uniform sampler2D atlas;
 
+
 in V2F {
     vec2 uv;
     vec4 color;
