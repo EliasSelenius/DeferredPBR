@@ -25,7 +25,6 @@ namespace Engine {
         Scene editorScene = new();
 
         ivec2 boxSelectStart;
-        bool isBoxSelecting;
 
         private Editor() {
             Application.window.Resize += onWindowResize;
@@ -100,34 +99,36 @@ namespace Engine {
 
                 // handle selections
                 if (Mouse.state == MouseState.free) {
-                    if (!isBoxSelecting && Mouse.isDown(MouseButton.left)) {
-                        isBoxSelecting = true;
+                    if (Mouse.isPressed(MouseButton.left)) {
                         boxSelectStart = (ivec2)Mouse.position;
-                    } else if (isBoxSelecting && Mouse.isReleased(MouseButton.left)) {
-                        isBoxSelecting = false;
-                        var sel = Mousepicking.select(Scene.active, boxSelectStart, (ivec2)Mouse.position);
-                    
-                        if (Keyboard.isDown(key.LeftShift)) {
-                            foreach (var s in sel) if (s.gameobject is not null && !selection.Contains(s.gameobject)) selection.AddLast(s.gameobject);
-                        } else {
-                            selection.Clear();
-                            foreach (var s in sel) if (s.gameobject is not null) selection.AddLast(s.gameobject);
-                        }
-                    } else if (Mouse.isPressed(MouseButton.left)) {
-                        var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
-                        
-                        if (Keyboard.isDown(key.LeftShift)) {
-                            if (selection.Contains(obj)) selection.Remove(obj);
-                            else if (obj is not null) selection.AddLast(obj);
-                        } else {
-                            selection.Clear();
-                            if (obj is not null) selection.AddLast(obj);
-                        }
-                    }
-                    if (isBoxSelecting) {
+                    } else if(Mouse.isDown(MouseButton.left)) {
                         canvas.rect(boxSelectStart, (Mouse.position - boxSelectStart), color.rgba(1,1,1,0.5f));
+                    } else if (Mouse.isReleased(MouseButton.left)) {
+                        var mpos = (ivec2)Mouse.position;
+
+                        if (boxSelectStart.x == mpos.x && boxSelectStart.y == mpos.y) { // single selection:
+                            var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
+                            
+                            if (Keyboard.isDown(key.LeftShift)) {
+                                if (selection.Contains(obj)) selection.Remove(obj);
+                                else if (obj is not null) selection.AddLast(obj);
+                            } else {
+                                selection.Clear();
+                                if (obj is not null) selection.AddLast(obj);
+                            }
+                        } else { // box selection
+                            var sel = Mousepicking.select(Scene.active, boxSelectStart, (ivec2)Mouse.position);
+                        
+                            if (Keyboard.isDown(key.LeftShift)) {
+                                foreach (var s in sel) if (s.gameobject is not null && !selection.Contains(s.gameobject)) selection.AddLast(s.gameobject);
+                            } else {
+                                selection.Clear();
+                                foreach (var s in sel) if (s.gameobject is not null) selection.AddLast(s.gameobject);
+                            }
+                        }
                     }
                 }
+
 
                 // highlight selection
                 foreach (var g in selection) {

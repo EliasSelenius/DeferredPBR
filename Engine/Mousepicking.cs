@@ -56,6 +56,7 @@ namespace Engine {
             var min = math.min(fromCoord, toCoord);
             var max = math.max(fromCoord, toCoord);
             var size = max - min;
+            size = math.max(size, ivec2.one);
             var ps = read(min.x, min.y, size.x, size.y);
 
             var res = new List<IRenderer>();
