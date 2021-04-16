@@ -42,6 +42,12 @@ namespace Engine {
             Renderer.updateCamera(ref viewMatrix, ref projectionMatrix);
         }
 
+
+        protected override void onEditorRender() {
+            //screenToRay((0, 0), out vec3 ray);
+
+        }
+
     }
 
     public class CameraFlyController : Component {

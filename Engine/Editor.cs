@@ -2,6 +2,7 @@ using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace Engine {
 
@@ -24,7 +25,9 @@ namespace Engine {
         public static readonly Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
 
-        ivec2 boxSelectStart;
+        ivec2 lastLeftclickPos;
+
+        TextEditor textEditor = new();
 
         private Editor() {
             Application.window.Resize += onWindowResize;
@@ -74,6 +77,23 @@ namespace Engine {
                 selection.Clear();
             }
 
+            if (Keyboard.isDown(key.X)) {
+                contexMenu(lastLeftclickPos, ("delete", () => {}), ("delete parent only", () => {}));
+            }
+
+        }
+
+        static void contexMenu(vec2 pos, params (string text, Action action)[] options) {
+
+            canvas.rect(pos, (130, options.Length * 16), color.hex(0x1e1e1eff));
+            var textcolor = color.hex(0xd4d4d4ff);
+
+            for (int i = 0; i < options.Length; i++) {
+                var o = options[i];
+                canvas.text(pos, Font.arial, 16, o.text, textcolor);
+                pos.y += 16;
+            }
+
         }
 
         internal override void updateCamera() {            
@@ -100,13 +120,13 @@ namespace Engine {
                 // handle selections
                 if (Mouse.state == MouseState.free) {
                     if (Mouse.isPressed(MouseButton.left)) {
-                        boxSelectStart = (ivec2)Mouse.position;
+                        lastLeftclickPos = (ivec2)Mouse.position;
                     } else if(Mouse.isDown(MouseButton.left)) {
-                        canvas.rect(boxSelectStart, (Mouse.position - boxSelectStart), color.rgba(1,1,1,0.5f));
+                        canvas.rect(lastLeftclickPos, (Mouse.position - lastLeftclickPos), color.rgba(1,1,1,0.5f));
                     } else if (Mouse.isReleased(MouseButton.left)) {
                         var mpos = (ivec2)Mouse.position;
 
-                        if (boxSelectStart.x == mpos.x && boxSelectStart.y == mpos.y) { // single selection:
+                        if (lastLeftclickPos.x == mpos.x && lastLeftclickPos.y == mpos.y) { // single selection:
                             var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
                             
                             if (Keyboard.isDown(key.LeftShift)) {
@@ -117,7 +137,7 @@ namespace Engine {
                                 if (obj is not null) selection.AddLast(obj);
                             }
                         } else { // box selection
-                            var sel = Mousepicking.select(Scene.active, boxSelectStart, (ivec2)Mouse.position);
+                            var sel = Mousepicking.select(Scene.active, lastLeftclickPos, (ivec2)Mouse.position);
                         
                             if (Keyboard.isDown(key.LeftShift)) {
                                 foreach (var s in sel) if (s.gameobject is not null && !selection.Contains(s.gameobject)) selection.AddLast(s.gameobject);
@@ -135,6 +155,17 @@ namespace Engine {
                     //g.transform.rotate(vec3.unity, 0.05f);
                     for (int i = 0; i < 10; i++) {
                         g.calcWorldPosition(out vec3 wpos);
+
+                        foreach (var c in g.children) {
+                            c.calcWorldPosition(out vec3 cpos);
+                            Gizmo.line(wpos, cpos);
+                        }
+
+                        if (g.parent != null) {
+                            g.parent.calcWorldPosition(out vec3 ppos);
+                            Gizmo.line(wpos, ppos);
+                        }
+
                         Gizmo.color(Utils.randColor());
                         Gizmo.point(new vec3(math.rand(), math.rand(), math.rand()) + wpos);
                     }
@@ -158,11 +189,20 @@ namespace Engine {
         }
 
         internal override void renderFrame() {
+
+            foreach (var g in Scene.active.gameobjects) {
+                foreach (var c in g.components) {
+                    c.editorRender();
+                }
+            }
+
             Gizmo.dispatchFrame();
 
 
             canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
-            canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
+            //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
+
+            //textEditor.render(canvas);
 
             canvas.dispatchFrame();
         }
@@ -328,5 +368,18 @@ namespace Engine {
         }
     }
 
+
+    class TextEditor {
+        System.Text.StringBuilder builder;
+
+
+        public void render(Gui.Canvas canvas) {
+            var textcolor = color.hex(0xd4d4d4ff);
+            canvas.text(100, Font.arial, 22, "Some file title", textcolor);
+
+            canvas.rect((110, 140), canvas.size - (220, 250), color.hex(0x2e2e2eff));
+            canvas.rect(100, canvas.size - 200, color.hex(0x1e1e1eff));
+        }
+    }
 
 }

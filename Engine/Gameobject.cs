@@ -168,12 +168,17 @@ namespace Engine {
             onLeave();
         }
 
+        internal void editorRender() {
+            onEditorRender();
+        }
+
 
         protected virtual void onStart() {}
         protected virtual void onUpdate() {}
         protected virtual void onEnter() {}
         protected virtual void onLeave() {}
         protected virtual void onDestroy() {}
+        protected virtual void onEditorRender() {}
 
 
         /* TODO: life hook cycles

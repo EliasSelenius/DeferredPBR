@@ -122,10 +122,10 @@ namespace Engine.Gui {
 
             uint count = (uint)rectBatch.data.vertices.Count;
 
-            vertex(pos, (0, 0), (1, 0, 0, 0.5f));
-            vertex(pos + (size.x, 0), (1, 0), (1, 1, 0, 1));
-            vertex(pos + size, (1, 1), (0, 0, 1, 1));
-            vertex(pos + (0, size.y), (0, 1), (0, 1, 1, 1));
+            vertex(pos, (0, 0), vertcolor);
+            vertex(pos + (size.x, 0), (1, 0), vertcolor);
+            vertex(pos + size, (1, 1), vertcolor);
+            vertex(pos + (0, size.y), (0, 1), vertcolor);
 
             rectBatch.data.addTriangles(new uint[] {
                 count + 2, count + 1, count + 0,
