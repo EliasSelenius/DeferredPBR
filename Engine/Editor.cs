@@ -3,6 +3,7 @@ using Nums;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Text;
 
 namespace Engine {
 
@@ -202,7 +203,7 @@ namespace Engine {
             canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
 
-            //textEditor.render(canvas);
+            textEditor.render(canvas);
 
             canvas.dispatchFrame();
         }
@@ -370,15 +371,34 @@ namespace Engine {
 
 
     class TextEditor {
-        System.Text.StringBuilder builder;
+        List<StringBuilder> lines = new List<StringBuilder> {
+            new StringBuilder("test"),
+            new StringBuilder("testwowo"),
+            new StringBuilder("test dwa"),
+            new StringBuilder("test a hgrwa"),
+            new StringBuilder("tefe"),
+        };
 
+        
 
         public void render(Gui.Canvas canvas) {
             var textcolor = color.hex(0xd4d4d4ff);
             canvas.text(100, Font.arial, 22, "Some file title", textcolor);
 
-            canvas.rect((110, 140), canvas.size - (220, 250), color.hex(0x2e2e2eff));
+
+            var textareapos = new vec2(110, 140);
+
+            vec2 linepos = textareapos;
+            for (int i = 0; i < lines.Count; i++) {
+                canvas.text(linepos, Font.arial, 16, (i+1).ToString() + "    " + lines[i].ToString(), in textcolor);
+                linepos.y += 16;
+            }
+
+            canvas.rectborder(textareapos, (20, linepos.y - textareapos.y), 2, in textcolor);
+            
+            canvas.rect(textareapos, canvas.size - (220, 250), color.hex(0x2e2e2eff));
             canvas.rect(100, canvas.size - 200, color.hex(0x1e1e1eff));
+
         }
     }
 

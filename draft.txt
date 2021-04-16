@@ -13,13 +13,6 @@ to research:
     - sdfgi
 
 
-Editor: 
-    - transform gizmo
-    - highlight
-    - delete menue
-        - 'x' as delete key will open different delete options
-            - delete parent only
-            - delete whole object
 
 
 add "Render targets" 
@@ -27,9 +20,15 @@ add "Render targets"
 
 
 upcomming todos:
-    transform gizmo 
-    object highlight
-   
+    - transform gizmo 
+    - object highlight
+    - delete menue
+        - 'x' as delete key will open different delete options
+            - delete parent only
+            - delete whole object
+    - canvas rect border
+    - canvas rect border radius
+    
 
 
 pirate game idea:

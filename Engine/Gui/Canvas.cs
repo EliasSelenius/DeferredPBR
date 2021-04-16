@@ -134,6 +134,55 @@ namespace Engine.Gui {
 
         }
 
+        public void rectborder(vec2 pos, vec2 size, float thicc, in color color) {
+            convertCoord(ref pos);
+            size.y = -size.y;
+
+            color.color2vec(color, out vec4 vertcolor);
+
+
+            uint i0 = (uint)rectBatch.data.vertices.Count,
+                 i1 = i0 + 1,
+                 i2 = i0 + 2,
+                 i3 = i0 + 3,
+                 i4 = i0 + 4,
+                 i5 = i0 + 5,
+                 i6 = i0 + 6,
+                 i7 = i0 + 7;
+
+            vec2 v1 = pos,
+                 v2 = pos + (size.x, 0),
+                 v3 = pos + size,
+                 v4 = pos + (0, size.y);  
+
+            vertex(v1, (0, 0), vertcolor); // 0
+            vertex(v2, (1, 0), vertcolor); // 1
+            vertex(v3, (1, 1), vertcolor); // 2
+            vertex(v4, (0, 1), vertcolor); // 3
+
+            vertex(v1 + (-thicc, thicc), (0, 1), vertcolor); // 4
+            vertex(v2 + thicc,           (0, 1), vertcolor); // 5
+            vertex(v3 + (thicc, -thicc), (0, 1), vertcolor); // 6
+            vertex(v4 -thicc,            (0, 1), vertcolor); // 7
+
+            rectBatch.data.addTriangles(new uint[] {
+                i0, i1, i4,
+                i4, i1, i5,
+
+                i0, i4, i7,
+                i7, i3, i0,
+
+                i5, i1, i6,
+                i1, i2, i6,
+
+                i2, i3, i6,
+                i3, i7, i6
+            });            
+
+
+
+        }
+
         void test(vec2 pos, vec2 size, float borderRadius, in color color) {
             convertCoord(ref pos);
             size.y = -size.y;
