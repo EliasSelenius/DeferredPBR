@@ -14,14 +14,12 @@ to research:
 
 
 Editor: 
-    - camera controller
-        - Keyboard axis
-    - <done> mouse picking
-    - user interface
-    - <done> gizmo
     - transform gizmo
     - highlight
-    
+    - delete menue
+        - 'x' as delete key will open different delete options
+            - delete parent only
+            - delete whole object
 
 
 add "Render targets" 
