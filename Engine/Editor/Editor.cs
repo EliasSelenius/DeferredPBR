@@ -1,11 +1,12 @@
 using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Collections.Generic;
-using System.Linq;
 using System;
 using System.Text;
+using System.Linq;
 
-namespace Engine {
+namespace Engine.Editor
+{
 
     public enum EditorRenderMode {
         lights,
@@ -13,14 +14,14 @@ namespace Engine {
         solid
     }
 
-    public class Editor : SceneBase {
+    public class SceneViewEditor : SceneBase {
 
         public static bool isOpen => Application.scene == instance;
         public static EditorRenderMode renderMode;
         public static LinkedList<Gameobject> selection = new();
 
-        static Editor instance = new(); 
-        static Editor() { }
+        static SceneViewEditor instance = new(); 
+        static SceneViewEditor() { }
         
 
         public static readonly Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
@@ -30,7 +31,7 @@ namespace Engine {
 
         TextEditor textEditor = new();
 
-        private Editor() {
+        private SceneViewEditor() {
             Application.window.Resize += onWindowResize;
 
             var cam = new Gameobject(
@@ -71,7 +72,7 @@ namespace Engine {
         internal override void update() {
             editorScene.update();
 
-            if (Keyboard.isPressed(key.M)) renderMode = EditorRenderMode.wireframe;
+            //if (Keyboard.isPressed(key.M)) renderMode = EditorRenderMode.wireframe;
 
             if (Keyboard.isPressed(key.Delete)) {
                 foreach (var s in selection) s.destroy();
@@ -203,6 +204,7 @@ namespace Engine {
             canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
 
+            Console.render(canvas);
             textEditor.render(canvas);
 
             canvas.dispatchFrame();
@@ -242,8 +244,8 @@ namespace Engine {
                 Mouse.state = MouseState.free;
             }
 
-            Editor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
-            Editor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
+            SceneViewEditor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
+            SceneViewEditor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
         }
 
         public void focus(in vec3 point) {
@@ -252,136 +254,86 @@ namespace Engine {
         }
     }
 
-    public static class Gizmo {
-        static Shader shader;
-
-        static Batch points = new(PrimitiveType.Points);
-        static Batch lines = new(PrimitiveType.Lines);
-
-        static vec4 currentColor = vec4.one;
-
-        static Gizmo() {
-            shader = Assets.getShader("gizmo");
-        }
-
-        public static void color(in vec4 color) => currentColor = color;
-        public static void color(in color color) => color.color2vec(in color, out currentColor);
-
-        public static void point(vec3 pos) {
-            points.vertex(pos, currentColor);
-            points.index(points.vertices.Count - 1);
-        }
-        public static void line(vec3 start, vec3 end) {
-            lines.vertex(start, currentColor);
-            lines.vertex(end, currentColor);
-
-            lines.index(lines.vertices.Count - 2);
-            lines.index(lines.vertices.Count - 1);
-        }
-
-        public static void bezier(vec3 p0, vec3 p1, vec3 p2) {
-            const int res = 20;
-            float t = 0;
-            
-            line(p0, p1);
-            line(p1, p2);
-            for (int i = 0; i < res; i++) {
-                line(math.bezier(p0, p1, p2, t), math.bezier(p0, p1, p2, t += 1f / res));
-            }
-        }
-
-
-        internal static void dispatchFrame() {
-            shader.use();
-
-            points.render();
-            lines.render();
-        }
-
-        class Batch {
-            public PrimitiveType primitiveType;
-            public List<posColorVertex> vertices = new();
-            public List<uint> indices = new();
-
-            int vao, vbo, ebo;
-
-            public Batch(PrimitiveType pType) {
-                primitiveType = pType;
-
-                vbo = GLUtils.createBuffer();
-                ebo = GLUtils.createBuffer();
-                vao = GLUtils.createVertexArray<posColorVertex>(vbo, ebo);
-            }
-
-            public void render() {
-                GLUtils.bufferdata(vbo, vertices.ToArray());
-                GLUtils.bufferdata(ebo, indices.ToArray());
-                
-                GL.BindVertexArray(vao);
-                GL.DrawElements(primitiveType, indices.Count, DrawElementsType.UnsignedInt, 0);
-                GL.BindVertexArray(0);
-
-                clear();
-            }
-
-            void clear() {
-                vertices.Clear();
-                indices.Clear();
-            }
-
-            public void vertex(in vec3 pos, in vec4 color) => vertices.Add(new posColorVertex { position = pos, color = color });
-            public void index(int i) => indices.Add((uint)i);
-        }
-    }
-
-
-    class SceneViewWindow : Gui.Window {
-        
-        public SceneViewWindow() : base("Scene", (200, 400)) {
-
-        }
-
-        protected override void onAttached() {
-        }
-
-        protected override void renderContent() {
-            
-            for (int i = 0; i < Scene.active.gameobjects.Count; i++) {
-                var o = Scene.active.gameobjects[i];
-                if (o.isRootObject) {
-                    obj(i, o);
-                }
-            }
-        }
-        
-
-        void obj(int i, Gameobject o) {
-            start((width, 16));
-            text("Gameobject " + i, 16, system.theme.textColor);
-            if (o.isParent) {
-                start((20, 0), (width - 20, 0));
-                for (int j = 0; j < o.children.Count; j++) {
-                    obj(i, o.children[j]);
-                }
-                end();
-            }
-            end();
-        }
-    }
-
-
     class TextEditor {
-        List<StringBuilder> lines = new List<StringBuilder> {
-            new StringBuilder("test"),
-            new StringBuilder("testwowo"),
-            new StringBuilder("test dwa"),
-            new StringBuilder("test a hgrwa"),
-            new StringBuilder("tefe"),
-        };
-
+        static TextEditor selected = null;
         
+        static TextEditor() {
+            Keyboard.onKeyPressed += keyboard_keypressed;
+            Keyboard.onTextInput += keyboard_textinput;
+        }
+
+        static void keyboard_keypressed(key k, keymod m) {
+            var s = selected;
+            if (s == null) return;
+
+            if (k == key.Up) s.moveCursor(0, -1); 
+            else if (k == key.Down) s.moveCursor(0, 1); 
+            else if (k == key.Left) s.moveCursor(-1, 0); 
+            else if (k == key.Right) s.moveCursor(1, 0); 
+
+            else if (k == key.Enter) {
+                s.lines.AddAfter(s.lines.Find(s.currentLine), new StringBuilder()); 
+                s.moveCursor(0, 1);
+            } else if (k == key.Backspace) {
+                if (s.cursor.x == 0) {
+                    if (s.cursor.y != 0) {
+                        s.lines.Remove(s.currentLine);
+                        s.moveCursor(int.MaxValue, -1);
+                    }
+                } else {
+                    s.currentLine.Remove(s.cursor.x - 1, 1);
+                    s.moveCursor(-1, 0);
+                }
+            } else if (k == key.Delete) {
+                if (s.cursor.x == s.currentLine.Length) {
+                    if (s.cursor.y != s.lines.Count-1) {
+                        s.lines.Remove(s.currentLine);
+                        s.moveCursor(0, 0);
+                    }
+                } else {
+                    s.currentLine.Remove(s.cursor.x, 1);
+                }
+            } else if (k == key.Tab) {
+                s.input("    ");
+            }
+        }
+
+
+        static void keyboard_textinput(string text) {
+            selected?.input(text);
+        }
+        
+        
+        LinkedList<StringBuilder> lines = new LinkedList<StringBuilder>();
+        StringBuilder currentLine;
+
+        ivec2 cursor = ivec2.zero;
+        bool closed = true;
+
+        public TextEditor() {
+            closed = false;
+            selected = this;
+
+            // add first initial line
+            currentLine = new StringBuilder();
+            lines.AddLast(currentLine);
+        }
+
+        private void moveCursor(int x, int y) {
+            currentLine = lines.ElementAt(cursor.y = math.clamp(cursor.y += y, 0, lines.Count-1));
+            cursor.x = math.clamp(cursor.x += x, 0, currentLine.Length);
+        }
+
+        private void input(string text) {
+            Console.notify(text + " was pressed");
+            
+            currentLine.Insert(cursor.x, text);
+            cursor.x += text.Length;
+        }
 
         public void render(Gui.Canvas canvas) {
+            if (closed) return;
+
             var textcolor = color.hex(0xd4d4d4ff);
             canvas.text(100, Font.arial, 22, "Some file title", textcolor);
 
@@ -389,12 +341,17 @@ namespace Engine {
             var textareapos = new vec2(110, 140);
 
             vec2 linepos = textareapos;
-            for (int i = 0; i < lines.Count; i++) {
-                canvas.text(linepos, Font.arial, 16, (i+1).ToString() + "    " + lines[i].ToString(), in textcolor);
+            int i = 0;
+            foreach(var sb in lines) {
+                canvas.text(linepos, Font.arial, 16, (i+1).ToString() + "    " + sb.ToString(), in textcolor);
                 linepos.y += 16;
+                i++;
             }
 
-            canvas.rectborder(textareapos, (20, linepos.y - textareapos.y), 2, in textcolor);
+            // cursor
+            canvas.rect(textareapos + (20 + cursor.x * 10, cursor.y * 16), (2, 16), in color.white);
+
+            canvas.rectborder(textareapos, (20, linepos.y - textareapos.y), 1, in textcolor);
             
             canvas.rect(textareapos, canvas.size - (220, 250), color.hex(0x2e2e2eff));
             canvas.rect(100, canvas.size - 200, color.hex(0x1e1e1eff));
@@ -403,3 +360,4 @@ namespace Engine {
     }
 
 }
+

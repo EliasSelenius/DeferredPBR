@@ -48,20 +48,7 @@ namespace Engine.Gui {
     }
 
 
-    public abstract class View {
-
-        static readonly Dictionary<string, Textbox> cachedTextMeshes = new Dictionary<string, Textbox>();
-        static Mesh<posUvVertex> rectMesh;
-        static View() {
-            //activeCanvas = new MenuCanvas();
-            rectMesh = new Mesh<posUvVertex>(MeshFactory<posUvVertex>.genQuad());
-        }
-
-
-        public Canvas canvas { get; internal set; }
-        protected vec2 canvasSize => new vec2(canvas.width, canvas.height);
-        protected int canvasWidth => canvas.width;
-        protected int canvasHeight => canvas.height;
+    /*public abstract class View {
 
         protected vec2 size => currentBox.size;
         protected float width => size.x;
@@ -75,7 +62,6 @@ namespace Engine.Gui {
         #region start ... end 
         
         public void start(vec2 pos, vec2 size) {
-
             boxStack.Push(new rectTransform {
                 pos = currentBox.pos + pos,
                 size = size
@@ -109,17 +95,12 @@ namespace Engine.Gui {
         #region text
 
 
-        // TODO: there needs to be a mesh per font
-        Mesh<posUvVertex> textmesh = new Mesh<posUvVertex>();
 
         public void text(string text, int fontSize, in color color) {
             var pos = currentBox.pos;
 
-            pos -= canvasSize / 2f;
-            pos *= (1, -1);
-
-            //Text.genText(text, pos, fontSize, Font.arial, textmesh.data);
         }
+        
 
         #endregion
 
@@ -193,5 +174,5 @@ namespace Engine.Gui {
 
 
 
-    } 
+    }*/
 }

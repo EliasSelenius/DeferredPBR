@@ -102,10 +102,10 @@ namespace Engine {
             for (int i = 0; i < bytes.Length; i += bpp) {
                 var pixelindex = (i / bpp);
                 pixels[pixelindex % bitmap.Width, pixelindex / bitmap.Width] = new color {
-                    red = toFloat(bytes[i + 2]),
-                    green = toFloat(bytes[i + 1]),
-                    blue = toFloat(bytes[i]),
-                    alpha = bpp == 4 ? toFloat(bytes[i + 3]) : 1f
+                    r = toFloat(bytes[i + 2]),
+                    g = toFloat(bytes[i + 1]),
+                    b = toFloat(bytes[i]),
+                    a = bpp == 4 ? toFloat(bytes[i + 3]) : 1f
                 };
                 
                 //new color32(bytes[i + 2], bytes[i + 1], bytes[i], bpp == 4 ? bytes[i + 3] : (byte)255);

@@ -5,6 +5,7 @@ using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Xml;
 using System;
+using Engine.Editor;
 
 namespace Engine {
     public static class Application {
@@ -13,6 +14,7 @@ namespace Engine {
 
 
         public static float deltaTime;
+        public static double time;
 
         public static void run(Action userload) {
 
@@ -39,14 +41,15 @@ namespace Engine {
 
 
         static void update(FrameEventArgs e) {
+            time += e.Time;
             deltaTime = (float)e.Time;
 
             
             scene.update();
 
             if (Keyboard.isPressed(key.F1)) {
-                if (Editor.isOpen) Editor.close();
-                else Editor.open();
+                if (SceneViewEditor.isOpen) SceneViewEditor.close();
+                else SceneViewEditor.open();
             }
         }
     }

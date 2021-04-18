@@ -5,7 +5,7 @@ using System;
 
 namespace Engine.Gui {
 
-    public class WindowingSystem : View {
+    /*public class WindowingSystem : View {
         
         readonly LinkedList<Window> windows = new LinkedList<Window>();
         internal Window currentWindow;
@@ -144,5 +144,5 @@ namespace Engine.Gui {
             end();
 
         }
-    }
+    }*/
 }

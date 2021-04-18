@@ -3,7 +3,8 @@ using System;
 namespace Engine {
     public static class Keyboard {
         static Keyboard() {
-
+            Application.window.TextInput += window_textinput;
+            Application.window.KeyDown += window_keyPressed;
         }
 
         public static bool isDown(key key) => Application.window.IsKeyDown((OpenTK.Windowing.GraphicsLibraryFramework.Keys)key);
@@ -12,7 +13,33 @@ namespace Engine {
 
         public static float getAxis(key k1, key k2) => Convert.ToSingle(isDown(k1)) * -1f + Convert.ToSingle(isDown(k2)); 
         
+        private static void window_textinput(OpenTK.Windowing.Common.TextInputEventArgs args) => onTextInput?.Invoke(args.AsString);
+        public static event Action<string> onTextInput; 
 
+        private static void window_keyPressed(OpenTK.Windowing.Common.KeyboardKeyEventArgs args) => onKeyPressed?.Invoke((key)args.Key, (keymod)args.Modifiers);
+        public static event Action<key, keymod> onKeyPressed;
+
+    }
+
+    [Flags]
+    public enum keymod {
+        /// <summary>If one or more Shift keys were held down.</summary>
+        shift = 0x0001,
+
+        /// <summary>If one or more Control keys were held down.</summary>
+        control = 0x0002,
+
+        /// <summary>If one or more Alt keys were held down.</summary>
+        alt = 0x0004,
+
+        /// <summary>If one or more Super keys were held down.</summary>
+        super = 0x0008,
+
+        /// <summary>If caps lock is enabled.</summary>
+        capslock = 0x0010,
+
+        /// <summary>If num lock is enabled.</summary>
+        numlock = 0x0020,
     }
 
     // NOTE: extracted from OpenTK
