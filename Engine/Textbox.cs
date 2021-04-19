@@ -15,14 +15,12 @@ namespace Engine {
 
 
 
-    public struct text {
-        public string value;
-        public Font font;
-        public int fontSize;
-        public color color;
-    }
-
     public static class Text {
+
+        internal static float length(string text, Font font) {
+            return 0f;
+        }
+
         internal static void genText(string text, vec2 textOffset, int fontSize, in color color, Font font, Meshdata<Gui.textVertex> meshdata) {
 
             uint initialVertCount = (uint)meshdata.vertices.Count;

@@ -205,7 +205,10 @@ namespace Engine.Editor
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
 
             Console.render(canvas);
-            textEditor.render(canvas);
+            TextEditor.selected.render(canvas);
+            if (Keyboard.isPressed(key.Escape)) {
+
+            }
 
             canvas.dispatchFrame();
         }
@@ -255,7 +258,7 @@ namespace Engine.Editor
     }
 
     class TextEditor {
-        static TextEditor selected = null;
+        public static TextEditor selected = null;
         
         static TextEditor() {
             Keyboard.onKeyPressed += keyboard_keypressed;
@@ -272,13 +275,18 @@ namespace Engine.Editor
             else if (k == key.Right) s.moveCursor(1, 0); 
 
             else if (k == key.Enter) {
-                s.lines.AddAfter(s.lines.Find(s.currentLine), new StringBuilder()); 
+                var sb = new StringBuilder(s.currentLine.ToString().Substring(s.cursor.x));
+                s.currentLine.Remove(s.cursor.x, s.currentLine.Length - s.cursor.x);
+                s.lines.AddAfter(s.lines.Find(s.currentLine), sb); 
                 s.moveCursor(0, 1);
             } else if (k == key.Backspace) {
                 if (s.cursor.x == 0) {
                     if (s.cursor.y != 0) {
+                        var o = s.lines.ElementAt(s.cursor.y - 1);
+                        var l = o.Length;
+                        o.Append(s.currentLine.ToString());
                         s.lines.Remove(s.currentLine);
-                        s.moveCursor(int.MaxValue, -1);
+                        s.moveCursor(l, -1);
                     }
                 } else {
                     s.currentLine.Remove(s.cursor.x - 1, 1);
@@ -287,6 +295,7 @@ namespace Engine.Editor
             } else if (k == key.Delete) {
                 if (s.cursor.x == s.currentLine.Length) {
                     if (s.cursor.y != s.lines.Count-1) {
+                        s.lines.ElementAt(s.cursor.y + 1).Insert(0, s.currentLine.ToString());
                         s.lines.Remove(s.currentLine);
                         s.moveCursor(0, 0);
                     }
@@ -308,14 +317,12 @@ namespace Engine.Editor
         StringBuilder currentLine;
 
         ivec2 cursor = ivec2.zero;
-        bool closed = true;
 
         public TextEditor() {
-            closed = false;
             selected = this;
 
             // add first initial line
-            currentLine = new StringBuilder();
+            currentLine = new StringBuilder("Nice text rendering dude!");
             lines.AddLast(currentLine);
         }
 
@@ -332,7 +339,6 @@ namespace Engine.Editor
         }
 
         public void render(Gui.Canvas canvas) {
-            if (closed) return;
 
             var textcolor = color.hex(0xd4d4d4ff);
             canvas.text(100, Font.arial, 22, "Some file title", textcolor);
@@ -353,6 +359,10 @@ namespace Engine.Editor
 
             canvas.rectborder(textareapos, (20, linepos.y - textareapos.y), 1, in textcolor);
             
+
+            canvas.rect((canvas.width - 110, 100), 10, in color.gray);
+
+
             canvas.rect(textareapos, canvas.size - (220, 250), color.hex(0x2e2e2eff));
             canvas.rect(100, canvas.size - 200, color.hex(0x1e1e1eff));
 

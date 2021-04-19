@@ -38,37 +38,6 @@ namespace Engine {
                 this.offset = offset;
                 this.advance = advance;
             }
-
-            public void addChar(Meshdata<posUvVertex> data, vec2 o) {
-                void addv(vec2 pos, vec2 uv) {
-                    pos += o;
-                    pos /= font.lineHeight;
-                    data.vertices.Add(new posUvVertex {
-                        position = new vec3(pos.x, pos.y, 0),
-                        uv = uv 
-                    });
-                }
-
-                var atlasSize = new vec2(font.atlas.width, font.atlas.height);
-
-                var p = pos / atlasSize;
-                var n = size / atlasSize;
-                var pn = p + n;
-
-                addv((offset + (0, size.y)) * new vec2(1, -1), (pn.y, p.x));
-                addv((offset + size)        * new vec2(1, -1), pn.yx);
-                addv( offset                * new vec2(1, -1), p.yx);
-                addv((offset + (size.x, 0)) * new vec2(1, -1), (p.y, pn.x));
-
-                //uint i = (uint)charIndex * 4;
-                uint i = (uint)data.vertices.Count - 4;
-
-                data.addTriangles(new uint[] {
-                    i + 0, i + 1, i + 2,
-                    i + 1, i + 3, i + 2
-                });
-
-            }
         }
 
         public Font(string fontdata, Texture2D atlas) : this(fontdata.Split('\n', '\r'), atlas) {}
