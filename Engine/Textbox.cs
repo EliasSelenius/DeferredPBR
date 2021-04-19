@@ -17,8 +17,13 @@ namespace Engine {
 
     public static class Text {
 
-        internal static float length(string text, Font font) {
-            return 0f;
+        internal static float length(string text, int length, int fontsize, Font font) {
+            float accl = 0;
+            for (int i = 0; i < length; i++) {
+                var glyph = font.getGlyph(text[i]);
+                accl += glyph.advance;
+            }
+            return accl / font.lineHeight * fontsize;
         }
 
         internal static void genText(string text, vec2 textOffset, int fontSize, in color color, Font font, Meshdata<Gui.textVertex> meshdata) {
@@ -55,13 +60,12 @@ namespace Engine {
                 var n = glyph.size / atlasSize;
                 var pn = p + n;
 
-                var nPos = glyph.pos / font.lineHeight;
                 var nSize = glyph.size / font.lineHeight;
                 var nOffset = glyph.offset / font.lineHeight;
 
                 addv((glyph.offset + (0, glyph.size.y)) * new vec2(1, -1), (pn.y, p.x));
-                addv((glyph.offset + glyph.size) * new vec2(1, -1), pn.yx);
-                addv(glyph.offset * new vec2(1, -1), p.yx);
+                addv((glyph.offset + glyph.size)        * new vec2(1, -1),  pn.yx);
+                addv(glyph.offset                       * new vec2(1, -1),  p.yx);
                 addv((glyph.offset + (glyph.size.x, 0)) * new vec2(1, -1), (p.y, pn.x));
 
 

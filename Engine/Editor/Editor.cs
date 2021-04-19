@@ -349,13 +349,14 @@ namespace Engine.Editor
             vec2 linepos = textareapos;
             int i = 0;
             foreach(var sb in lines) {
-                canvas.text(linepos, Font.arial, 16, (i+1).ToString() + "    " + sb.ToString(), in textcolor);
+                canvas.text(linepos, Font.arial, 16, (i+1).ToString(), in textcolor);
+                canvas.text((linepos.x + 20, linepos.y), Font.arial, 16, sb.ToString(), in textcolor);
                 linepos.y += 16;
                 i++;
             }
 
             // cursor
-            canvas.rect(textareapos + (20 + cursor.x * 10, cursor.y * 16), (2, 16), in color.white);
+            canvas.rect(textareapos + (20 + Text.length(currentLine.ToString(), cursor.x, 16, Font.arial), cursor.y * 16), (2, 16), in color.white);
 
             canvas.rectborder(textareapos, (20, linepos.y - textareapos.y), 1, in textcolor);
             
