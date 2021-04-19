@@ -9,15 +9,15 @@ using System;
 namespace Engine {
     public static class Assets {
 
-        public static Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
-        static Dictionary<string, string> shaderSources = new Dictionary<string, string>();
+        public static Dictionary<string, Shader> shaders = new();
+        static Dictionary<string, string> shaderSources = new();
 
-        public static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
-        public static Dictionary<string, PBRMaterial> materials = new Dictionary<string, PBRMaterial>();
+        public static Dictionary<string, Texture2D> textures = new();
+        public static Dictionary<string, PBRMaterial> materials = new();
 
-        public static Dictionary<string, Prefab> prefabs = new Dictionary<string, Prefab>();
+        public static Dictionary<string, Prefab> prefabs = new();
 
-        public static Dictionary<string, Font> fonts = new Dictionary<string, Font>();
+        public static Dictionary<string, Gui.Font> fonts = new();
 
         static List<IResourceProvider> providers = new List<IResourceProvider>();
 
@@ -53,7 +53,7 @@ namespace Engine {
                 foreach (var res in provider.enumerate("fnt")) {
                     var i = res.LastIndexOf(".");
                     var atlasName = res.Substring(0, i) + ".png";
-                    fonts.Add(res, new Font(provider.getText(res), getTexture2D(atlasName)));
+                    fonts.Add(res, new Gui.Font(provider.getText(res), getTexture2D(atlasName)));
                 }
             }
 
@@ -84,7 +84,7 @@ namespace Engine {
         public static Shader getShader(string name) => shaders[name];
         public static Texture2D getTexture2D(string name) => textures[name];
         public static PBRMaterial getMaterial(string name) => materials[name];
-        public static Font getFont(string name) => fonts[name];
+        public static Gui.Font getFont(string name) => fonts[name];
         public static Prefab getPrefab(string name) => prefabs[name];
 
         static void loadFromXml(XmlDocument doc) {

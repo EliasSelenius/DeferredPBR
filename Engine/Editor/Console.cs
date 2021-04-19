@@ -25,7 +25,7 @@ namespace Engine.Editor {
                     i--;
                 }
                 
-                canvas.text((0, y), Font.arial, 16, e.message, e.level switch { Level.notification => color.white, Level.warning => color.yellow, Level.error => color.red });
+                canvas.text((0, y), Gui.Font.arial, 16, e.message, e.level switch { Level.notification => color.white, Level.warning => color.yellow, Level.error => color.red });
                 y += 16;
             }
         } 

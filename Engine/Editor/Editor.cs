@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using System.Linq;
+using Engine.Gui;
 
-namespace Engine.Editor
-{
+namespace Engine.Editor {
 
     public enum EditorRenderMode {
         lights,
@@ -92,7 +92,7 @@ namespace Engine.Editor
 
             for (int i = 0; i < options.Length; i++) {
                 var o = options[i];
-                canvas.text(pos, Font.arial, 16, o.text, textcolor);
+                canvas.text(pos, Gui.Font.arial, 16, o.text, textcolor);
                 pos.y += 16;
             }
 
@@ -278,7 +278,7 @@ namespace Engine.Editor
                 var sb = new StringBuilder(s.currentLine.ToString().Substring(s.cursor.x));
                 s.currentLine.Remove(s.cursor.x, s.currentLine.Length - s.cursor.x);
                 s.lines.AddAfter(s.lines.Find(s.currentLine), sb); 
-                s.moveCursor(0, 1);
+                s.moveCursor(-s.cursor.x, 1);
             } else if (k == key.Backspace) {
                 if (s.cursor.x == 0) {
                     if (s.cursor.y != 0) {

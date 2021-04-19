@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using Nums;
 
-namespace Engine {
-
+namespace Engine.Gui {
     public class Font {
 
         
         public static readonly Font arial = Assets.getFont("Engine.data.fonts.arial.fnt");
 
         public readonly Texture2D atlas;
+        public vec2 atlasSize => new vec2(atlas.width, atlas.height);
+
         public readonly List<Glyph> glyphs = new List<Glyph>();
 
         public int paddingTop { get; private set; }
@@ -25,18 +26,33 @@ namespace Engine {
         public class Glyph {
             public readonly Font font;
             public readonly int id;
-            public readonly vec2 pos;
-            public readonly vec2 size;
-            public readonly vec2 offset;
             public readonly float advance;
+
+            public readonly vec2 v0, v1, v2, v3;
+            public readonly vec2 uv0, uv1, uv2, uv3;
 
             public Glyph(Font font, int id, vec2 pos, vec2 size, vec2 offset, float advance) {
                 this.font = font;
                 this.id = id;
-                this.pos = pos;
-                this.size = size;
-                this.offset = offset;
-                this.advance = advance;
+                this.advance = advance / font.lineHeight;
+
+                // compute vertex attribute values
+
+                // uvs
+                var p = pos / font.atlasSize;
+                var n = size / font.atlasSize;
+                var pn = p + n;
+                uv0 = (pn.y, p.x);
+                uv1 = pn.yx;
+                uv2 = p.yx;
+                uv3 = (p.y, pn.x);
+
+                // pos
+                vec2 invy = new vec2(1, -1);
+                v0 = invy * (offset + (0, size.y)) / font.lineHeight;
+                v1 = invy * (offset + size)        / font.lineHeight;
+                v2 = invy * offset                 / font.lineHeight;
+                v3 = invy * (offset + (size.x, 0)) / font.lineHeight;
             }
         }
 

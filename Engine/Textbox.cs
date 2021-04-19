@@ -13,61 +13,55 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Engine {
 
-
-
     public static class Text {
 
-        internal static float length(string text, int length, int fontsize, Font font) {
+        internal static float length(string text, int length, int fontsize, Gui.Font font) {
             float accl = 0;
             for (int i = 0; i < length; i++) {
                 var glyph = font.getGlyph(text[i]);
                 accl += glyph.advance;
             }
-            return accl / font.lineHeight * fontsize;
+            return accl * fontsize;
         }
 
-        internal static void genText(string text, vec2 textOffset, int fontSize, in color color, Font font, Meshdata<Gui.textVertex> meshdata) {
+        internal static void genText(string text, vec2 textOffset, int fontSize, in color color, Gui.Font font, Meshdata<Gui.textVertex> meshdata) {
 
             uint initialVertCount = (uint)meshdata.vertices.Count;
             color.color2vec(color, out vec4 vertColor);
 
-            vec2 pos = vec2.zero;
+            vec2 offset = vec2.zero;
             for(int i = 0; i < text.Length; i++) {
                 var g = font.getGlyph(text[i]);
-                addChar(g, i, pos);
-                pos.x += g.advance;// * fontSize;
+                addChar(g, i);
+                offset.x += g.advance;// * fontSize;
             }
             //meshdata.genNormals();
 
-            void addChar(Font.Glyph glyph, int charIndex, vec2 offset) {
+            void addChar(Gui.Font.Glyph glyph, int charIndex) {
+                
                 void addv(vec2 pos, vec2 uv) {
-                    pos += offset;
-                    pos /= font.lineHeight;
                     
+                    // the advance
+                    pos += offset;
+                    
+                    // scale the nomalized values to the fontsize
                     pos *= fontSize;
+
+                    // apply text offset
                     pos += textOffset;
 
                     meshdata.vertices.Add(new Gui.textVertex {
-                        position = new vec2(pos.x, pos.y),
+                        position = pos,
                         uv = uv,
                         color = vertColor
                     });
                 }
 
-                var atlasSize = new vec2(font.atlas.width, font.atlas.height);
 
-                var p = glyph.pos / atlasSize;
-                var n = glyph.size / atlasSize;
-                var pn = p + n;
-
-                var nSize = glyph.size / font.lineHeight;
-                var nOffset = glyph.offset / font.lineHeight;
-
-                addv((glyph.offset + (0, glyph.size.y)) * new vec2(1, -1), (pn.y, p.x));
-                addv((glyph.offset + glyph.size)        * new vec2(1, -1),  pn.yx);
-                addv(glyph.offset                       * new vec2(1, -1),  p.yx);
-                addv((glyph.offset + (glyph.size.x, 0)) * new vec2(1, -1), (p.y, pn.x));
-
+                addv(glyph.v0, glyph.uv0);
+                addv(glyph.v1, glyph.uv1);
+                addv(glyph.v2, glyph.uv2);
+                addv(glyph.v3, glyph.uv3);
 
                 uint i = initialVertCount + (uint)charIndex * 4;
 
@@ -80,7 +74,7 @@ namespace Engine {
 
     }
 
-    public class Textbox {
+    /*public class Textbox {
         private Font font;
         private readonly Mesh<posUvVertex> mesh = new Mesh<posUvVertex>();
 
@@ -157,6 +151,6 @@ namespace Engine {
             font.atlas.bind(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0);
             mesh.render();
         }
-    }
+    }*/
 }
 
