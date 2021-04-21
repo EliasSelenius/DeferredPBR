@@ -13,6 +13,11 @@ namespace Engine.Voxels {
     }
 
     public class Voxelgrid {
+        public static Voxelgrid grid;
+        public Voxelgrid() {
+            grid = this;
+        }
+
         const int chunkSize = 16;
         readonly Dictionary<ivec3, Chunk> chunks = new Dictionary<ivec3, Chunk>();
 
@@ -36,7 +41,10 @@ namespace Engine.Voxels {
         }
 
 
-        public ref voxel voxelAt(in ivec3 worldPos) => ref getChunk(worldPos / chunkSize).voxelAt(worldToLocal(in worldPos));
+        public ref voxel voxelAt(in ivec3 worldPos) {
+            var c = getChunk(worldPos / chunkSize);
+            return ref c.voxelAt(worldToLocal(in worldPos));
+        }
         
 
         static Meshdata<Vertex> cube;
@@ -88,6 +96,7 @@ namespace Engine.Voxels {
             public readonly voxel[,,] voxels = new voxel[chunkSize, chunkSize, chunkSize];
             
             Mesh<Vertex> mesh;
+
 
             public ref voxel voxelAt(ivec3 localPos) {
                 return ref voxels[localPos.x, localPos.y, localPos.z];

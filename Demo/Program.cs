@@ -180,7 +180,7 @@ namespace Demo {
 
             { // voxelgrid
                 var g = new Gameobject();
-                g.transform.position = (-20, 30, 20);
+                //g.transform.position = (-20, 30, 20);
                 var vg = new Engine.Voxels.VoxelgridComponent();
                 vg.grid = new Engine.Voxels.Voxelgrid();
 

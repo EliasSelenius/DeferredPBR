@@ -31,6 +31,12 @@ namespace Engine.Editor {
 
         TextEditor textEditor = new();
 
+        ContexMenu deleteMenu = new("Delete", 
+            ("parent & chilldren", null), 
+            ("parent only", null),
+            ("children only", null)
+        );
+
         private SceneViewEditor() {
             Application.window.Resize += onWindowResize;
 
@@ -79,24 +85,13 @@ namespace Engine.Editor {
                 selection.Clear();
             }
 
-            if (Keyboard.isDown(key.X)) {
-                contexMenu(lastLeftclickPos, ("delete", () => {}), ("delete parent only", () => {}));
+            if (Keyboard.isPressed(key.X)) {
+                deleteMenu.open();
             }
 
         }
 
-        static void contexMenu(vec2 pos, params (string text, Action action)[] options) {
 
-            canvas.rect(pos, (130, options.Length * 16), color.hex(0x1e1e1eff));
-            var textcolor = color.hex(0xd4d4d4ff);
-
-            for (int i = 0; i < options.Length; i++) {
-                var o = options[i];
-                canvas.text(pos, Gui.Font.arial, 16, o.text, textcolor);
-                pos.y += 16;
-            }
-
-        }
 
         internal override void updateCamera() {            
             editorScene.camera.updateUniformBuffer();
@@ -200,15 +195,31 @@ namespace Engine.Editor {
 
             Gizmo.dispatchFrame();
 
+            if (selection.First != null) {
+                selection.First.Value.calcWorldPosition(out vec3 wpos);
+                editorScene.camera.world2screen(in wpos, out vec2 coords);
+                coords.y = -coords.y;
+                coords = (coords + vec2.one) / 2f;
+                coords *= canvas.size;
+                //coords = (coords + canvas.size / 2);
+
+                
+                canvas.text(coords, Font.arial, 30, "Hello World", in color.white);
+
+
+            }
 
             canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
 
             Console.render(canvas);
-            TextEditor.selected.render(canvas);
+            TextEditor.selected?.render(canvas);
             if (Keyboard.isPressed(key.Escape)) {
-
+                if (TextEditor.selected == null) TextEditor.selected = textEditor;
+                else TextEditor.selected = null;
             }
+
+            ContexMenu.render(canvas);
 
             canvas.dispatchFrame();
         }
@@ -249,6 +260,18 @@ namespace Engine.Editor {
 
             SceneViewEditor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
             SceneViewEditor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
+
+
+
+             
+            if (false) { // voxel testing
+                if (Mouse.isPressed(MouseButton.left)) {
+                    var vpos = (ivec3)(transform.position + transform.forward * 2);
+                    Console.notify("voxel placed at " + vpos);
+                    Voxels.Voxelgrid.grid.voxelAt(vpos).isSolid = true;
+                    Voxels.Voxelgrid.grid.updateMesh();
+                }
+            }
         }
 
         public void focus(in vec3 point) {
@@ -319,7 +342,6 @@ namespace Engine.Editor {
         ivec2 cursor = ivec2.zero;
 
         public TextEditor() {
-            selected = this;
 
             // add first initial line
             currentLine = new StringBuilder("Nice text rendering dude!");
@@ -366,6 +388,51 @@ namespace Engine.Editor {
 
             canvas.rect(textareapos, canvas.size - (220, 250), color.hex(0x2e2e2eff));
             canvas.rect(100, canvas.size - 200, color.hex(0x1e1e1eff));
+
+        }
+    }
+
+    public class ContexMenu {
+        static ivec2 pos;
+        static ContexMenu current;
+
+        string title;
+        (string text, Action action)[] options;
+
+        public ContexMenu(string title, params (string text, Action action)[] options) {
+            this.title = title;
+            this.options = options;
+        }
+
+        public void open() {
+            pos = (ivec2)Mouse.position;
+            current = this;
+        }
+        public static void close() {
+            current = null;
+        }
+
+        public static void render(Canvas canvas) {
+            if (current is null) return;
+
+            current.draw(canvas);
+        }
+
+        void draw(Canvas canvas) {
+            
+            var textcolor = color.hex(0xd4d4d4ff);
+            var p = pos;
+
+            canvas.text(p, Font.arial, 20, title, in textcolor);
+            canvas.rect(p, (130, 20 + options.Length * 16), color.hex(0x1e1e1eff));
+            p.y += 20;
+            p.x += 15;
+
+            for (int i = 0; i < options.Length; i++) {
+                var o = options[i];
+                canvas.text(p, Gui.Font.arial, 16, o.text, textcolor);
+                p.y += 16;
+            }
 
         }
     }

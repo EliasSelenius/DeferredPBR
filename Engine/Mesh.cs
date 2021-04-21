@@ -326,6 +326,11 @@ namespace Engine {
 
         public void render() {
             gameobject.calcModelMatrix(out mat4 mat);
+
+            //mat.row1.xyz = Renderer.viewMatrix.col1.xyz;
+            //mat.row2.xyz = Renderer.viewMatrix.col2.xyz;
+            //mat.row3.xyz = Renderer.viewMatrix.col3.xyz;
+
             GLUtils.setUniformMatrix4(Renderer.geomPass.id, "model", ref mat);
             mesh.render(materials);
         }
