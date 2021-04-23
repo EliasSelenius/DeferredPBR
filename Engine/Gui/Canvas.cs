@@ -107,6 +107,11 @@ namespace Engine.Gui {
         */
         private void convertCoord(ref vec2 coord) => coord.y = -(coord -= new vec2(width, height) / 2f).y;
 
+        public void ndc2canvasCoord(ref vec2 ndc) {
+            ndc.y = -ndc.y;
+            ndc = (ndc + vec2.one) / 2f;
+            ndc *= size;
+        }
 
         public void text(vec2 pos, Font font, int fontSize, string text, in color color) {
             convertCoord(ref pos);

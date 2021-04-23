@@ -34,7 +34,7 @@ namespace Engine {
         
         */
 
-        public void world2screen(in vec3 point, out vec2 ndc) {
+        public void world2ndc(in vec3 point, out vec2 ndc) {
             var d = (new vec4(point, 1f) * viewMatrix * projectionMatrix);
             ndc = d.xy / d.z;
         }
