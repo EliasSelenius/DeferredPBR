@@ -57,6 +57,12 @@ namespace Engine {
         internal void _addGameobject(Gameobject obj) => _gameobjects.Add(obj);
         internal void _removeGameobject(Gameobject obj) => _gameobjects.Remove(obj);
 
+        public Gameobject createObject(params Component[] comps) {
+            var g = new Gameobject(comps);
+            g.enterScene(this);
+            return g;
+        }
+
         internal override void update() {
             update_event?.Invoke();
             colliders.testCollisions(colliders);
