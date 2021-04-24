@@ -19,6 +19,8 @@ namespace Engine {
 
         public static Dictionary<string, Gui.Font> fonts = new();
 
+        public static Dictionary<string, Mesh<Vertex>> meshes = new();
+
         static List<IResourceProvider> providers = new List<IResourceProvider>();
 
 
@@ -86,6 +88,8 @@ namespace Engine {
         public static PBRMaterial getMaterial(string name) => materials[name];
         public static Gui.Font getFont(string name) => fonts[name];
         public static Prefab getPrefab(string name) => prefabs[name];
+        public static Mesh<Vertex> getMesh(string name) => meshes[name];
+
 
         static void loadFromXml(XmlDocument doc) {
             foreach (var elm in doc.DocumentElement.ChildNodes) {
@@ -98,7 +102,16 @@ namespace Engine {
                     shaders.Add(assetName, new Shader(shaderSources[xml.GetAttribute("fragsrc")], shaderSources[xml.GetAttribute("vertsrc")]));
                 }
                 // materials:
-                else if (xml.Name.Equals("material")) {}
+                else if (xml.Name.Equals("material")) {
+                    var mat = new PBRMaterial();
+                    var a = xml.GetElementsByTagName("albedo").Item(0).InnerText.Split(' ').Select(x => float.Parse(x) / 255f).ToArray();
+                    mat.albedo = new Nums.vec3(a[0], a[1], a[2]);
+
+                    mat.metallic = float.Parse(xml.GetElementsByTagName("metallic").Item(0).InnerText);
+                    mat.roughness = float.Parse(xml.GetElementsByTagName("roughness").Item(0).InnerText);
+
+                    materials.Add(assetName, mat);
+                }
                 // prefabs: 
                 else if (xml.Name.Equals("prefab")) {}
                 // scenes
