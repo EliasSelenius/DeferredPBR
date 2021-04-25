@@ -27,6 +27,7 @@ namespace Engine {
         }
 
         public static vec2 delta => new vec2(Application.window.MouseState.Delta.X, Application.window.MouseState.Delta.Y);
+        public static float wheeldelta => Application.window.MouseState.ScrollDelta.Y;
 
         private static MouseState _state;
         public static MouseState state {

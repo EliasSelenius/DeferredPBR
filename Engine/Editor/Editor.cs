@@ -205,6 +205,7 @@ namespace Engine.Editor {
 
             canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
+            canvas.text(100, Font.arial, 30, Mouse.wheeldelta.ToString(), in color.white);
 
             Console.render(canvas);
             TextEditor.selected?.render(canvas);

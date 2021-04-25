@@ -11,6 +11,7 @@ namespace Engine {
         public static Matrix4 toOpenTK(this mat4 m) => new Matrix4(m.row1.toOpenTK(), m.row2.toOpenTK(), m.row3.toOpenTK(), m.row4.toOpenTK());
 
 
+        public static vec2 toNums(this Vector2 v) => new vec2(v.X, v.Y);
         public static vec3 toNums(this Vector3 v) => new vec3(v.X, v.Y, v.Z);
         public static vec4 toNums(this Vector4 v) => new vec4(v.X, v.Y, v.Z, v.W);
         public static mat4 toNums(this Matrix4 m) => new mat4(m.Row0.toNums(), m.Row1.toNums(), m.Row2.toNums(), m.Row3.toNums());
