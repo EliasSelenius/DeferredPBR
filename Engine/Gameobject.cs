@@ -159,7 +159,7 @@ namespace Engine {
             onStart();
         }
 
-        internal void enter() {
+        internal void enter() {            
             scene.update_event += onUpdate;
             onEnter();
         }

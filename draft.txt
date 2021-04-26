@@ -28,7 +28,7 @@ upcomming todos:
             - delete whole object
     - canvas rect border
     - canvas rect border radius
-    
+    - unlit materials    
 
 
 pirate game idea:

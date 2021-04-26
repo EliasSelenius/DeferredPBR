@@ -22,6 +22,10 @@ namespace Engine {
         void render(int shaderID);
     }
 
+    public interface IUnlitRenderer : IRenderer {
+
+    }
+
     public class Scene : SceneBase {
 
         public static Scene active { get; private set; }
@@ -44,6 +48,7 @@ namespace Engine {
         public readonly List<Dirlight> dirlights = new List<Dirlight>();
 
         internal readonly List<IRenderer> renderers = new List<IRenderer>();
+        internal readonly List<IUnlitRenderer> unlitRenderers = new();
 
         internal event System.Action update_event;
 

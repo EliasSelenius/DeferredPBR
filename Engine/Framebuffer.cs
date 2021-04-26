@@ -60,7 +60,7 @@ namespace Engine {
         //public void initDrawBuffers(params FramebufferFormat[] formats) { }
 
         
-        public void writeMode() {
+        public void bind() {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);
         }
         public void readMode() {

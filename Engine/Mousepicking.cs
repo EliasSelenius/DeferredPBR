@@ -30,7 +30,7 @@ namespace Engine {
             }
 
             shader.use();
-            framebuffer.writeMode();
+            framebuffer.bind();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             for (int i = 1; i <= scene.renderers.Count; i++) {

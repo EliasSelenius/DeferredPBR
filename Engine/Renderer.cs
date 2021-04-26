@@ -142,13 +142,22 @@ namespace Engine {
 
 
                 geomPass.use();
-                gBuffer.writeMode();
+                gBuffer.bind();
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 
                 scene.updateCamera();
                 scene.renderGeometry();
             }
 
+            { // forward pass
+                // copy depthbuffer from the gbuffer to the hdr buffer
+                gBuffer.blit(hdrBuffer, ClearBufferMask.DepthBufferBit, Filter.Nearest);
+
+                hdrBuffer.bind();
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+
+                        
+            }
 
             { // light pass
                 GL.Disable(EnableCap.DepthTest);
@@ -157,12 +166,8 @@ namespace Engine {
                 GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
                 GL.BlendEquation(BlendEquationMode.FuncAdd);
 
-                // copy depthbuffer from the gbuffer to the hdr buffer
-                gBuffer.blit(hdrBuffer, ClearBufferMask.DepthBufferBit, Filter.Nearest);
 
-                hdrBuffer.writeMode();
                 gBuffer.readMode();
-                GL.Clear(ClearBufferMask.ColorBufferBit);
 
                 scene.renderLights();
             }
