@@ -30,6 +30,9 @@
         vertsrc="Engine.data.shaders.gizmo.vert.glsl"
         fragsrc="Engine.data.shaders.gizmo.frag.glsl" />
 
+    <shader name="unlit"
+        vertsrc="Engine.data.shaders.geomPass.vert.glsl"
+        fragsrc="Engine.data.shaders.unlit_solidcolor.frag.glsl" />
 
     <shader name="genCubemap" vertsrc="Engine.data.shaders.imagePass.vert.glsl" fragsrc="Engine.data.shaders.genTexture2Dfrag.glsl" />
 

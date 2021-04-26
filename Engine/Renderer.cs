@@ -105,6 +105,8 @@ namespace Engine {
             }
 
 
+            testShader = Assets.getShader("unlit");
+
             { // init UBOs
                 windowInfoUBO = new UBO("Window", vec4.bytesize);
                 lightPass_pointlight.bindUBO(windowInfoUBO);
@@ -114,6 +116,7 @@ namespace Engine {
                 lightPass_dirlight.bindUBO(cameraUBO);
                 lightPass_pointlight.bindUBO(cameraUBO);
                 textShader.bindUBO(cameraUBO);
+                testShader.bindUBO(cameraUBO);
                 Assets.getShader("CubemapSkybox").bindUBO(cameraUBO);
                 Assets.getShader("mousePicking").bindUBO(cameraUBO);
                 Assets.getShader("gizmo").bindUBO(cameraUBO);
@@ -125,6 +128,9 @@ namespace Engine {
             whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
 
         }
+
+        static MeshRenderer test = Assets.getPrefab("Engine.data.models.Ships.Brig").createInstance().getComponent<MeshRenderer>();
+        static Shader testShader;
 
         public static void drawframe(FrameEventArgs e) {
 
@@ -149,15 +155,6 @@ namespace Engine {
                 scene.renderGeometry();
             }
 
-            { // forward pass
-                // copy depthbuffer from the gbuffer to the hdr buffer
-                gBuffer.blit(hdrBuffer, ClearBufferMask.DepthBufferBit, Filter.Nearest);
-
-                hdrBuffer.bind();
-                GL.Clear(ClearBufferMask.ColorBufferBit);
-
-                        
-            }
 
             { // light pass
                 GL.Disable(EnableCap.DepthTest);
@@ -166,11 +163,27 @@ namespace Engine {
                 GL.BlendFunc(BlendingFactor.One, BlendingFactor.One);
                 GL.BlendEquation(BlendEquationMode.FuncAdd);
 
+                // copy depthbuffer from the gbuffer to the hdr buffer
+                gBuffer.blit(hdrBuffer, ClearBufferMask.DepthBufferBit, Filter.Nearest);
+
+                hdrBuffer.bind();
+                GL.Clear(ClearBufferMask.ColorBufferBit);
 
                 gBuffer.readMode();
 
                 scene.renderLights();
             }
+
+
+            { // forward pass
+                GL.Enable(EnableCap.DepthTest);
+                GL.Disable(EnableCap.Blend);
+
+                testShader.use();
+
+                test.render(testShader.id);
+            }
+
 
             { // image pass
                 GL.Disable(EnableCap.DepthTest);
