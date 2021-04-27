@@ -39,6 +39,7 @@ namespace Engine.Gui {
 
 
         public void dispatchFrame() {
+            GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             Renderer.textShader.use();
