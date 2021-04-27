@@ -26,9 +26,20 @@ upcomming todos:
         - 'x' as delete key will open different delete options
             - delete parent only
             - delete whole object
-    - canvas rect border
     - canvas rect border radius
+
     - unlit materials    
+
+    - glsl bind UBO pragma or somthn
+
+
+new shaderprogram system:
+    - preprocessor
+        - includes (with #line and possibly #error when file not found)
+        - vertex/fragment/geometry in same file
+    - auto UBO bindings
+    - cache uniform locations
+    - hot-reload
 
 
 pirate game idea:
