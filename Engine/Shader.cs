@@ -1,11 +1,19 @@
-
+using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 
 namespace Engine {
     public class Shader {
+        public readonly string name;
         public readonly int id;
 
-        public Shader(string frag, string vert) {
+        readonly Dictionary<string, int> uniformBlocks = new();
+
+
+        public void use() => GL.UseProgram(id);
+
+
+        public Shader(string name, string frag, string vert) {
+            this.name = name;
             id = GL.CreateProgram();
 
             int createShader(ShaderType type, string src) {
@@ -32,13 +40,35 @@ namespace Engine {
 
             delShader(f); delShader(v);
 
+            initUniformbuffers();
+
         }
 
-        public void use() => GL.UseProgram(id);
+        void initUniformbuffers() {
+            GL.GetProgram(id, GetProgramParameterName.ActiveUniformBlocks, out int count);
+            GL.GetProgram(id, GetProgramParameterName.ActiveUniformBlockMaxNameLength, out int maxBufSize);
+            
 
-        public void bindUBO(UBO ubo) {
-            int i = GL.GetUniformBlockIndex(id, ubo.name);
-            GL.UniformBlockBinding(id, i, ubo.bindingPoint);
+            for (int i = 0; i < count; i++) {
+                GL.GetActiveUniformBlockName(id, i, maxBufSize, out int nameLength, out string name);
+                
+                int uboIndex = GL.GetUniformBlockIndex(id, name);    
+                uniformBlocks[name] = uboIndex;
+
+                var ubo = Uniformblock.require(name);
+                GL.UniformBlockBinding(id, uboIndex, ubo.bindingPoint);
+            }
+
+        }
+    }
+
+
+    internal static class GLSL_Preprocessor {
+        
+
+        
+        public static void process(ref string source) {
+
         }
     }
 

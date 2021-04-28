@@ -23,8 +23,8 @@ namespace Engine {
         private static Framebuffer gBuffer;
         private static Framebuffer hdrBuffer;
 
-        private static UBO windowInfoUBO;
-        private static UBO cameraUBO;
+        private static Uniformblock windowInfoUBO;
+        private static Uniformblock cameraUBO;
 
         internal static Texture2D whiteTexture;
 
@@ -40,11 +40,11 @@ namespace Engine {
         }
         public static void updateCameraView(ref mat4 view) {
             viewMatrix = view;
-            GLUtils.buffersubdata(cameraUBO.id, 0, ref view);
+            GLUtils.buffersubdata(cameraUBO.bufferId, 0, ref view);
         }
         public static void updateCameraProjection(ref mat4 projection) {
             projectionMatrix = projection;
-            GLUtils.buffersubdata(cameraUBO.id, mat4.bytesize, ref projection);
+            GLUtils.buffersubdata(cameraUBO.bufferId, mat4.bytesize, ref projection);
         }
 
         public static void load() {
@@ -108,18 +108,11 @@ namespace Engine {
             testShader = Assets.getShader("unlit");
 
             { // init UBOs
-                windowInfoUBO = new UBO("Window", vec4.bytesize);
-                lightPass_pointlight.bindUBO(windowInfoUBO);
+                windowInfoUBO = Uniformblock.require("Window");
+                windowInfoUBO.bindBuffer(GLUtils.createBuffer(vec4.bytesize));
 
-                cameraUBO = new UBO("Camera", 2 * mat4.bytesize);
-                geomPass.bindUBO(cameraUBO);
-                lightPass_dirlight.bindUBO(cameraUBO);
-                lightPass_pointlight.bindUBO(cameraUBO);
-                textShader.bindUBO(cameraUBO);
-                testShader.bindUBO(cameraUBO);
-                Assets.getShader("CubemapSkybox").bindUBO(cameraUBO);
-                Assets.getShader("mousePicking").bindUBO(cameraUBO);
-                Assets.getShader("gizmo").bindUBO(cameraUBO);
+                cameraUBO = Uniformblock.require("Camera");
+                cameraUBO.bindBuffer(GLUtils.createBuffer(2 * mat4.bytesize));
             }
 
 
@@ -223,7 +216,7 @@ namespace Engine {
 
             // update window info ubo:
             vec2 s = new vec2(e.Width, e.Height);
-            GLUtils.buffersubdata(windowInfoUBO.id, 0, ref s);
+            GLUtils.buffersubdata(windowInfoUBO.bufferId, 0, ref s);
 
 
         }

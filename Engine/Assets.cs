@@ -99,7 +99,7 @@ namespace Engine {
 
                 // shaders:
                 if (xml.Name.Equals("shader")) {
-                    shaders.Add(assetName, new Shader(shaderSources[xml.GetAttribute("fragsrc")], shaderSources[xml.GetAttribute("vertsrc")]));
+                    shaders.Add(assetName, new Shader(assetName, shaderSources[xml.GetAttribute("fragsrc")], shaderSources[xml.GetAttribute("vertsrc")]));
                 }
                 // materials:
                 else if (xml.Name.Equals("material")) {

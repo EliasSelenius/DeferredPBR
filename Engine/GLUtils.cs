@@ -31,6 +31,12 @@ using System;
 
 namespace Engine {
 
+    struct glBuffer {
+        public readonly int id;
+
+        
+    }
+
     static class GLUtils {
 
         static GLUtils() {
