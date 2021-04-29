@@ -211,7 +211,13 @@ namespace Engine.Editor {
             TextEditor.selected?.render(canvas);
             if (Keyboard.isPressed(key.Escape)) {
                 if (TextEditor.selected == null) TextEditor.selected = textEditor;
-                else TextEditor.selected = null;
+                else {
+                    var nf = TextEditor.selected.getText();
+                    var s = Assets.getShader("unlit");
+                    s.sources[ShaderType.FragmentShader] = nf;
+                    s.linkProgram();
+                    TextEditor.selected = null;
+                }
             }
 
             ContexMenu.render(canvas);

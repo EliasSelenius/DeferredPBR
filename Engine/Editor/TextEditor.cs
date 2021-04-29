@@ -1,4 +1,5 @@
 using Nums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -71,6 +72,26 @@ namespace Engine.Editor {
             // add first initial line
             currentLine = new StringBuilder("Nice text rendering dude!");
             lines.AddLast(currentLine);
+
+
+            setText(Assets.getShader("unlit").sources[OpenTK.Graphics.OpenGL4.ShaderType.FragmentShader]);
+        }
+
+        public void setText(string text) {
+            lines.Clear();
+            var ls = text.Split('\n').Select(x => x.TrimEnd('\r'));
+            foreach (var line in ls) {
+                lines.AddLast(new StringBuilder(line));
+            }
+            currentLine = lines.First.Value;
+        }
+
+        public string getText() {
+            var res = new StringBuilder();
+            foreach (var line in lines) {
+                res.AppendLine(line.ToString());
+            }
+            return res.ToString();
         }
 
         private void moveCursor(int x, int y) {
@@ -97,13 +118,13 @@ namespace Engine.Editor {
             int i = 0;
             foreach(var sb in lines) {
                 canvas.text(linepos, Font.arial, 16, (i+1).ToString(), in textcolor);
-                canvas.text((linepos.x + 20, linepos.y), Font.arial, 16, sb.ToString(), in textcolor);
+                canvas.text((linepos.x + 25, linepos.y), Font.arial, 16, sb.ToString(), in textcolor);
                 linepos.y += 16;
                 i++;
             }
 
             // cursor
-            canvas.rect(textareapos + (20 + Text.length(currentLine.ToString(), cursor.x, 16, Font.arial), cursor.y * 16), (2, 16), in color.white);
+            canvas.rect(textareapos + (25 + Text.length(currentLine.ToString(), cursor.x, 16, Font.arial), cursor.y * 16), (2, 16), in color.white);
 
             canvas.rectborder(textareapos, (20, linepos.y - textareapos.y), 1, in textcolor);
             

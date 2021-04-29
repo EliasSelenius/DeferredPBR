@@ -10,7 +10,7 @@ namespace Engine {
         public bool linked { get; private set; }
 
         readonly Dictionary<string, int> uniformBlocks = new();
-        readonly Dictionary<ShaderType, string> sources = new();
+        public readonly Dictionary<ShaderType, string> sources = new();
 
         public void use() => GL.UseProgram(id);
         public string getInfolog() => GL.GetProgramInfoLog(id);
