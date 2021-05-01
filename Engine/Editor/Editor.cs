@@ -36,6 +36,8 @@ namespace Engine.Editor {
             ("children only", null)
         );
 
+        WindowSystem windowSys = new();
+
         private SceneViewEditor() {
             Application.window.Resize += onWindowResize;
 
@@ -66,6 +68,7 @@ namespace Engine.Editor {
                 c.transform.position += i; 
             }
 
+            windowSys.addWindow(new Window());
 
         }
 
@@ -221,6 +224,8 @@ namespace Engine.Editor {
             }
 
             ContexMenu.render(canvas);
+
+            windowSys.render(canvas);
 
             canvas.dispatchFrame();
         }

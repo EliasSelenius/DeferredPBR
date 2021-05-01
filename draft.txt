@@ -30,7 +30,6 @@ upcomming todos:
 
     - unlit materials    
 
-    - glsl bind UBO pragma or somthn
 
 
 new shaderprogram system:

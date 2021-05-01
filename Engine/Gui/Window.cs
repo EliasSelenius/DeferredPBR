@@ -145,4 +145,38 @@ namespace Engine.Gui {
 
         }
     }*/
+
+    public class WindowSystem {
+        readonly LinkedList<Window> windows = new();
+        public ColorTheme theme = ColorTheme.darkGreenish;
+
+        public void addWindow(Window window) {
+            window.sys = this;
+            windows.AddLast(window);
+        }
+
+        public void render(Canvas canvas) {
+
+            foreach (var window in windows) {
+                window.render(canvas);
+            }
+        }
+    }
+
+    public class Window {
+        public WindowSystem sys { get; internal set; }
+
+        string title = "Hello Window";
+        int titlebarHeight = 18;
+        vec2 pos = 100, size = (320, 200);
+
+        public void render(Canvas canvas) {
+            // title bar
+            canvas.rect(pos, new vec2(size.x, titlebarHeight), sys.theme.primaryColor);
+            canvas.text(pos, Font.arial, titlebarHeight, title, sys.theme.textColor);
+
+            // content area
+            canvas.rect(pos, size, sys.theme.backgroundColor);
+        }
+    }
 }
