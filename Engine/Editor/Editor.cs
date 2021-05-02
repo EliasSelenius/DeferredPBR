@@ -117,7 +117,7 @@ namespace Engine.Editor {
             { // selections
 
                 // handle selections
-                if (Mouse.state == MouseState.free) {
+                if (Mouse.state == MouseState.free && windowSys.selection == null) {
                     if (Mouse.isPressed(MouseButton.left)) {
                         lastLeftclickPos = (ivec2)Mouse.position;
                     } else if(Mouse.isDown(MouseButton.left)) {
@@ -171,16 +171,10 @@ namespace Engine.Editor {
                 }
             }
 
-
-
-
-
             Gizmo.bezier(vec3.zero, (20, 5, 7), 10);
 
             //GL.PointParameter(PointParameterName.)
             GL.PointSize(10);
-
-            
         }
 
         internal override void renderLights() {

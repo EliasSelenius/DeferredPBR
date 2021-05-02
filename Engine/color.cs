@@ -59,20 +59,4 @@ namespace Engine {
     public class ColorPalette {
     }
 
-    public class ColorTheme {
-
-        // var c = color.hex(0x004156AF);
-
-        public static readonly ColorTheme darkGreenish = new ColorTheme {
-            primaryColor = color.hex(0x84A98CFF),
-            backgroundColor = color.hex(0x52796FDF),
-            textColor = color.hex(0xCAD2C5FF)
-        };
-
-
-        public color primaryColor { get; init; }
-        public color backgroundColor { get; init; }
-        public color textColor { get; init; }
-        
-    }
 }

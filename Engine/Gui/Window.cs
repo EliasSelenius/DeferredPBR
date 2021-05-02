@@ -148,7 +148,15 @@ namespace Engine.Gui {
 
     public class WindowSystem {
         readonly LinkedList<Window> windows = new();
-        public ColorTheme theme = ColorTheme.darkGreenish;
+
+        Window _selection;
+        vec2 selectionMouseOffset;
+        public Window selection {
+            get => _selection;
+            set { if (_selection != value) selectionMouseOffset = Mouse.position - (_selection = value)?.pos ?? vec2.zero; }
+        }
+
+        public Colortheme theme = Colortheme.darkGreenish;
 
         public void addWindow(Window window) {
             window.sys = this;
@@ -160,6 +168,10 @@ namespace Engine.Gui {
             foreach (var window in windows) {
                 window.render(canvas);
             }
+
+            if (Mouse.isDown(MouseButton.left) && selection != null) {
+                selection.pos = Mouse.position - selectionMouseOffset;
+            } else selection = null;
         }
     }
 
@@ -168,15 +180,40 @@ namespace Engine.Gui {
 
         string title = "Hello Window";
         int titlebarHeight = 18;
-        vec2 pos = 100, size = (320, 200);
+        public vec2 pos = 100, size = (320, 200);
 
         public void render(Canvas canvas) {
             // title bar
-            canvas.rect(pos, new vec2(size.x, titlebarHeight), sys.theme.primaryColor);
+            var barSize = new vec2(size.x, titlebarHeight);
+            canvas.rect(pos, barSize, sys.theme.primaryColor);
             canvas.text(pos, Font.arial, titlebarHeight, title, sys.theme.textColor);
+            
+            if (Utils.insideBounds(Mouse.position - pos, barSize)) sys.selection = this;
 
             // content area
             canvas.rect(pos, size, sys.theme.backgroundColor);
+
+            // border
+            canvas.rectborder(pos, size, 3, sys.theme.borderColor);
         }
+    }
+
+    public class Colortheme {
+
+        // var c = color.hex(0x004156AF);
+
+        public static readonly Colortheme darkGreenish = new Colortheme {
+            primaryColor = color.hex(0x84A98CFF),
+            backgroundColor = color.hex(0x52796FDF),
+            borderColor = color.hex(0x84C98CFF),
+            textColor = color.hex(0xCAD2C5FF)
+        };
+
+
+        public color primaryColor { get; init; }
+        public color backgroundColor { get; init; }
+        public color borderColor { get; init; }
+        public color textColor { get; init; }
+        
     }
 }

@@ -4,16 +4,7 @@ using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using System;
 
-/*
-
-    Textbox class:
-        generate text mesh from string
-        render using font
-
-*/
-
 namespace Engine {
-
     public static class Text {
 
         internal static float length(string text, int length, int fontsize, Gui.Font font) {
