@@ -149,12 +149,10 @@ namespace Engine.Gui {
     public class WindowSystem {
         readonly LinkedList<Window> windows = new();
 
-        Window _selection;
+        public Window activeWindow;
+        
         vec2 selectionMouseOffset;
-        public Window selection {
-            get => _selection;
-            set { if (_selection != value) selectionMouseOffset = Mouse.position - (_selection = value)?.pos ?? vec2.zero; }
-        }
+        bool draging = false;
 
         public Colortheme theme = Colortheme.darkGreenish;
 
@@ -164,31 +162,52 @@ namespace Engine.Gui {
         }
 
         public void render(Canvas canvas) {
-
+            
+            bool mouseDown = Mouse.isDown(MouseButton.left) || Mouse.isDown(MouseButton.right);
             foreach (var window in windows) {
                 window.render(canvas);
+
+                if (mouseDown) {
+                    if (Utils.insideBounds(Mouse.position - window.pos, window.size) && !draging) {
+                        activeWindow = window;
+                        
+                        // on title bar
+                        if (Mouse.position.y - window.pos.y < window.titlebarHeight) {
+                            draging = true;
+                            selectionMouseOffset = Mouse.position - window.pos;
+                        }
+                    }
+
+                    if (draging && activeWindow == window) {
+                        window.pos = Mouse.position - selectionMouseOffset;
+                    }
+                } else {
+                    draging = false;
+                }
             }
 
-            if (Mouse.isDown(MouseButton.left) && selection != null) {
-                selection.pos = Mouse.position - selectionMouseOffset;
-            } else selection = null;
+            // make sure active window renders ontop of all other windows:
+            if (activeWindow != null && windows.First.Value != activeWindow) {
+                windows.Remove(activeWindow);
+                windows.AddFirst(activeWindow);
+            }
         }
     }
 
     public class Window {
         public WindowSystem sys { get; internal set; }
 
-        string title = "Hello Window";
-        int titlebarHeight = 18;
+        public string title = "Hello Window";
+        public int titlebarHeight = 18;
         public vec2 pos = 100, size = (320, 200);
+
+        public bool isActive => sys.activeWindow == this;
 
         public virtual void render(Canvas canvas) {
             // title bar
             var barSize = new vec2(size.x, titlebarHeight);
             canvas.rect(pos, barSize, sys.theme.primaryColor);
             canvas.text(pos, Font.arial, titlebarHeight, title, sys.theme.textColor);
-            
-            if (Utils.insideBounds(Mouse.position - pos, barSize)) sys.selection = this;
 
             // content area
             canvas.rect(pos, size, sys.theme.backgroundColor);
@@ -223,10 +242,15 @@ namespace Engine.Gui {
     public class TextEditorWindow : Window {
         readonly Textbox textbox = new();
 
-        public override void render(Canvas canvas) {
-            base.render(canvas);
+        public TextEditorWindow() {
+            title = "Text Editor";
+        }
 
-            textbox.render(canvas, this.pos);
+        public override void render(Canvas canvas) {
+            var textboxOffset = new vec2(pos.x, pos.y + this.titlebarHeight);
+            textbox.render(canvas, textboxOffset);
+
+            base.render(canvas);
         }
     }
 }

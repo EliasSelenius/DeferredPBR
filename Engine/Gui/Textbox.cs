@@ -123,7 +123,7 @@ namespace Engine.Gui {
 
             
 
-            canvas.rect((canvas.width - 110, 100), 10, in color.gray);
+            //canvas.rect((canvas.width - 110, 100), 10, in color.gray);
 
 
             //canvas.rect(textareapos, canvas.size - (220, 250), color.hex(0x2e2e2eff));

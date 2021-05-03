@@ -30,6 +30,7 @@ upcomming todos:
 
     - unlit materials    
 
+    - resize windows
 
 
 new shaderprogram system:

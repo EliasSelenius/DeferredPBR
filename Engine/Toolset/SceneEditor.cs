@@ -67,7 +67,7 @@ namespace Engine.Toolset {
             }
 
             windowSys.addWindow(new Window());
-
+            windowSys.addWindow(new TextEditorWindow());
         }
 
         private void onWindowResize(OpenTK.Windowing.Common.ResizeEventArgs args) {
@@ -115,7 +115,7 @@ namespace Engine.Toolset {
             { // selections
 
                 // handle selections
-                if (Mouse.state == MouseState.free && windowSys.selection == null) {
+                if (Mouse.state == MouseState.free && windowSys.activeWindow == null) {
                     if (Mouse.isPressed(MouseButton.left)) {
                         lastLeftclickPos = (ivec2)Mouse.position;
                     } else if(Mouse.isDown(MouseButton.left)) {
