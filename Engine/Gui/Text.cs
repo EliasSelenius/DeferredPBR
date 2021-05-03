@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using System;
 
-namespace Engine {
+namespace Engine.Gui {
     public static class Text {
 
         internal static float length(string text, int length, int fontsize, Gui.Font font) {

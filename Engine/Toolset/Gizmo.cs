@@ -3,7 +3,7 @@ using Nums;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Engine.Editor {
+namespace Engine.Toolset {
     public static class Gizmo {
         static Shader shader;
 

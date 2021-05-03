@@ -1,7 +1,7 @@
 using Nums;
 using Engine.Gui;
 
-namespace Engine.Editor {
+namespace Engine.Toolset {
     public class EditorCamera : Component {
 
         vec3 velocity;
@@ -30,8 +30,8 @@ namespace Engine.Editor {
                 Mouse.state = MouseState.free;
             }
 
-            SceneViewEditor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
-            SceneViewEditor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
+            SceneEditor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
+            SceneEditor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
 
 
 

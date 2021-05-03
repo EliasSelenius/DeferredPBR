@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Xml;
 using System;
-using Engine.Editor;
+using Engine.Toolset;
 
 namespace Engine {
     public static class Application {
@@ -48,8 +48,8 @@ namespace Engine {
             scene.update();
 
             if (Keyboard.isPressed(key.F1)) {
-                if (SceneViewEditor.isOpen) SceneViewEditor.close();
-                else SceneViewEditor.open();
+                if (SceneEditor.isOpen) SceneEditor.close();
+                else SceneEditor.open();
             }
         }
     }

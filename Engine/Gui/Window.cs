@@ -182,7 +182,7 @@ namespace Engine.Gui {
         int titlebarHeight = 18;
         public vec2 pos = 100, size = (320, 200);
 
-        public void render(Canvas canvas) {
+        public virtual void render(Canvas canvas) {
             // title bar
             var barSize = new vec2(size.x, titlebarHeight);
             canvas.rect(pos, barSize, sys.theme.primaryColor);
@@ -215,5 +215,18 @@ namespace Engine.Gui {
         public color borderColor { get; init; }
         public color textColor { get; init; }
         
+    }
+
+
+
+
+    public class TextEditorWindow : Window {
+        readonly Textbox textbox = new();
+
+        public override void render(Canvas canvas) {
+            base.render(canvas);
+
+            textbox.render(canvas, this.pos);
+        }
     }
 }

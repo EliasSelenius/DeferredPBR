@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Engine.Editor {
+namespace Engine.Toolset {
     public static class Console {
 
         public enum Level {

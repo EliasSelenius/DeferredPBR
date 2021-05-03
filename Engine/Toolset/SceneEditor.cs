@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using Engine.Gui;
 
-namespace Engine.Editor {
+namespace Engine.Toolset {
 
     public enum EditorRenderMode {
         lights,
@@ -12,23 +12,21 @@ namespace Engine.Editor {
         solid
     }
 
-    public class SceneViewEditor : SceneBase {
+    public class SceneEditor : SceneBase {
 
         public static bool isOpen => Application.scene == instance;
         public static EditorRenderMode renderMode;
         public static LinkedList<Gameobject> selection = new();
         public static Camera camera { get; private set; }
 
-        static SceneViewEditor instance = new(); 
-        static SceneViewEditor() { }
+        static SceneEditor instance = new(); 
+        static SceneEditor() { }
         
 
         public static readonly Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
 
         ivec2 lastLeftclickPos;
-
-        TextEditor textEditor = new();
 
         ContexMenu deleteMenu = new("Delete", 
             ("parent & chilldren", null), 
@@ -38,7 +36,7 @@ namespace Engine.Editor {
 
         WindowSystem windowSys = new();
 
-        private SceneViewEditor() {
+        private SceneEditor() {
             Application.window.Resize += onWindowResize;
 
             var cam = new Gameobject(
@@ -205,17 +203,6 @@ namespace Engine.Editor {
             canvas.text(100, Font.arial, 30, Mouse.wheeldelta.ToString(), in color.white);
 
             Console.render(canvas);
-            TextEditor.selected?.render(canvas);
-            if (Keyboard.isPressed(key.Escape)) {
-                if (TextEditor.selected == null) TextEditor.selected = textEditor;
-                else {
-                    var nf = TextEditor.selected.getText();
-                    var s = Assets.getShader("unlit");
-                    s.sources[ShaderType.FragmentShader] = nf;
-                    s.linkProgram();
-                    TextEditor.selected = null;
-                }
-            }
 
             ContexMenu.render(canvas);
 
