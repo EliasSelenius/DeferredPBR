@@ -5,6 +5,26 @@ using System.Drawing;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System;
+using Engine.Gui;
+using Nums;
+using Engine.Toolset;
+
+
+/*
+
+    assets to draw in GUI
+        - shaders
+            - glsl source files
+        - textures
+            - settings (genMipmap, filter)
+        - materials
+        - prefabs
+        - fonts
+        - meshes
+
+
+
+*/
 
 namespace Engine {
     public static class Assets {
@@ -120,6 +140,43 @@ namespace Engine {
                 else {}
             }
         }
-    } 
+
+
+#region gui rendering
+
+        internal static void drawGui(Canvas canvas) {
+            
+
+
+
+            // background
+            var backgroundSize = new vec2(canvas.width / 3.5f, canvas.height - 6); 
+            canvas.rect(3, backgroundSize, Editor.theme.backgroundColor);
+            // border
+
+        }
+
+#endregion
+
+    }
+
+
+/*
+    public abstract class Asset {
+        public string name { get; }
+        public bool isReadonly { get; }
+
+        public Asset(string name) {
+
+        }
+
+
+    }
+
+    class MaterialAsset : Asset {
+        public MaterialAsset()
+
+    }
+    */
 }
 
