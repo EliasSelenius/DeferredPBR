@@ -14,16 +14,11 @@ namespace Engine.Toolset {
 
     public class SceneEditor : SceneBase {
 
-        public static bool isOpen => Application.scene == instance;
         public static EditorRenderMode renderMode;
         public static LinkedList<Gameobject> selection = new();
         public static Camera camera { get; private set; }
-
-        static SceneEditor instance = new(); 
-        static SceneEditor() { }
         
 
-        public static readonly Gui.Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
         Scene editorScene = new();
 
         ivec2 lastLeftclickPos;
@@ -36,8 +31,7 @@ namespace Engine.Toolset {
 
         WindowSystem windowSys = new();
 
-        private SceneEditor() {
-            Application.window.Resize += onWindowResize;
+        internal SceneEditor() {
 
             var cam = new Gameobject(
                 camera = new Camera(),
@@ -68,10 +62,6 @@ namespace Engine.Toolset {
 
             windowSys.addWindow(new Window());
             windowSys.addWindow(new TextEditorWindow());
-        }
-
-        private void onWindowResize(OpenTK.Windowing.Common.ResizeEventArgs args) {
-            canvas.resize(args.Width, args.Height);
         }
 
 
@@ -119,7 +109,7 @@ namespace Engine.Toolset {
                     if (Mouse.isPressed(MouseButton.left)) {
                         lastLeftclickPos = (ivec2)Mouse.position;
                     } else if(Mouse.isDown(MouseButton.left)) {
-                        canvas.rect(lastLeftclickPos, (Mouse.position - lastLeftclickPos), color.rgba(1,1,1,0.5f));
+                        Editor.canvas.rect(lastLeftclickPos, (Mouse.position - lastLeftclickPos), color.rgba(1,1,1,0.5f));
                     } else if (Mouse.isReleased(MouseButton.left)) {
                         var mpos = (ivec2)Mouse.position;
 
@@ -192,29 +182,24 @@ namespace Engine.Toolset {
             if (selection.First != null) {
                 selection.First.Value.calcWorldPosition(out vec3 wpos);
                 editorScene.camera.world2ndc(in wpos, out vec2 coords);
-                canvas.ndc2canvasCoord(ref coords);
-                canvas.text(coords, Font.arial, 30, "Hello World", in color.white);
+                Editor.canvas.ndc2canvasCoord(ref coords);
+                Editor.canvas.text(coords, Font.arial, 30, "Hello World", in color.white);
 
 
             }
 
-            canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
+            Editor.canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
-            canvas.text(100, Font.arial, 30, Mouse.wheeldelta.ToString(), in color.white);
+            Editor.canvas.text(100, Font.arial, 30, Mouse.wheeldelta.ToString(), in color.white);
 
-            Console.render(canvas);
+            Console.render(Editor.canvas);
 
-            ContexMenu.render(canvas);
+            ContexMenu.render(Editor.canvas);
 
-            windowSys.render(canvas);
+            windowSys.render(Editor.canvas);
 
-            canvas.dispatchFrame();
-        }
-
-
-        public static void open() => Application.scene = instance;
-        public static void close() => Application.scene = Scene.active;
-        
+            Editor.canvas.dispatchFrame();
+        }        
     }
 
     public class ContexMenu {

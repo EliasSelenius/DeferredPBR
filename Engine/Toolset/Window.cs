@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Nums;
 using System;
+using Engine.Gui;
 
-namespace Engine.Gui {
+namespace Engine.Toolset {
 
     /*public class WindowingSystem : View {
         
@@ -154,7 +155,7 @@ namespace Engine.Gui {
         vec2 selectionMouseOffset;
         bool draging = false;
 
-        public Colortheme theme = Colortheme.darkGreenish;
+        public Theme theme = Theme.darkGreenish;
 
         public void addWindow(Window window) {
             window.sys = this;
@@ -216,26 +217,6 @@ namespace Engine.Gui {
             canvas.rectborder(pos, size, 3, sys.theme.borderColor);
         }
     }
-
-    public class Colortheme {
-
-        // var c = color.hex(0x004156AF);
-
-        public static readonly Colortheme darkGreenish = new Colortheme {
-            primaryColor = color.hex(0x84A98CFF),
-            backgroundColor = color.hex(0x52796FDF),
-            borderColor = color.hex(0x84C98CFF),
-            textColor = color.hex(0xCAD2C5FF)
-        };
-
-
-        public color primaryColor { get; init; }
-        public color backgroundColor { get; init; }
-        public color borderColor { get; init; }
-        public color textColor { get; init; }
-        
-    }
-
 
 
 

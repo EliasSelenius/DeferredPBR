@@ -48,8 +48,8 @@ namespace Engine {
             scene.update();
 
             if (Keyboard.isPressed(key.F1)) {
-                if (SceneEditor.isOpen) SceneEditor.close();
-                else SceneEditor.open();
+                if (Editor.isOpen) Editor.close();
+                else Editor.open();
             }
         }
     }
