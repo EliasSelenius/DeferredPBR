@@ -28,12 +28,13 @@ namespace Engine {
 
     public class Scene : SceneBase {
 
-        public static Scene active { get; private set; }
-        public static void load(Scene scene) {
-            Application.scene = Scene.active = scene;
+        static Scene _active;
+        public static Scene active { 
+            get => _active;
+            set => Application.scene = Scene.active = value;
         }
         static Scene() {
-            load(new Scene());
+            active = new Scene(); 
         }
 
         public Skybox skybox;
