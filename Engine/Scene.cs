@@ -31,7 +31,7 @@ namespace Engine {
         static Scene _active;
         public static Scene active { 
             get => _active;
-            set => Application.scene = Scene.active = value;
+            set => Application.scene = _active = value;
         }
         static Scene() {
             active = new Scene(); 
