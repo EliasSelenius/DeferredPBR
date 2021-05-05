@@ -116,7 +116,7 @@ namespace Engine.Gui {
 
             // cursor
             var cursorpos = offset + new vec2(
-                x: Text.length(currentLine.ToString(), cursor.x, fontsize, Font.arial), 
+                x: Text.length(currentLine.ToString(), 0, cursor.x, fontsize, Font.arial), 
                 y: cursor.y * fontsize );
 
             canvas.rect(cursorpos, new vec2(2, fontsize), in color.white);

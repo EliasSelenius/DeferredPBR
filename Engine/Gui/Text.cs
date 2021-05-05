@@ -7,9 +7,9 @@ using System;
 namespace Engine.Gui {
     public static class Text {
 
-        internal static float length(string text, int length, int fontsize, Gui.Font font) {
+        internal static float length(string text, int start, int length, int fontsize, Gui.Font font) {
             float accl = 0;
-            for (int i = 0; i < length; i++) {
+            for (int i = start; i < length; i++) {
                 var glyph = font.getGlyph(text[i]);
                 accl += glyph.advance;
             }
