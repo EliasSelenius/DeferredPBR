@@ -42,6 +42,11 @@ namespace Engine {
             scale.y = m.row2.xyz.length;
             scale.z = m.row3.xyz.length;
 
+            // mirroring
+            if (m.row1.xyz.cross(m.row2.xyz).dot(m.row3.xyz) < 0) {
+                scale.x *= -1;
+            }
+
             var rm = new mat3(m);
             // the divisions here normalizes the vectors
             rm.row1 /= scale.x;
@@ -49,6 +54,8 @@ namespace Engine {
             rm.row3 /= scale.z;
 
             quat.fromMatrix(rm, out rotation);
+
+            // TODO: create mat4.decompose(out vec3 translation, out vec3 scale, out quat rotation) in Nums
         }
 
 
