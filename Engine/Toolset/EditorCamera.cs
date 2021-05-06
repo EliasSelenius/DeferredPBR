@@ -30,8 +30,8 @@ namespace Engine.Toolset {
                 Mouse.state = MouseState.free;
             }
 
-            SceneEditor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
-            SceneEditor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
+            Editor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
+            Editor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
 
 
 
