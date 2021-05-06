@@ -122,8 +122,8 @@ namespace Engine {
 
         }
 
-        static MeshRenderer test = Assets.getPrefab("Engine.data.models.Ships.Brig").createInstance().getComponent<MeshRenderer>();
         static Shader testShader;
+
 
         public static void drawframe(FrameEventArgs e) {
 
@@ -145,7 +145,7 @@ namespace Engine {
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 
                 scene.updateCamera();
-                scene.renderGeometry();
+                scene.geometryPass();
             }
 
 
@@ -164,7 +164,7 @@ namespace Engine {
 
                 gBuffer.readMode();
 
-                scene.renderLights();
+                scene.lightPass();
             }
 
 
@@ -172,9 +172,10 @@ namespace Engine {
                 GL.Enable(EnableCap.DepthTest);
                 GL.Disable(EnableCap.Blend);
 
-                testShader.use();
+                //testShader.use();
+                //test.render(testShader.id);
 
-                test.render(testShader.id);
+                scene.forwardPass();
             }
 
 

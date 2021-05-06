@@ -87,17 +87,17 @@ namespace Engine.Toolset {
             editorScene.camera.updateUniformBuffer();
         }
 
-        internal override void renderGeometry() {
+        internal override void geometryPass() {
             //GL.LineWidth(10);
             if (renderMode == EditorRenderMode.wireframe) GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
 
-            Scene.active.renderGeometry();
+            Scene.active.geometryPass();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 
 
             GL.DepthFunc(DepthFunction.Always);
-            editorScene.renderGeometry();
+            editorScene.geometryPass();
             GL.DepthFunc(DepthFunction.Lequal);
 
 
@@ -165,8 +165,12 @@ namespace Engine.Toolset {
             GL.PointSize(10);
         }
 
-        internal override void renderLights() {
-            Scene.active.renderLights();
+        internal override void lightPass() {
+            Scene.active.lightPass();
+        }
+
+        internal override void forwardPass() {
+            Scene.active.forwardPass();
         }
 
         internal override void renderFrame() {

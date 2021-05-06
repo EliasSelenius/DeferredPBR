@@ -9,8 +9,11 @@ namespace Engine {
     public abstract class SceneBase {
         internal abstract void update();
         internal abstract void updateCamera();
-        internal abstract void renderGeometry();
-        internal abstract void renderLights();
+
+        internal abstract void geometryPass();
+        internal abstract void lightPass();
+        internal abstract void forwardPass();
+        
         internal abstract void renderFrame();
     }
 
@@ -25,6 +28,7 @@ namespace Engine {
     public interface IUnlitRenderer : IRenderer {
 
     }
+
 
     public class Scene : SceneBase {
 
@@ -48,8 +52,8 @@ namespace Engine {
 
         public readonly List<Dirlight> dirlights = new List<Dirlight>();
 
-        internal readonly List<IRenderer> renderers = new List<IRenderer>();
-        internal readonly List<IUnlitRenderer> unlitRenderers = new();
+        internal readonly List<IRenderer> renderers = new();
+        internal readonly List<IUnlitRenderer> forwardpassRenderers = new();
 
         internal event System.Action update_event;
 
@@ -78,11 +82,11 @@ namespace Engine {
             camera.updateUniformBuffer();
         }
         
-        internal override void renderGeometry() {
+        internal override void geometryPass() {
             foreach (var r in renderers) r.render();
         }
 
-        internal override void renderLights() {
+        internal override void lightPass() {
             Renderer.lightPass_dirlight.use();
             foreach (var light in dirlights) {
                 GL.Uniform3(GL.GetUniformLocation(Renderer.lightPass_dirlight.id, "lightDir"), light.dir.x, light.dir.y, light.dir.z);
@@ -109,6 +113,11 @@ namespace Engine {
             GL.Enable(EnableCap.DepthTest);
             skybox?.render();
         }
+
+        internal override void forwardPass() {
+            foreach (var r in forwardpassRenderers) r.render();
+        }
+
 
         internal override void renderFrame() {
 

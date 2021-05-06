@@ -1,12 +1,12 @@
 #version 330 core
 #include "Engine.data.shaders.Camera.glsl"
+#include "Engine.data.shaders.Model.glsl"
 
 /*
     geomPass vertex shader
 
 */
 
-uniform mat4 model;
 
 layout (location = 0) in vec3 a_Pos;
 layout (location = 1) in vec3 a_Normal;
