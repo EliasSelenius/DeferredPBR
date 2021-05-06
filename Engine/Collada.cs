@@ -7,10 +7,14 @@ using System;
 namespace Engine {
 
 
-    class Collada {
+    public class Collada {
 
-        private readonly List<Geometry> geometries = new List<Geometry>();
-        private readonly List<Material> materials = new List<Material>();
+        public readonly Dictionary<string, Prefab> prefabs;
+        public readonly Dictionary<string, PBRMaterial> materials;
+        public readonly Dictionary<string, (Mesh<Vertex> mesh, string[] materialNames)> meshes;
+
+        private readonly List<Geometry> colladaGeometries = new List<Geometry>();
+        private readonly List<Material> colladaMaterials = new List<Material>();
         private readonly XmlElement scene;
 
         private static readonly mat3 m = new mat3(
@@ -33,48 +37,53 @@ namespace Engine {
         }
 
         public Collada(XmlDocument doc) {
-
             var root = doc["COLLADA"];
 
             // asset
             var asset_xml = root["asset"];
             var up_axis = asset_xml["up_axis"].InnerText;
 
-
             // scenes
             scene = root["library_visual_scenes"]["visual_scene"];
-
 
             // geometry
             var lib_geom = root["library_geometries"];
             foreach (var item in lib_geom.GetElementsByTagName("geometry")) {
-                geometries.Add(new Geometry(this, (XmlElement)item));
+                colladaGeometries.Add(new Geometry(this, (XmlElement)item));
             }
-
 
             // materials
             var lib_materials = root["library_materials"];
             foreach (var item in lib_materials.GetElementsByTagName("material")) {
-                materials.Add(new Material((XmlElement)item));
+                colladaMaterials.Add(new Material((XmlElement)item));
             }
+
+
+
+            // meshes
+            meshes = new();
+            foreach (var g in colladaGeometries) {
+                meshes.Add(g.id, (g.mesh, g.materialNames));
+            }
+
+            // materials
+            materials = new();
+            foreach (var cm in colladaMaterials) {
+                materials.Add(cm.name, cm.pbrMaterial);
+            }
+            
+            // prefabs
+            prefabs = toPrefabs();
         }
 
-        public Geometry get_geometry(string id) => geometries.Find(x => x.id.Equals(id));
-        public Material get_material(string id) => materials.Find(x => x.id.Equals(id));
+        Geometry get_geometry(string id) => colladaGeometries.Find(x => x.id.Equals(id));
+        Material get_material(string id) => colladaMaterials.Find(x => x.id.Equals(id));
 
-        public Dictionary<string, Prefab> toPrefabs() {
-            var geoms = new Dictionary<string, (Mesh<Vertex> mesh, string[] materialNames)>();
-            foreach (var g in geometries) {
-                var t = g.genMesh();
-                geoms.Add(g.id, (new Mesh<Vertex>(t.mesh), t.materialNames));
-            }
-
+        Dictionary<string, Prefab> toPrefabs() {
             Prefab node(XmlElement xml) {
                 var g = new Prefab();
 
-
                 var fs = xml["matrix"].InnerText.Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
-
                 var m = new mat4();
                 m.m11 = fs[0];
                 m.m12 = fs[1];
@@ -106,7 +115,7 @@ namespace Engine {
 
                 var inst_geom = xml["instance_geometry"];
                 if (inst_geom != null) {
-                    var geom = geoms[inst_geom.GetAttribute("url").TrimStart('#')];
+                    var geom = meshes[inst_geom.GetAttribute("url").TrimStart('#')];
 
                     var inst_materials = inst_geom["bind_material"]?["technique_common"]?.GetElementsByTagName("instance_material");
 
@@ -154,6 +163,9 @@ namespace Engine {
         public class Geometry {
             readonly Collada collada;
             public readonly string id, name;
+
+            public readonly Mesh<Vertex> mesh;
+            public readonly string[] materialNames;
 
             Dictionary<string, Source> sources = new Dictionary<string, Source>();
             TriangleCollection[] triangles;
@@ -270,9 +282,12 @@ namespace Engine {
 
                 // triangles
                 triangles = xml.GetElementsByTagName("triangles").Cast<XmlElement>().Select(x => new TriangleCollection(this, x)).ToArray();
+
+
+                (mesh, materialNames) = genMesh();
             }
 
-            public (Meshdata<Vertex> mesh, string[] materialNames) genMesh() {
+            (Mesh<Vertex> mesh, string[] materialNames) genMesh() {
                 var mesh = new Meshdata<Vertex>();
 
                 static int add_vertex(Vertex v, Meshdata<Vertex> mesh) {
@@ -316,7 +331,7 @@ namespace Engine {
                 }
                 //mesh.bufferdata();
 
-                return (mesh, materials);
+                return (new Mesh<Vertex>(mesh), materials);
             }
         }
 

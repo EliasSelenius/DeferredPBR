@@ -41,6 +41,8 @@ namespace Engine {
 
         public static Dictionary<string, Mesh<Vertex>> meshes = new();
 
+        public static Dictionary<string, Collada> colladaFiles = new();
+
         static List<IResourceProvider> providers = new List<IResourceProvider>();
 
 
@@ -80,16 +82,29 @@ namespace Engine {
             }
 
             { // collada
-                // TODO: load materials aswell
                 foreach (var res in provider.enumerate("dae")) {
                     var doc = new XmlDocument();
                     doc.LoadXml(provider.getText(res));
                     var collada = new Collada(doc);
-                    var prefs = collada.toPrefabs();
-                    foreach (var p in prefs) {
-                        var prefabName = res.Substring(0, res.LastIndexOf('.')) + "." + p.Key;
-                        prefabs.Add(prefabName, p.Value);
+                    colladaFiles.Add(res, collada);
+
+                    var assetname = res.Substring(0, res.LastIndexOf('.')) + ".";
+
+                    // prefabs
+                    foreach (var p in collada.prefabs) {
+                        prefabs.Add(assetname + p.Key, p.Value);
                     }
+
+                    // meshes
+                    foreach (var m in collada.meshes) {
+                        meshes.Add(assetname + m.Key, m.Value.mesh);
+                    }
+
+                    // materials
+                    foreach (var m in collada.materials) {
+                        materials.Add(assetname + m.Key, m.Value);
+                    }
+
                 }
             }
 
