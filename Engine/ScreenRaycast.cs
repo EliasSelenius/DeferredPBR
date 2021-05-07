@@ -3,12 +3,12 @@ using Nums;
 using System.Collections.Generic;
 
 namespace Engine {
-    public static class Mousepicking {
+    public static class ScreenRaycast {
         static Framebuffer framebuffer;
         public static Shader shader;
 
 
-        static Mousepicking() {
+        static ScreenRaycast() {
             framebuffer = new Framebuffer(Renderer.windowWidth, Renderer.windowHeight, 
             new (FramebufferAttachment, RenderbufferStorage)[] {
                 (FramebufferAttachment.DepthAttachment, RenderbufferStorage.DepthComponent)
