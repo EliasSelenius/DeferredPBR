@@ -6,7 +6,7 @@ namespace Engine {
     static class ModelUBO {
         static Uniformblock uBlock;
         static ModelUBO() {
-            uBlock = Uniformblock.require("Model");
+            uBlock = Uniformblock.get("Model");
             uBlock.bindBuffer(GLUtils.createBuffer(mat4.bytesize));
         }
 

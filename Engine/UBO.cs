@@ -11,11 +11,10 @@ namespace Engine {
 
         static int bindingPoint_count = 0;
 
-        static Dictionary<string, Uniformblock> UBOs = new();
-        public static Uniformblock get(string name) => UBOs[name];
-        public static Uniformblock require(string name) {
-            if (UBOs.ContainsKey(name)) return UBOs[name];
-            else return UBOs[name] = new Uniformblock(name);
+        static Dictionary<string, Uniformblock> blocks = new();
+        public static Uniformblock get(string name) {
+            if (blocks.ContainsKey(name)) return blocks[name];
+            else return blocks[name] = new Uniformblock(name);
         }
 
 

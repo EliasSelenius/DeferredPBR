@@ -77,7 +77,7 @@ namespace Engine {
                 int uboIndex = GL.GetUniformBlockIndex(id, name);    
                 uniformBlocks[name] = uboIndex;
 
-                var ubo = Uniformblock.require(name);
+                var ubo = Uniformblock.get(name);
                 GL.UniformBlockBinding(id, uboIndex, ubo.bindingPoint);
             }
 

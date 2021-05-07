@@ -9,7 +9,7 @@ namespace Engine {
     }
 
     public class Material : IMaterial {
-        static Uniformblock uBlock = Uniformblock.require("Material");
+        static Uniformblock uBlock = Uniformblock.get("Material");
 
         public readonly Shader shader;
         int buffer;

@@ -107,10 +107,10 @@ namespace Engine {
 
 
             { // init UBOs
-                windowInfoUBO = Uniformblock.require("Window");
+                windowInfoUBO = Uniformblock.get("Window");
                 windowInfoUBO.bindBuffer(GLUtils.createBuffer(vec4.bytesize));
 
-                cameraUBO = Uniformblock.require("Camera");
+                cameraUBO = Uniformblock.get("Camera");
                 cameraUBO.bindBuffer(GLUtils.createBuffer(2 * mat4.bytesize));
             }
 
