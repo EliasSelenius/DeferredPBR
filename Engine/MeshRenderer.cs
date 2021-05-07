@@ -1,4 +1,5 @@
 using Nums;
+using System.Linq;
 
 namespace Engine {
 
@@ -18,6 +19,14 @@ namespace Engine {
     public class MeshRenderer : Component, IRenderer {
         public Mesh<Vertex> mesh;
         public IMaterial[] materials;
+
+        bool isUnlit() {
+            var type = materials[0].GetType();
+
+            if (!materials.Select(x => x.GetType()).All(x => x == type)) throw new System.Exception();
+            
+            return materials[0] is Material;
+        }
 
         public void render() {
             gameobject.calcModelMatrix(out mat4 mat);
@@ -50,11 +59,13 @@ namespace Engine {
         }
 
         protected override void onEnter() {
-            scene.renderers.Add(this);
+            if (isUnlit()) scene.forwardpassRenderers.Add(this);
+            else scene.renderers.Add(this);
         }
 
         protected override void onLeave() {
-            scene.renderers.Remove(this);
+            if (isUnlit()) scene.forwardpassRenderers.Remove(this);
+            else scene.renderers.Remove(this);
         }
     }
 }

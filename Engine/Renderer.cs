@@ -105,7 +105,6 @@ namespace Engine {
             }
 
 
-            testShader = Assets.getShader("unlit");
 
             { // init UBOs
                 windowInfoUBO = Uniformblock.require("Window");
@@ -122,7 +121,6 @@ namespace Engine {
 
         }
 
-        static Shader testShader;
 
 
         public static void drawframe(FrameEventArgs e) {
@@ -171,9 +169,6 @@ namespace Engine {
             { // forward pass
                 GL.Enable(EnableCap.DepthTest);
                 GL.Disable(EnableCap.Blend);
-
-                //testShader.use();
-                //test.render(testShader.id);
 
                 scene.forwardPass();
             }

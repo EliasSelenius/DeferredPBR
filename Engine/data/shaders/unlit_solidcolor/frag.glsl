@@ -5,6 +5,11 @@
 
 */
 
+layout(std140) uniform Material {
+    vec4 color;
+};
+
+
 in V2F {
     vec3 fragPos;
     vec3 normal;
@@ -14,5 +19,5 @@ in V2F {
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(1, 0, 0, 1);
+    FragColor = color;
 }

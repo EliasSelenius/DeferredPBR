@@ -14,12 +14,13 @@ namespace Engine {
         public readonly Shader shader;
         int buffer;
 
-        public Material(Shader shader, int buffer) {
+        public Material(Shader shader) {
             this.shader = shader;
-            this.buffer = buffer;
         }
 
-        
+        public void setdata<T>(T data) where T : unmanaged {
+            buffer = GLUtils.createBuffer(ref data);
+        }
 
         public void use() {
             shader.use();

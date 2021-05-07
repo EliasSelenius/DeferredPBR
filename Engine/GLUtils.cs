@@ -105,6 +105,11 @@ namespace Engine {
             bufferdata(b, data, hint);
             return b;
         }
+        public static int createBuffer<T>(ref T data, BufferUsageHint hint = BufferUsageHint.StaticDraw) where T : struct {
+            int b = GL.GenBuffer();
+            bufferdata(b, ref data, hint);
+            return b;
+        }
         public static int createBuffer(int bytesize, BufferUsageHint hint = BufferUsageHint.StaticDraw) {
             int b = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, b);
@@ -116,6 +121,10 @@ namespace Engine {
         public static void bufferdata<T>(int buffer, T[] data, BufferUsageHint hint = BufferUsageHint.StaticDraw) where T : struct {
             GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * System.Runtime.InteropServices.Marshal.SizeOf<T>(), data, hint);
+        }
+        public static void bufferdata<T>(int buffer, ref T data, BufferUsageHint hint = BufferUsageHint.StaticDraw) where T : struct {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
+            GL.BufferData(BufferTarget.ArrayBuffer, System.Runtime.InteropServices.Marshal.SizeOf<T>(), ref data, hint );
         }
 
         public static void buffersubdata<T>(int buffer, int offset, ref T data) where T : struct {
