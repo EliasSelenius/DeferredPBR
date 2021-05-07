@@ -26,10 +26,7 @@ namespace Engine {
             shader.use();
             uBlock.bindBuffer(buffer);
         }
-
-        
     }
-
 
     public class PBRMaterial : IMaterial {
         public vec3 albedo = vec3.one;

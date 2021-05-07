@@ -114,8 +114,11 @@ namespace Engine.Toolset {
                         var mpos = (ivec2)Mouse.position;
 
                         if (lastLeftclickPos.x == mpos.x && lastLeftclickPos.y == mpos.y) { // single selection:
-                            var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
-                            
+                            //var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
+                            Mousepicking.get((ivec2)Mouse.position, Scene.active.renderers, out IRenderer rendobj, out int primID, out vec3 normal);
+                            var obj = rendobj?.gameobject;
+
+
                             if (Keyboard.isDown(key.LeftShift)) {
                                 if (selection.Contains(obj)) selection.Remove(obj);
                                 else if (obj is not null) selection.AddLast(obj);
@@ -172,6 +175,7 @@ namespace Engine.Toolset {
         internal override void forwardPass() {
             Scene.active.forwardPass();
         }
+
 
         internal override void renderFrame() {
 
