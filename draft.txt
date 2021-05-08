@@ -26,11 +26,10 @@ upcomming todos:
         - 'x' as delete key will open different delete options
             - delete parent only
             - delete whole object
+
     - canvas rect border radius
-
-    - unlit materials    
-
     - resize windows
+    - first iteration of Assets gui
 
 
 new shaderprogram system:

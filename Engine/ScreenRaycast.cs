@@ -47,7 +47,7 @@ namespace Engine {
             }
         }
 
-        public static void get(ivec2 coord, List<IRenderer> renderers, out IRenderer renderer, out int primitiveID, out vec3 normal) {
+        public static void get(ivec2 coord, List<IRenderer> renderers, out IRenderer renderer, out int primitiveID, out vec3 normal, out vec3 position) {
             render(renderers);
             convertCoord(ref coord);
 
@@ -57,6 +57,7 @@ namespace Engine {
             primitiveID = readPrimitiveIDs(coord, 1, 1)[0, 0];
 
             normal = readNormals(coord, 1, 1)[0, 0];
+            position = readPositions(coord, 1, 1)[0, 0];
         }
 
         public static IRenderer select(Scene scene, ivec2 coord) {
@@ -100,7 +101,14 @@ namespace Engine {
         static vec3[,] readNormals(ivec2 coord, int w, int h) {
             GL.ReadBuffer(ReadBufferMode.ColorAttachment2);
             vec3[,] pixels = new vec3[w, h];
-            GL.ReadPixels<vec3>(coord.x, coord.y, w, h, PixelFormat.Rgb, PixelType.HalfFloat, pixels);
+            GL.ReadPixels<vec3>(coord.x, coord.y, w, h, PixelFormat.Rgb, PixelType.Float, pixels);
+            return pixels;
+        }
+
+        static vec3[,] readPositions(ivec2 coord, int w, int h) {
+            GL.ReadBuffer(ReadBufferMode.ColorAttachment3);
+            vec3[,] pixels = new vec3[w, h];
+            GL.ReadPixels<vec3>(coord.x, coord.y, w, h, PixelFormat.Rgb, PixelType.Float, pixels);
             return pixels;
         }
 

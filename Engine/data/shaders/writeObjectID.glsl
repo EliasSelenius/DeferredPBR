@@ -23,5 +23,5 @@ void main() {
     objectID = ObjectID;
     primitiveID = gl_PrimitiveID;
     normal = v2f.normal;
-    fragpos = v2f.fragpos;
+    fragpos = v2f.fragPos;
 }
