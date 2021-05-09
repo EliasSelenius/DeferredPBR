@@ -42,22 +42,15 @@ namespace Engine {
 
 
         public void updateUniformBuffer() {
+            
+            gameobject.calcModelMatrix(out viewMatrix);
+            viewMatrix.row1.xyz *= -1;
+            viewMatrix.row3.xyz *= -1;
+            Utils.invert(in viewMatrix, out viewMatrix);
 
-            /* gameobject.calcModelMatrix(out viewMatrix);
-            //viewMatrix.row4.xz *= -1;
-            //viewMatrix.row1.xyz *= -1;
-            //viewMatrix.row3.xyz *= -1;
-            var pos = viewMatrix.row4.xyz;
-            var x = -viewMatrix.row1.xyz.dot(pos);
-            var y = -viewMatrix.row2.xyz.dot(pos);
-            var z = -viewMatrix.row3.xyz.dot(pos);
-            viewMatrix = viewMatrix.transpose;
-            viewMatrix.col4 = (0,0,0,1);
-            viewMatrix.row4.xyz = (x, y, z); */
+            //viewMatrix = math.lookAt(transform.position, transform.position + transform.forward, transform.up);
 
-            viewMatrix = math.lookAt(transform.position, transform.position + transform.forward, transform.up);
-            //viewMatrix = Matrix4.LookAt(transform.position.toOpenTK(), (transform.position + transform.forward).toOpenTK(), transform.up.toOpenTK()).toNums();
-
+            
             Matrix4.CreatePerspectiveFieldOfView(fieldOfView * math.deg2rad, (float)Application.window.Size.X / Application.window.Size.Y, nearPlane, farPlane, out Matrix4 res);
             projectionMatrix = res.toNums(); 
 

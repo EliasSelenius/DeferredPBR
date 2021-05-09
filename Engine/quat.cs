@@ -94,6 +94,13 @@ namespace Engine {
 
         public quat conj() => new quat(-x, -y, -z, w);
 
+        public void normalize() {
+            var l = math.sqrt(x*x + y*y + z*z + w*w);
+            x /= l;
+            y /= l;
+            z /= l;
+            w /= l;
+        }
 
         public static quat operator *(in quat l, in quat r) {
             // (a + ib + jc + kd) * (e + if + jg + kh)
