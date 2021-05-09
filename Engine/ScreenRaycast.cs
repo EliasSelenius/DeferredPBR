@@ -1,6 +1,7 @@
 using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Collections.Generic;
+using System;
 
 namespace Engine {
     public static class ScreenRaycast {
@@ -59,6 +60,20 @@ namespace Engine {
             normal = readNormals(coord, 1, 1)[0, 0];
             position = readPositions(coord, 1, 1)[0, 0];
         }
+
+        /*public delegate void requestCallback(IRenderer renderer);
+        static readonly Stack<requestCallback> callbacks = new();
+        public static void request(ivec2 coord, requestCallback callback) {
+            callbacks.Push(callback);
+        }
+
+        internal static void dispatchFrame() {
+            render(Scene.active.renderers);
+
+            while(callbacks.TryPop(out requestCallback res)) {
+                res()
+            }
+        }*/
 
         public static IRenderer select(Scene scene, ivec2 coord) {
             render(scene.renderers);

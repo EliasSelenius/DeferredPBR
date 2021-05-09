@@ -17,16 +17,20 @@ namespace Engine {
 
         public void addForce(in vec3 force, in vec3 offset) {
             addForce(force);
-            addTorque((offset - centerOfMass).cross(force));
+
+            var axis = (offset - centerOfMass).cross(force);
+            var angle = axis.length;
+            axis /= angle;
+            addTorque(in axis, angle);
         }
 
-        public void addTorque(in vec3 torque) {
-            angularVelocity *= quat.fromAxisangle(torque.normalized(), torque.length);
+        public void addTorque(in vec3 axis, float angle) {
+            addTorque(quat.fromAxisangle(axis, angle));
         }
 
         public void addTorque(in quat torque) {
-            //var axisAngle = quat.a
-            throw new System.NotImplementedException();
+            // TODO: how do we convert from torque to angularacceleration using F = ma, mass is not acounted for here:
+            angularVelocity *= torque;
         }
 
         protected override void onUpdate() {

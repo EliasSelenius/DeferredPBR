@@ -114,18 +114,7 @@ namespace Engine.Toolset {
                         var mpos = (ivec2)Mouse.position;
 
                         if (lastLeftclickPos.x == mpos.x && lastLeftclickPos.y == mpos.y) { // single selection:
-                            //var obj = Mousepicking.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
-                            ScreenRaycast.get((ivec2)Mouse.position, Scene.active.renderers, out IRenderer rendobj, out int primID, out vec3 normal, out vec3 position);
-                            var obj = rendobj?.gameobject;
-
-                            editorScene.camera.gameobject.calcModelMatrix(out mat4 cammat);
-                            position.xz *= -1;
-                            position = (new vec4(position, 1) * cammat).xyz;
-
-                            Scene.active.createObject(new MeshRenderer {
-                                materials = new[] { PBRMaterial.defaultMaterial, PBRMaterial.defaultMaterial },
-                                mesh = Assets.getMesh("spoz.data.models.kitbash.cockpit1-mesh")
-                            }).transform.position = position;
+                            var obj = ScreenRaycast.select(Scene.active, (ivec2)Mouse.position)?.gameobject;
 
                             if (Keyboard.isDown(key.LeftShift)) {
                                 if (selection.Contains(obj)) selection.Remove(obj);
