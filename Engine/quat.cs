@@ -37,6 +37,14 @@ namespace Engine {
             };
         }
 
+        public static void toAxisangle(in quat q, out vec3 axis, out float angle) {
+            if (q.w > 1f) q.normalize();
+            angle = 2 * System.MathF.Acos(q.w);
+            var sin = math.sin(angle / 2f);
+            if (sin < 0.001f) axis = vec3.unitx;
+            else axis = new vec3(q.x, q.y, q.z) / sin;
+        }
+
         public static void toMatrix(in quat q, out mat3 res) {
             float xx = q.x * q.x,
                 xy = q.x * q.y,
