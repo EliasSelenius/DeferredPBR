@@ -61,19 +61,32 @@ namespace Engine {
             position = readPositions(coord, 1, 1)[0, 0];
         }
 
-        /*public delegate void requestCallback(IRenderer renderer);
-        static readonly Stack<requestCallback> callbacks = new();
-        public static void request(ivec2 coord, requestCallback callback) {
-            callbacks.Push(callback);
-        }
 
-        internal static void dispatchFrame() {
+
+        public struct rayhitdata {
+            public bool hit => renderer != null;
+            public IRenderer renderer;
+            public int primitiveID;
+            public vec3 normal, position;
+        }
+        public delegate void requestCallback(in rayhitdata data);
+        static readonly Dictionary<ivec2, Stack<requestCallback>> callbacks = new();
+        static Stack<requestCallback> getCallbackStack(ivec2 coord) => callbacks.ContainsKey(coord) ? callbacks[coord] : callbacks[coord] = new();
+        public static void request(ivec2 coord, requestCallback callback) => getCallbackStack(coord).Push(callback);
+
+        internal static void dispatchCallbacks() {
             render(Scene.active.renderers);
 
-            while(callbacks.TryPop(out requestCallback res)) {
-                res()
+            foreach (var kv in callbacks) {
+                var i = readObjIDs(kv.Key, 1 , 1)[0, 0] - 1;
+                var renderer = i < 0 ? null : Scene.active.renderers[i];
+                
+                while(kv.Value.TryPop(out requestCallback res)) {
+                    //res(renderer);
+                }
             }
-        }*/
+            
+        }
 
         public static IRenderer select(Scene scene, ivec2 coord) {
             render(scene.renderers);
