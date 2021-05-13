@@ -160,6 +160,8 @@ namespace Engine.Toolset {
             }
 
             Gizmo.bezier(vec3.zero, (20, 5, 7), 10);
+            Gizmo.circle(vec3.one * 40, vec3.one.normalized(), 4);
+            Gizmo.sphere(vec3.unity * 20, 10);
 
             //GL.PointParameter(PointParameterName.)
             GL.PointSize(10);

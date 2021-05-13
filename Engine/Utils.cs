@@ -25,6 +25,15 @@ namespace Engine {
         public static color randColor(int seed) => color.rgba(math.range(seed, 0, 1), math.range(seed+1, 0, 1), math.range(seed+2, 0, 1), 1.0f);
         public static color randColor() => color.rgba(math.range(0, 1), math.range(0, 1), math.range(0, 1), 1.0f);
 
+
+        public static void getTangentsOfNormal(in vec3 forward, out vec3 left, out vec3 up) {
+            if (forward.dot(vec3.unity) > 0.999f) left = forward.cross(vec3.unitx);
+            else left = forward.cross(vec3.unity);
+            
+            up = forward.cross(left);
+        }
+
+
         private static readonly List<mat4> matrixStack = new List<mat4> { mat4.identity }; 
         public static mat4 currentMatrix => matrixStack[matrixStack.Count - 1];
         public static void pushMatrix() {

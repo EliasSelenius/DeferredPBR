@@ -42,6 +42,25 @@ namespace Engine.Toolset {
             }
         }
 
+        public static void circle(in vec3 pos, in vec3 normal, float radius) {
+            Utils.getTangentsOfNormal(in normal, out vec3 left, out vec3 up);
+
+            float angle = 0;
+            const float d = math.tau / 26f;
+
+            for (int i = 0; i < 26; i++) {
+                var p1 = pos + left * math.cos(angle) * radius + up * math.sin(angle) * radius;
+                angle += d;
+                var p2 = pos + left * math.cos(angle) * radius + up * math.sin(angle) * radius;
+                line(p1, p2);
+            }
+        }
+
+        public static void sphere(in vec3 pos, float radius) {
+            circle(in pos, in vec3.unitx, radius);
+            circle(in pos, in vec3.unity, radius);
+            circle(in pos, in vec3.unitz, radius);
+        }
 
         internal static void dispatchFrame() {
             shader.use();
