@@ -63,7 +63,7 @@ namespace Engine {
         public void rotate(vec3 axis, float angle) => rotate(quat.fromAxisangle(axis, angle));
 
         public void lookat(in vec3 point, in vec3 up) {
-            Utils.invert(math.lookAt(position, point, up), out mat4 m);
+            Utils.invert(math.lookat(position, point, up), out mat4 m);
             m.row1.xyz = -m.row1.xyz;
             m.row3.xyz = -m.row3.xyz;
             quat.fromMatrix(new mat3(m), out rotation);

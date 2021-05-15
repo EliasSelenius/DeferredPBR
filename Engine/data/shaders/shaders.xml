@@ -22,9 +22,9 @@
     <shader name="CubemapSkybox" 
         vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
         fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />
-    <shader name="mousePicking" 
-        vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
-        fragsrc="Engine.data.shaders.writeObjectID.glsl" />
+    <shader name="ScreenRaycast" 
+        vertsrc="Engine.data.shaders.ScreenRaycast.vert.glsl" 
+        fragsrc="Engine.data.shaders.ScreenRaycast.frag.glsl" />
 
     <shader name="gizmo" 
         vertsrc="Engine.data.shaders.gizmo.vert.glsl"

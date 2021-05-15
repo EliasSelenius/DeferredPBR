@@ -1,7 +1,7 @@
 #version 330 core
 
 /*
-    Object ID fragment shader
+    ScreenRaycast fragment shader
 
 */
 

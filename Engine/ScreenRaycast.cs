@@ -22,7 +22,7 @@ namespace Engine {
                 FramebufferFormat.rgb16f // position
             });
 
-            shader = Assets.getShader("mousePicking");
+            shader = Assets.getShader("ScreenRaycast");
         }
 
         static void convertCoord(ref ivec2 coord) => coord.y = framebuffer.height - coord.y;
@@ -62,6 +62,7 @@ namespace Engine {
                 position = pos;
                 normal = norm;
             }
+            
         }
     
         public delegate void hitCallback(rayhitdata data);

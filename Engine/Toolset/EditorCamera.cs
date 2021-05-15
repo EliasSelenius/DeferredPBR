@@ -7,6 +7,9 @@ namespace Engine.Toolset {
         vec3 velocity;
         float speedMult = 100f;
 
+        vec3 lastClickPos;
+        vec3 lastClickNormal = vec3.unity;
+
         protected override void onUpdate() {
 
             transform.position += velocity * Application.deltaTime;
@@ -30,16 +33,22 @@ namespace Engine.Toolset {
                 Mouse.state = MouseState.free;
             }
 
-            Editor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
-            Editor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
+            //Editor.canvas.text((0, 30), Font.arial, 16, "velocity: " + velocity.length.ToString(), color.white);
+            //Editor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
 
 
             // test screen raycast callbacks
-            if (Mouse.isPressed(MouseButton.left)) {
+            if (true){//Mouse.isPressed(MouseButton.left)) {
                 ScreenRaycast.onHit(hit => {
-                    hit.renderer.gameobject.transform.position.y += 10;
+                    var mesh = (hit.renderer as MeshRenderer).mesh;
+                    lastClickPos = hit.position;
+                    lastClickNormal = hit.normal;
                 });
             }
+            Gizmo.color(in color.blue);
+            Gizmo.circle(in lastClickPos, in lastClickNormal, 1);
+            Gizmo.line(lastClickPos, lastClickPos + lastClickNormal);
+
 
 
             

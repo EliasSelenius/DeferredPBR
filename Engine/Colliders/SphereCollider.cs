@@ -25,6 +25,7 @@ namespace Engine {
 
         protected override void onEditorRender() {
             gameobject.calcWorldPosition(out vec3 wpos);
+            Toolset.Gizmo.color(in color.green);
             Toolset.Gizmo.sphere(in wpos, radius);
         }
 
