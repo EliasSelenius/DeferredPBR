@@ -21,6 +21,7 @@ namespace Engine {
         public int width { get; private set; }
         public int height { get; private set; }
 
+
         static (PixelInternalFormat internalFormat, PixelFormat format, PixelType type) getGLformat(FramebufferFormat format) => format switch {
             FramebufferFormat.rgba8 => (PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte),
             FramebufferFormat.rgba16f => (PixelInternalFormat.Rgba16f, PixelFormat.Rgba, PixelType.Float),

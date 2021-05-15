@@ -39,6 +39,7 @@ namespace Engine {
             framebuffer.bind();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+
             var uniformloc = GL.GetUniformLocation(shader.id, "ObjectID");
             int i = 1;
             foreach (var r in renderers) {
@@ -48,50 +49,57 @@ namespace Engine {
             }
         }
 
-        public static void get(ivec2 coord, List<IRenderer> renderers, out IRenderer renderer, out int primitiveID, out vec3 normal, out vec3 position) {
-            render(renderers);
+
+#region callbacks API
+        public class rayhitdata {
+            public readonly IRenderer renderer;
+            public readonly int primitiveID;
+            public readonly vec3 normal, position;
+
+            public rayhitdata(IRenderer r, int primID, vec3 pos, vec3 norm) {
+                renderer = r;
+                primitiveID = primID;
+                position = pos;
+                normal = norm;
+            }
+        }
+    
+        public delegate void hitCallback(rayhitdata data);
+        static Stack<hitCallback> callbacks = new();
+
+        public static void onHit(hitCallback callback) => callbacks.Push(callback);
+
+        static rayhitdata getHitdata(ivec2 coord) {
             convertCoord(ref coord);
 
-            var i = readObjIDs(coord, 1 , 1)[0, 0] - 1;
-            renderer = i < 0 ? null : renderers[i];
+            var i = readObjID(coord) - 1;
             
-            primitiveID = readPrimitiveIDs(coord, 1, 1)[0, 0];
-
-            normal = readNormals(coord, 1, 1)[0, 0];
-            position = readPositions(coord, 1, 1)[0, 0];
+            if (i < 0) return null;
+            
+            return new(
+                Scene.active.renderers[i],
+                readPrimitiveID(coord),
+                readPosition(coord),
+                readNormal(coord)
+            );
         }
-
-
-
-        public struct rayhitdata {
-            public bool hit => renderer != null;
-            public IRenderer renderer;
-            public int primitiveID;
-            public vec3 normal, position;
-        }
-        public delegate void requestCallback(in rayhitdata data);
-        static readonly Dictionary<ivec2, Stack<requestCallback>> callbacks = new();
-        static Stack<requestCallback> getCallbackStack(ivec2 coord) => callbacks.ContainsKey(coord) ? callbacks[coord] : callbacks[coord] = new();
-        public static void request(ivec2 coord, requestCallback callback) => getCallbackStack(coord).Push(callback);
 
         internal static void dispatchCallbacks() {
+            if (callbacks.Count == 0) return;
+
             render(Scene.active.renderers);
 
-            foreach (var kv in callbacks) {
-                var i = readObjIDs(kv.Key, 1 , 1)[0, 0] - 1;
-                var renderer = i < 0 ? null : Scene.active.renderers[i];
-                
-                while(kv.Value.TryPop(out requestCallback res)) {
-                    //res(renderer);
-                }
-            }
-            
+            var data = getHitdata((ivec2)Mouse.position);
+            if (data == null) callbacks.Clear();
+
+            while (callbacks.TryPop(out hitCallback callback)) callback(data);
         }
+#endregion
 
         public static IRenderer select(Scene scene, ivec2 coord) {
             render(scene.renderers);
             convertCoord(ref coord);
-            var p = readObjIDs(coord, 1, 1)[0,0] - 1;
+            var p = readObjID(coord) - 1;
             return p < 0 ? null : scene.renderers[p];
         }
 
@@ -104,7 +112,7 @@ namespace Engine {
             var max = math.max(fromCoord, toCoord);
             var size = max - min;
             size = math.max(size, ivec2.one);
-            var ps = readObjIDs(min, size.x, size.y);
+            var ps = readObjIDs(min, size);
 
             var res = new List<IRenderer>();
             foreach(int i in ps) if (i-1 >= 0 && !res.Contains(scene.renderers[i-1])) res.Add(scene.renderers[i-1]);
@@ -112,31 +120,54 @@ namespace Engine {
         }
         
 
-        static int[,] readObjIDs(ivec2 coord, int w, int h) {
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-            int[,] pixels = new int[w, h];
-            GL.ReadPixels<int>(coord.x, coord.y, w, h, PixelFormat.RedInteger, PixelType.Int, pixels);
-            return pixels;
+        static int readObjID(ivec2 coord) => readObjIDs(coord, ivec2.one)[0,0];
+        static int[,] readObjIDs(ivec2 coord, ivec2 size) {
+            return read<int>(
+                ReadBufferMode.ColorAttachment0,
+                PixelFormat.RedInteger,
+                PixelType.Int,
+                coord,
+                size
+            );
+        }
+        
+        static int readPrimitiveID(ivec2 coord) => readPrimitiveIDs(coord, ivec2.one)[0,0];
+        static int[,] readPrimitiveIDs(ivec2 coord, ivec2 size) {
+            return read<int>(
+                ReadBufferMode.ColorAttachment1,
+                PixelFormat.RedInteger,
+                PixelType.Int,
+                coord,
+                size
+            );
         }
 
-        static int[,] readPrimitiveIDs(ivec2 coord, int w, int h) {
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment1);
-            int[,] pixels = new int[w, h];
-            GL.ReadPixels<int>(coord.x, coord.y, w, h, PixelFormat.RedInteger, PixelType.Int, pixels);
-            return pixels;
+        static vec3 readNormal(ivec2 coord) => readNormals(coord, ivec2.one)[0,0];
+        static vec3[,] readNormals(ivec2 coord, ivec2 size) {
+            return read<vec3>(
+                ReadBufferMode.ColorAttachment2,
+                PixelFormat.Rgb,
+                PixelType.Float,
+                coord,
+                size
+            );
         }
 
-        static vec3[,] readNormals(ivec2 coord, int w, int h) {
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment2);
-            vec3[,] pixels = new vec3[w, h];
-            GL.ReadPixels<vec3>(coord.x, coord.y, w, h, PixelFormat.Rgb, PixelType.Float, pixels);
-            return pixels;
+        static vec3 readPosition(ivec2 coord) => readPositions(coord, ivec2.one)[0,0];
+        static vec3[,] readPositions(ivec2 coord, ivec2 size) {
+            return read<vec3>(
+                ReadBufferMode.ColorAttachment3,
+                PixelFormat.Rgb,
+                PixelType.Float,
+                coord,
+                size
+            );
         }
 
-        static vec3[,] readPositions(ivec2 coord, int w, int h) {
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment3);
-            vec3[,] pixels = new vec3[w, h];
-            GL.ReadPixels<vec3>(coord.x, coord.y, w, h, PixelFormat.Rgb, PixelType.Float, pixels);
+        static T[,] read<T>(ReadBufferMode rb, PixelFormat format, PixelType type, ivec2 coord, ivec2 size) where T : unmanaged {
+            GL.ReadBuffer(rb);
+            T[,] pixels = new T[size.x, size.y];
+            GL.ReadPixels<T>(coord.x, coord.y, size.x, size.y, format, type, pixels);
             return pixels;
         }
 

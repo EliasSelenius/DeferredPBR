@@ -62,6 +62,7 @@ namespace Engine.Toolset {
 
             windowSys.addWindow(new Window());
             windowSys.addWindow(new TextEditorWindow());
+            windowSys.addWindow(new AssetsWindow());
         }
 
 
@@ -84,7 +85,7 @@ namespace Engine.Toolset {
 
 
         internal override void updateCamera() {            
-            editorScene.camera.updateUniformBuffer();
+            editorScene.camera.use();
         }
 
         internal override void geometryPass() {

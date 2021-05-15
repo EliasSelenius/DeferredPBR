@@ -23,5 +23,10 @@ namespace Engine {
             throw new NotImplementedException();
         }
 
+        protected override void onEditorRender() {
+            gameobject.calcWorldPosition(out vec3 wpos);
+            Toolset.Gizmo.sphere(in wpos, radius);
+        }
+
     }
 }

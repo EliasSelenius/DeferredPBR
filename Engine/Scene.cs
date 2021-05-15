@@ -75,7 +75,7 @@ namespace Engine {
         }
 
         internal override void updateCamera() {
-            camera.updateUniformBuffer();
+            camera.use();
         }
         
         internal override void geometryPass() {

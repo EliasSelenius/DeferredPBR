@@ -34,8 +34,15 @@ namespace Engine.Toolset {
             Editor.canvas.text((0, 46), Font.arial, 16, "speedMul: " + speedMult, color.white);
 
 
+            // test screen raycast callbacks
+            if (Mouse.isPressed(MouseButton.left)) {
+                ScreenRaycast.onHit(hit => {
+                    hit.renderer.gameobject.transform.position.y += 10;
+                });
+            }
 
-             
+
+            
             if (false) { // voxel testing
                 if (Mouse.isPressed(MouseButton.left)) {
                     var vpos = (ivec3)(transform.position + transform.forward * 2);

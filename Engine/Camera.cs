@@ -41,8 +41,7 @@ namespace Engine {
 
 
 
-        public void updateUniformBuffer() {
-            
+        public void updateMatrices() {
             gameobject.calcModelMatrix(out viewMatrix);
             viewMatrix.row1.xyz *= -1;
             viewMatrix.row3.xyz *= -1;
@@ -53,7 +52,10 @@ namespace Engine {
             
             Matrix4.CreatePerspectiveFieldOfView(fieldOfView * math.deg2rad, (float)Application.window.Size.X / Application.window.Size.Y, nearPlane, farPlane, out Matrix4 res);
             projectionMatrix = res.toNums(); 
+        }
 
+        public void use() {
+            updateMatrices();
             Renderer.updateCamera(ref viewMatrix, ref projectionMatrix);
         }
 

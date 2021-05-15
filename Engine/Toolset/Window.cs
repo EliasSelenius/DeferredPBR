@@ -234,4 +234,16 @@ namespace Engine.Toolset {
             base.render(canvas);
         }
     }
+
+    public class AssetsWindow : Window {
+        public override void render(Canvas canvas) {
+            vec2 p = this.pos + (0, titlebarHeight);
+            foreach (var m in Assets.meshes) {
+                canvas.text(p, Font.arial, 16, m.Key, in color.white);
+                p.y += 16;
+            }
+
+            base.render(canvas);
+        }
+    }
 }

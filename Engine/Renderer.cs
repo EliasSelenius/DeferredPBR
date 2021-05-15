@@ -185,6 +185,7 @@ namespace Engine {
 
             }
             
+            ScreenRaycast.dispatchCallbacks();
 
             scene.renderFrame();
 
