@@ -196,15 +196,16 @@ namespace Engine.Toolset {
 
             }
 
-            Editor.canvas.text(vec2.zero, Font.arial, 16, "fps: " + Renderer.fps, in color.white);
+            Editor.canvas.text((1000, 0), Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
-            Editor.canvas.text(100, Font.arial, 30, Mouse.wheeldelta.ToString(), in color.white);
 
             Console.render(Editor.canvas);
 
             ContexMenu.render(Editor.canvas);
 
-            windowSys.render(Editor.canvas);
+            //windowSys.render(Editor.canvas);
+
+            Assets.drawGui(Editor.canvas);
 
             Editor.canvas.dispatchFrame();
         }        

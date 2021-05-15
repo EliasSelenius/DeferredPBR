@@ -187,6 +187,7 @@ namespace Engine {
             
             ScreenRaycast.dispatchCallbacks();
 
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0); // TODO: remove this
             scene.renderFrame();
 
 

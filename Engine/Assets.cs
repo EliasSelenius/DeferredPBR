@@ -10,21 +10,6 @@ using Nums;
 using Engine.Toolset;
 
 
-/*
-
-    assets to draw in GUI
-        - shaders
-            - glsl source files
-        - textures
-            - settings (genMipmap, filter)
-        - materials
-        - prefabs
-        - fonts
-        - meshes
-
-
-
-*/
 
 namespace Engine {
     public static class Assets {
@@ -159,8 +144,64 @@ namespace Engine {
 
 #region gui rendering
 
+
+/*
+
+    assets to draw in GUI
+        - shaders
+            - glsl source files
+        - textures
+            - settings (genMipmap, filter)
+        - materials
+        - prefabs
+        - fonts
+        - meshes
+
+
+
+*/
+
+        static (string title, Action<Textflow> draw)[] pages = {
+            ("Prefabs", tf => {
+                foreach (var p in prefabs) {
+                    tf.writeline(p.Key);
+                }
+            }),
+            ("Materials", tf => {
+                foreach (var p in materials) {
+                    tf.writeline(p.Key);
+                }
+            }),
+            ("Meshes", tf => {
+                foreach (var p in meshes) {
+                    tf.writeline(p.Key);
+                }
+            }),
+            ("Shaders", tf => {
+                foreach (var p in shaders) {
+                    tf.writeline(p.Key);
+                }
+            }),
+            ("Textures", tf => {
+                foreach (var p in textures) {
+                    tf.writeline(p.Key);
+                }
+            })
+        };
+
+        static int page = 0;
+
         internal static void drawGui(Canvas canvas) {
-            
+            var tf = new Textflow(canvas) {
+                font = Gui.Font.arial,
+                fontsize = 16,
+                textcolor = Editor.theme.textColor,
+                pos = (10, 40)
+            };
+
+
+            canvas.text(3, Gui.Font.arial, 32, pages[page].title, Editor.theme.textColor);
+            pages[page].draw(tf);
 
 
 
@@ -168,11 +209,37 @@ namespace Engine {
             var backgroundSize = new vec2(canvas.width / 3.5f, canvas.height - 6); 
             canvas.rect(3, backgroundSize, Editor.theme.backgroundColor);
             // border
+            canvas.rectborder(3, backgroundSize, 3, Editor.theme.borderColor);
 
         }
 
 #endregion
 
+    }
+
+
+    class Textflow {
+        public enum Align {
+            left, center, right
+        }
+        
+        public Canvas canvas;
+
+        public Gui.Font font;
+        public int fontsize;
+        public vec2 pos;
+        public color textcolor;
+        public Align align;
+
+
+        public Textflow(Canvas canvas) {
+            this.canvas = canvas;
+        }
+
+        public void writeline(string text) {
+            canvas.text(pos, font, fontsize, text, in textcolor);
+            pos.y += fontsize;
+        }
     }
 
 

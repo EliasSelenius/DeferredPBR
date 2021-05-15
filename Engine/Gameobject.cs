@@ -155,6 +155,10 @@ namespace Engine {
         public Transform transform => gameobject.transform;
         public Scene scene => gameobject.scene;
 
+        public void disable() {
+            if (scene != null) scene.update_event -= onUpdate;
+        }
+
         internal void start() {
             onStart();
         }

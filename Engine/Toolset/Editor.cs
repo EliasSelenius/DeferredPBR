@@ -10,7 +10,7 @@ namespace Engine.Toolset {
         public static void close() => Application.scene = Scene.active;
 
 
-        public static Theme theme; 
+        public static Theme theme = Theme.darkGreenish;
 
         public static readonly Canvas canvas = new(Renderer.windowWidth, Renderer.windowHeight);
 
