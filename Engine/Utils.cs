@@ -31,6 +31,9 @@ namespace Engine {
             else left = forward.cross(vec3.unity);
             
             up = forward.cross(left);
+
+            left.normalize();
+            up.normalize();
         }
 
 
