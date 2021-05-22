@@ -52,14 +52,15 @@ namespace Engine.Toolset {
 
 
             
-            if (false) { // voxel testing
+            /*{ // voxel testing
                 if (Mouse.isPressed(MouseButton.left)) {
                     var vpos = (ivec3)(transform.position + transform.forward * 2);
-                    Console.notify("voxel placed at " + vpos);
+                    Editor.notify("voxel placed at " + vpos);
                     Voxels.Voxelgrid.grid.voxelAt(vpos).isSolid = true;
                     Voxels.Voxelgrid.grid.updateMesh();
+                    
                 }
-            }
+            }*/
         }
 
         public void focus(in vec3 point) {

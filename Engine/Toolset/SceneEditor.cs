@@ -199,7 +199,7 @@ namespace Engine.Toolset {
             Editor.canvas.text((1000, 0), Font.arial, 16, "fps: " + Renderer.fps, in color.white);
             //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
 
-            Console.render(Editor.canvas);
+            Editor.renderConsole();
 
             ContexMenu.render(Editor.canvas);
 

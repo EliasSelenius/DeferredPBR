@@ -3,7 +3,7 @@ using Engine.Gui;
 
 
 namespace Engine.Toolset {
-    public static class Editor {
+    public static partial class Editor {
         static readonly SceneEditor sceneEditor = new();
         public static bool isOpen => Application.scene == sceneEditor;
         public static void open() => Application.scene = sceneEditor;
