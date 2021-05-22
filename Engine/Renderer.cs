@@ -121,9 +121,9 @@ namespace Engine {
 
         }
 
+        public static event System.Action onDrawFrame;
 
-
-        public static void drawframe(FrameEventArgs e) {
+        internal static void drawframe(FrameEventArgs e) {
 
             time += deltaTime = e.Time;
 
@@ -186,10 +186,14 @@ namespace Engine {
             }
             
             ScreenRaycast.dispatchCallbacks();
-
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0); // TODO: remove this
+            
+            // TODO: ScreenRaycast.dispatchCallbacks() should hapen after scene.renderFrame(), 
+            // but canvas.dispatchFrame() updates projection, so thats a problem. solve it by yeeting it away from canvas, (its not needed anyway)
+            
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0); 
             scene.renderFrame();
 
+            onDrawFrame?.Invoke();
 
             GL.Flush();
             Application.window.SwapBuffers();

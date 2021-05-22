@@ -23,14 +23,6 @@ namespace Engine.Toolset {
 
         ivec2 lastLeftclickPos;
 
-        ContexMenu deleteMenu = new("Delete", 
-            ("parent & chilldren", null), 
-            ("parent only", null),
-            ("children only", null)
-        );
-
-        WindowSystem windowSys = new();
-
         internal SceneEditor() {
 
             var cam = new Gameobject(
@@ -41,28 +33,10 @@ namespace Engine.Toolset {
 
 
 
-            /*var transformGizmo = new Gameobject(
-                new MeshRenderer {
-                    mesh = new Mesh<Vertex>(MeshFactory<Vertex>.genSphere(10, 0.5f)),
-                    materials = new[] {
-                        PBRMaterial.defaultMaterial
-                    }
-                }
-            );*/
-
             var transformGizmoPrefab = Assets.getPrefab("Engine.data.models.TransformGizmo.pivot");
             var transformGizmo = transformGizmoPrefab.createInstance();
             transformGizmo.enterScene(editorScene);
 
-            int i = 0;
-            foreach (var c in transformGizmo.children) {
-                i += 3;
-                c.transform.position += i; 
-            }
-
-            windowSys.addWindow(new Window());
-            windowSys.addWindow(new TextEditorWindow());
-            windowSys.addWindow(new AssetsWindow());
         }
 
 
@@ -75,11 +49,6 @@ namespace Engine.Toolset {
                 foreach (var s in selection) s.destroy();
                 selection.Clear();
             }
-
-            if (Keyboard.isPressed(key.X)) {
-                deleteMenu.open();
-            }
-
         }
 
 
@@ -106,7 +75,7 @@ namespace Engine.Toolset {
             { // selections
 
                 // handle selections
-                if (Mouse.state == MouseState.free && windowSys.activeWindow == null) {
+                if (Mouse.state == MouseState.free) {
                     if (Mouse.isPressed(MouseButton.left)) {
                         lastLeftclickPos = (ivec2)Mouse.position;
                     } else if(Mouse.isDown(MouseButton.left)) {
@@ -160,12 +129,7 @@ namespace Engine.Toolset {
                 }
             }
 
-            Gizmo.bezier(vec3.zero, (20, 5, 7), 10);
-            Gizmo.circle(vec3.one * 40, vec3.one.normalized(), 4);
-            Gizmo.sphere(vec3.unity * 20, 10);
 
-            //GL.PointParameter(PointParameterName.)
-            GL.PointSize(10);
         }
 
         internal override void lightPass() {
@@ -178,37 +142,13 @@ namespace Engine.Toolset {
 
 
         internal override void renderFrame() {
-
-            foreach (var g in Scene.active.gameobjects) {
-                foreach (var c in g.components) {
-                    c.editorRender();
-                }
-            }
-
-            Gizmo.dispatchFrame();
-
             if (selection.First != null) {
                 selection.First.Value.calcWorldPosition(out vec3 wpos);
                 editorScene.camera.world2ndc(in wpos, out vec2 coords);
                 Editor.canvas.ndc2canvasCoord(ref coords);
                 Editor.canvas.text(coords, Font.arial, 30, "Hello World", in color.white);
-
-
             }
-
-            Editor.canvas.text((1000, 0), Font.arial, 16, "fps: " + Renderer.fps, in color.white);
-            //canvas.rect(canvas.size/2, canvas.size/2 - 10, in color.white);
-
-            Editor.renderConsole();
-
-            ContexMenu.render(Editor.canvas);
-
-            //windowSys.render(Editor.canvas);
-
-            Assets.drawGui(Editor.canvas);
-
-            Editor.canvas.dispatchFrame();
-        }        
+        }     
     }
 
     public class ContexMenu {

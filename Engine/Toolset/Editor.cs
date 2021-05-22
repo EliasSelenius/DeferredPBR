@@ -5,9 +5,17 @@ using Engine.Gui;
 namespace Engine.Toolset {
     public static partial class Editor {
         static readonly SceneEditor sceneEditor = new();
+        
         public static bool isOpen => Application.scene == sceneEditor;
-        public static void open() => Application.scene = sceneEditor;
-        public static void close() => Application.scene = Scene.active;
+        
+        public static void open() {
+            Application.scene = sceneEditor;
+            Renderer.onDrawFrame += renderer_drawframe;
+        }
+        public static void close() {
+            Application.scene = Scene.active;
+            Renderer.onDrawFrame -= renderer_drawframe;
+        }
 
 
         public static Theme theme = Theme.darkGreenish;
@@ -21,6 +29,26 @@ namespace Engine.Toolset {
 
         static void onWindowResize(OpenTK.Windowing.Common.ResizeEventArgs args) {
             canvas.resize(args.Width, args.Height);
+        }
+
+        static void renderer_drawframe() {
+
+            foreach (var g in Scene.active.gameobjects) {
+                foreach (var c in g.components) {
+                    c.editorRender();
+                }
+            }
+
+            Gizmo.dispatchFrame();
+
+            // FPS:
+            canvas.text((1000, 0), Font.arial, 16, "fps: " + Renderer.fps, in color.white);
+
+            renderConsole();
+
+            Assets.drawGui(canvas);
+
+            canvas.dispatchFrame();
         }
 
     }
