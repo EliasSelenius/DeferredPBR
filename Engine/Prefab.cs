@@ -9,6 +9,8 @@ namespace Engine {
         readonly List<Prefab> children = new();
 
         
+        static Func<Component> getConstructor<T>() where T : Component, new() => () => new T();
+
         public void addComponent(Type type, Dictionary<string, object> fields) => components.Add(new Comp(type, fields)); 
         public void addComponent<T>(Dictionary<string, object> fields) => addComponent(typeof(T), fields); 
 

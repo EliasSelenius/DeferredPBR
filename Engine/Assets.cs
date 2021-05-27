@@ -54,7 +54,7 @@ namespace Engine {
 
             { // textures
                 foreach (var res in provider.enumerate("png")) {
-                    textures[res] = new Texture2D(WrapMode.Repeat, Filter.Nearest, Utils.bitmapToColorArray(provider.getBitmap(res)));
+                    textures[res] = new Texture2D(WrapMode.Repeat, Filter.Linear, Utils.bitmapToColorArray(provider.getBitmap(res)));
                 }
             }
 
@@ -193,7 +193,7 @@ namespace Engine {
 
         internal static void drawGui(Canvas canvas) {
             var tf = new Textflow(canvas) {
-                font = Gui.Font.arial,
+                font = getFont("Engine.data.fonts.monospaced.fnt"),  // Gui.Font.arial,
                 fontsize = 16,
                 textcolor = Editor.theme.textColor,
                 pos = (10, 40)

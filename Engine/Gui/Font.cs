@@ -9,6 +9,7 @@ namespace Engine.Gui {
 
         
         public static readonly Font arial = Assets.getFont("Engine.data.fonts.arial.fnt");
+        public static readonly Font monospaced = Assets.getFont("Engine.data.fonts.monospaced.fnt");
 
         public readonly Texture2D atlas;
         public vec2 atlasSize => new vec2(atlas.width, atlas.height);
