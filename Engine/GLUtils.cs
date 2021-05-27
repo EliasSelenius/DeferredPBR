@@ -37,7 +37,7 @@ namespace Engine {
         
     }
 
-    static class GLUtils {
+    public static class GLUtils {
 
         static GLUtils() {
             texture_generator_fbo = GL.GenFramebuffer();
@@ -210,6 +210,15 @@ namespace Engine {
             GL.BindVertexArray(vao);
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
+            setupAttribPointers<VertType>();
+            GL.BindVertexArray(0);
+            return vao;
+        }
+
+        public static int createVertexArray<VertType>(int vbo) where VertType : struct {
+            int vao = GL.GenVertexArray();
+            GL.BindVertexArray(vao);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             setupAttribPointers<VertType>();
             GL.BindVertexArray(0);
             return vao;
