@@ -31,7 +31,18 @@ namespace Engine.Toolset {
             canvas.resize(args.Width, args.Height);
         }
 
+        static Textbox textbox = new();
+
         static void renderer_drawframe() {
+
+            if (textbox.editing) { // text box 
+                textbox.render(canvas, (500, 100));
+            }
+
+            if (Keyboard.isPressed(key.Escape)) {
+                textbox.editing = !textbox.editing;
+            }
+
 
             foreach (var g in Scene.active.gameobjects) {
                 foreach (var c in g.components) {
