@@ -50,6 +50,12 @@ namespace Engine.Gui {
                 }
 
 
+                // italic text:
+                //var italicOffset = new vec2(0.1f, 0);
+                //addv(glyph.v2 + italicOffset, glyph.uv2);
+                //addv(glyph.v3 + italicOffset, glyph.uv3);
+
+
                 addv(glyph.v0, glyph.uv0);
                 addv(glyph.v1, glyph.uv1);
                 addv(glyph.v2, glyph.uv2);

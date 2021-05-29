@@ -32,6 +32,14 @@ upcomming todos:
     - first iteration of Assets gui
 
 
+compute shader use cases:
+    - generate texture
+    - generate voxelgrid
+    - game of life
+    - particle system
+    
+
+
 new shaderprogram system:
     - preprocessor
         - includes (with #line and possibly #error when file not found)

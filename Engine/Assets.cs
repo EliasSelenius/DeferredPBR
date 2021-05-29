@@ -15,7 +15,7 @@ namespace Engine {
     public static class Assets {
 
         public static Dictionary<string, Shader> shaders = new();
-        static Dictionary<string, string> shaderSources = new();
+        public static Dictionary<string, string> shaderSources = new();
 
         public static Dictionary<string, Texture2D> textures = new();
         public static Dictionary<string, PBRMaterial> materials = new();

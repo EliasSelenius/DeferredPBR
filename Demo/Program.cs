@@ -38,7 +38,7 @@ namespace Demo {
             }
 
             { // textured plane
-                var m = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(10, 10f, 10));
+                var m = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(10, 10f));
 
                 var tex = new Texture2D(WrapMode.MirroredRepeat, Filter.Nearest, 1000, 1000);
                 for (int i = 0; i < tex.width; i++) {
@@ -53,6 +53,8 @@ namespace Demo {
                     }
                 }
                 tex.applyChanges();
+
+                Renderer.computeTexture(tex);
 
                 var g = new Gameobject();
                 g.addComponent(new MeshRenderer {

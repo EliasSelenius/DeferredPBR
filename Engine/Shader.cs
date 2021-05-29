@@ -15,9 +15,12 @@ namespace Engine {
         public void use() => GL.UseProgram(id);
         public string getInfolog() => GL.GetProgramInfoLog(id);
 
-        public Shader(string name, string frag, string vert) {
+        public Shader(string name) {
             this.name = name;
             id = GL.CreateProgram();
+        }
+
+        public Shader(string name, string frag, string vert) : this(name) {
 
             sources.Add(ShaderType.FragmentShader, frag);
             sources.Add(ShaderType.VertexShader, vert);
@@ -25,7 +28,6 @@ namespace Engine {
             if (!linkProgram()) {
                 System.Console.WriteLine(getInfolog());
             }
-
         }
 
         /// <summary>returns true if linking was successful</summary>

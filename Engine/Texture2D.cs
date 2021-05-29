@@ -2,7 +2,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Engine {
     public class Texture2D {
-        int id;
+        public readonly int id;
 
         public int width { get; private set; }
         public int height { get; private set; }

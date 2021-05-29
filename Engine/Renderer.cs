@@ -222,6 +222,32 @@ namespace Engine {
 
 
         }
+
+
+#region compute shader test
+
+        static Shader computeShader;
+
+        public static void computeTexture(Texture2D tex) {
+            if (computeShader == null) {
+                computeShader = new Shader("computeTest");
+                computeShader.sources[ShaderType.ComputeShader] = Assets.shaderSources["Engine.data.shaders.compute.test1.glsl"];
+                if (!computeShader.linkProgram())
+                    System.Console.WriteLine(computeShader.getInfolog());
+            }
+
+
+            GL.BindImageTexture(0, tex.id, 0, false, 0, TextureAccess.WriteOnly, SizedInternalFormat.Rgba8);
+
+            computeShader.use();
+            GL.DispatchCompute(tex.width, tex.height, 1);
+
+
+        }
+
+
+
+#endregion
     }
 
     /*
