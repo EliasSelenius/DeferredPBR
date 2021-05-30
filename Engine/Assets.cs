@@ -62,7 +62,7 @@ namespace Engine {
                 foreach (var res in provider.enumerate("fnt")) {
                     var i = res.LastIndexOf(".");
                     var atlasName = res.Substring(0, i) + ".png";
-                    fonts.Add(res, new Gui.Font(provider.getText(res), getTexture2D(atlasName)));
+                    fonts.Add(res, new Gui.Font(res, provider.getText(res), getTexture2D(atlasName)));
                 }
             }
 

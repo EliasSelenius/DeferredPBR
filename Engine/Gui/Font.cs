@@ -11,6 +11,8 @@ namespace Engine.Gui {
         public static readonly Font arial = Assets.getFont("Engine.data.fonts.arial.fnt");
         public static readonly Font monospaced = Assets.getFont("Engine.data.fonts.monospaced.fnt");
 
+        public readonly string name;
+
         public readonly Texture2D atlas;
         public vec2 atlasSize => new vec2(atlas.width, atlas.height);
 
@@ -57,8 +59,9 @@ namespace Engine.Gui {
             }
         }
 
-        public Font(string fontdata, Texture2D atlas) : this(fontdata.Split('\n', '\r'), atlas) {}
-        public Font(string[] fontData, Texture2D atlas) {
+        public Font(string name, string fontdata, Texture2D atlas) : this(name, fontdata.Split('\n', '\r'), atlas) {}
+        public Font(string name, string[] fontData, Texture2D atlas) {
+            this.name = name;
             this.atlas = atlas;
             this.loadFontData(fontData);
         }

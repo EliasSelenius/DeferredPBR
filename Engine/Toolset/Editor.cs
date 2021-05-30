@@ -25,6 +25,8 @@ namespace Engine.Toolset {
         static Editor() {
             Application.window.Resize += onWindowResize;
 
+            textbox.setText(Renderer.computeShader.sources[OpenTK.Graphics.OpenGL4.ShaderType.ComputeShader].Replace("\t", "    "));
+            //textbox.font = Font.arial;
         }
 
         static void onWindowResize(OpenTK.Windowing.Common.ResizeEventArgs args) {
@@ -40,6 +42,10 @@ namespace Engine.Toolset {
             }
 
             if (Keyboard.isPressed(key.Escape)) {
+                if (textbox.editing) {
+                    Renderer.computeShader.sources[OpenTK.Graphics.OpenGL4.ShaderType.ComputeShader] = textbox.getText();
+                    if (!Renderer.computeShader.linkProgram()) System.Console.WriteLine(Renderer.computeShader.getInfolog());
+                }
                 textbox.editing = !textbox.editing;
             }
 

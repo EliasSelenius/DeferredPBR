@@ -39,8 +39,6 @@ namespace Engine.Gui {
             currentLine = new StringBuilder("Nice text rendering dude!");
             lines.AddLast(currentLine);
 
-
-            setText(Assets.getShader("unlit").sources[OpenTK.Graphics.OpenGL4.ShaderType.FragmentShader]);
         }
         
         void keyboard_keypressed(key k, keymod m) {

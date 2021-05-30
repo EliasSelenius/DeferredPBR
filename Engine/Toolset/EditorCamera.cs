@@ -38,7 +38,7 @@ namespace Engine.Toolset {
 
 
             // test screen raycast callbacks
-            if (true){//Mouse.isPressed(MouseButton.left)) {
+            if (Mouse.isPressed(MouseButton.left)) {
                 ScreenRaycast.onHit(hit => {
                     var mesh = (hit.renderer as MeshRenderer).mesh;
                     lastClickPos = hit.position;

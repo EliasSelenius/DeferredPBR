@@ -40,7 +40,7 @@ namespace Demo {
             { // textured plane
                 var m = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(10, 10f));
 
-                var tex = new Texture2D(WrapMode.MirroredRepeat, Filter.Nearest, 1000, 1000);
+                var tex = new Texture2D(WrapMode.MirroredRepeat, Filter.Nearest, 100, 100);
                 for (int i = 0; i < tex.width; i++) {
                     for (int j = 0; j < tex.height; j++) {
                         var scale = math.gradnoise(new vec2(i,j) / 10f)*.5f+.5f;
@@ -54,7 +54,7 @@ namespace Demo {
                 }
                 tex.applyChanges();
 
-                Renderer.computeTexture(tex);
+                Renderer.startGameOfLife(tex);
 
                 var g = new Gameobject();
                 g.addComponent(new MeshRenderer {
@@ -70,7 +70,8 @@ namespace Demo {
                     size = (1,1,1)
                 });
 
-                g.transform.position.z += 20;
+                g.transform.position.z += 8;
+                g.transform.rotate(vec3.unitx, math.half_pi);
                 //g.transform.scale.xz *= 2000;
 
                 g.enterScene(Scene.active);

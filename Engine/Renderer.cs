@@ -226,9 +226,9 @@ namespace Engine {
 
 #region compute shader test
 
-        static Shader computeShader;
+        internal static Shader computeShader;
 
-        public static void computeTexture(Texture2D tex) {
+        public static void startGameOfLife(Texture2D tex) {
             if (computeShader == null) {
                 computeShader = new Shader("computeTest");
                 computeShader.sources[ShaderType.ComputeShader] = Assets.shaderSources["Engine.data.shaders.compute.test1.glsl"];
@@ -237,12 +237,14 @@ namespace Engine {
             }
 
 
-            GL.BindImageTexture(0, tex.id, 0, false, 0, TextureAccess.WriteOnly, SizedInternalFormat.Rgba8);
 
-            computeShader.use();
-            GL.DispatchCompute(tex.width, tex.height, 1);
-
-
+            onDrawFrame += () => {
+                GL.BindImageTexture(0, tex.id, 0, false, 0, TextureAccess.WriteOnly, SizedInternalFormat.Rgba8);
+                
+                computeShader.use();
+                GL.Uniform1(0, (float)Application.time);
+                GL.DispatchCompute(tex.width, tex.height, 1);
+            };
         }
 
 

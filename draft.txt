@@ -37,6 +37,7 @@ compute shader use cases:
     - generate voxelgrid
     - game of life
     - particle system
+    - mandelbrot set
     
 
 

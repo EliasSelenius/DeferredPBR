@@ -24,6 +24,9 @@ namespace Engine.Gui {
             vec2 offset = vec2.zero;
             for(int i = 0; i < text.Length; i++) {
                 var g = font.getGlyph(text[i]);
+                if (g == null) 
+                    throw new Exception("Font '" + font.name + "' could not find glyph for '" + text[i] 
+                        + "' with ASCII code: " + System.Text.Encoding.ASCII.GetBytes(new[] {text[i]})[0]);
                 addChar(g, i);
                 offset.x += g.advance;// * fontSize;
             }
