@@ -52,6 +52,7 @@ namespace Demo {
                         };
                     }
                 }
+
                 tex.applyChanges();
 
                 Renderer.startGameOfLife(tex);

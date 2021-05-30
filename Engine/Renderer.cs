@@ -236,10 +236,12 @@ namespace Engine {
                     System.Console.WriteLine(computeShader.getInfolog());
             }
 
-
+            tex.internalFormat = PixelInternalFormat.R8;
+            tex.applyChanges();
 
             onDrawFrame += () => {
-                GL.BindImageTexture(0, tex.id, 0, false, 0, TextureAccess.WriteOnly, SizedInternalFormat.Rgba8);
+
+                GL.BindImageTexture(0, tex.id, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.R8);
                 
                 computeShader.use();
                 GL.Uniform1(0, (float)Application.time);

@@ -7,6 +7,7 @@ namespace Engine {
         public int width { get; private set; }
         public int height { get; private set; }
         public color[,] pixels { get; private set; }
+        public PixelInternalFormat internalFormat = PixelInternalFormat.Rgba8;
         public readonly WrapMode wrapMode = WrapMode.Repeat;
         public readonly Filter filter = Filter.Linear;
         public bool genMipmap = true;
@@ -17,7 +18,7 @@ namespace Engine {
             this.pixels = pixels;
             wrapMode = wmode;
             filter = f;
-            id = GLUtils.createTexture2D(this.pixels, PixelInternalFormat.Rgba, wrapMode, filter, genMipmap);
+            id = GLUtils.createTexture2D(this.pixels, internalFormat, wrapMode, filter, genMipmap);
         }
 
         public void bind(TextureUnit unit) => GLUtils.bindTex2D(unit, id);
@@ -35,7 +36,7 @@ namespace Engine {
 
         public void applyChanges() {
             GL.BindTexture(TextureTarget.Texture2D, id);
-            GLUtils.texImage2D(PixelInternalFormat.Rgba, pixels);
+            GLUtils.texImage2D(internalFormat, pixels);
             if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
