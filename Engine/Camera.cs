@@ -14,6 +14,8 @@ namespace Engine {
         public mat4 projectionMatrix = mat4.identity;
         public mat4 viewMatrix = mat4.identity;
 
+        public Gui.Canvas canvas;
+
         protected override void onEnter() {
             scene.camera = this;
         }
@@ -57,6 +59,10 @@ namespace Engine {
         public void use() {
             updateMatrices();
             Renderer.updateCamera(ref viewMatrix, ref projectionMatrix);
+
+            // for now, a camera can only render to the screen, so its okay to set the gui to the screen size,
+            // but in the future, when we have "RenderTargets", the camera may render to something with a different size than the screen 
+            canvas?.resize(Renderer.windowWidth, Renderer.windowHeight);
         }
 
 

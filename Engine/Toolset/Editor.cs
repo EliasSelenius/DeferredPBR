@@ -25,7 +25,8 @@ namespace Engine.Toolset {
         static Editor() {
             Application.window.Resize += onWindowResize;
 
-            textbox.setText(Renderer.computeShader.sources[OpenTK.Graphics.OpenGL4.ShaderType.ComputeShader].Replace("\t", "    "));
+            if (Renderer.computeShader != null)
+                textbox.setText(Renderer.computeShader.sources[OpenTK.Graphics.OpenGL4.ShaderType.ComputeShader].Replace("\t", "    "));
             //textbox.font = Font.arial;
         }
 

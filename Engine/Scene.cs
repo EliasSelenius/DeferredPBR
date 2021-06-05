@@ -116,7 +116,7 @@ namespace Engine {
 
 
         internal override void renderFrame() {
-
+            camera.canvas?.dispatchFrame();
         }
     }
 }
