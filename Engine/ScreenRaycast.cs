@@ -2,6 +2,7 @@ using OpenTK.Graphics.OpenGL4;
 using Nums;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace Engine {
     public static class ScreenRaycast {
@@ -27,7 +28,10 @@ namespace Engine {
 
         static void convertCoord(ref ivec2 coord) => coord.y = framebuffer.height - coord.y;
 
-        public static void render(IEnumerable<IRenderer> renderers) {
+        static List<IRenderer> renderers;
+        public static void render(List<IRenderer> rens) {
+            renderers = rens;
+
             GL.Disable(EnableCap.Blend);
             GL.Enable(EnableCap.DepthTest);
 
@@ -78,17 +82,19 @@ namespace Engine {
             if (i < 0) return null;
             
             return new(
-                Scene.active.renderers[i],
+                renderers[i],
                 readPrimitiveID(coord),
                 readPosition(coord),
                 readNormal(coord)
             );
         }
 
+        public static Func<IRenderer, bool> filter;
         internal static void dispatchCallbacks() {
             if (callbacks.Count == 0) return;
 
-            render(Scene.active.renderers);
+            if (filter != null) render(Scene.active.renderers.Where(filter).ToList());
+            else render(Scene.active.renderers);
 
             var data = getHitdata((ivec2)Mouse.position);
             if (data == null) callbacks.Clear();
