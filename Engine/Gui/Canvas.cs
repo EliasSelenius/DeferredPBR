@@ -223,7 +223,7 @@ namespace Engine.Gui {
 
     
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-    struct textVertex : VertexData {
+    public struct textVertex : VertexData {
 
         public vec2 position;
         public vec2 uv;

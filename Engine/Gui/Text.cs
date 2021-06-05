@@ -7,7 +7,7 @@ using System;
 namespace Engine.Gui {
     public static class Text {
 
-        internal static float length(string text, int start, int length, int fontsize, Gui.Font font) {
+        public static float length(string text, int start, int length, int fontsize, Gui.Font font) {
             float accl = 0;
             for (int i = start; i < length; i++) {
                 var glyph = font.getGlyph(text[i]);
@@ -16,7 +16,7 @@ namespace Engine.Gui {
             return accl * fontsize;
         }
 
-        internal static void genText(string text, vec2 textOffset, int fontSize, in color color, Gui.Font font, Meshdata<Gui.textVertex> meshdata) {
+        public static void genText(string text, vec2 textOffset, int fontSize, in color color, Gui.Font font, Meshdata<Gui.textVertex> meshdata) {
 
             uint initialVertCount = (uint)meshdata.vertices.Count;
             color.color2vec(color, out vec4 vertColor);

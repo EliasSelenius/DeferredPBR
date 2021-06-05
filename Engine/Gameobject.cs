@@ -12,6 +12,7 @@ namespace Engine {
         public Scene scene { get; private set; }
 
         public Gameobject parent { get; private set; }
+        public Gameobject rootParent => parent?.rootParent ?? this;
 
         List<Gameobject> _children = new List<Gameobject>();
         public readonly ReadOnlyCollection<Gameobject> children;
