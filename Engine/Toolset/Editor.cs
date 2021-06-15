@@ -57,7 +57,7 @@ namespace Engine.Toolset {
                 }
             }
 
-            Gizmo.dispatchFrame();
+
 
             // FPS:
             canvas.text((1000, 0), Font.arial, 16, "fps: " + Renderer.fps, in color.white);

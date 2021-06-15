@@ -128,6 +128,8 @@ namespace Engine {
             // notify components that we have entered a scene
             for (int i = 0; i < components.Count; i++) components[i].enter();
         }
+
+        // NOTE: its not being removed from its potential parent 
         public void leaveScene() {
             if (scene is null) return;
 

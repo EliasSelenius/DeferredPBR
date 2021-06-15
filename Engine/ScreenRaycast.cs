@@ -7,7 +7,7 @@ using System.Linq;
 namespace Engine {
     public static class ScreenRaycast {
         static Framebuffer framebuffer;
-        public static Shader shader;
+        static Shader shader;
 
 
         static ScreenRaycast() {

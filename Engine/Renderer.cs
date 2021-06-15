@@ -193,7 +193,11 @@ namespace Engine {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0); 
             scene.renderFrame();
 
+            Toolset.Gizmo.dispatchFrame();
+
+            
             onDrawFrame?.Invoke();
+
 
             GL.Flush();
             Application.window.SwapBuffers();
