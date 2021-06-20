@@ -45,10 +45,11 @@ namespace Engine.Toolset {
         public static void circle(in vec3 pos, in vec3 normal, float radius) {
             Utils.getTangentsOfNormal(in normal, out vec3 left, out vec3 up);
 
+            const float res = 40; // 26;
             float angle = 0;
-            const float d = math.tau / 26f;
+            const float d = math.tau / res;
 
-            for (int i = 0; i < 26; i++) {
+            for (int i = 0; i < res; i++) {
                 var p1 = pos + left * math.cos(angle) * radius + up * math.sin(angle) * radius;
                 angle += d;
                 var p2 = pos + left * math.cos(angle) * radius + up * math.sin(angle) * radius;
