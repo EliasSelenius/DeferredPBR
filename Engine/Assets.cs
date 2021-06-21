@@ -114,6 +114,9 @@ namespace Engine {
         static void loadFromXml(XmlDocument doc) {
             foreach (var elm in doc.DocumentElement.ChildNodes) {
                 var xml = elm as XmlElement;
+
+                if (xml is null) continue; // skip anything that isnt an xmlElement (like a comment..)
+
                 var assetName = xml.GetAttribute("name");
 
 

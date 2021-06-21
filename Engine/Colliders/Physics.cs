@@ -3,6 +3,11 @@ using Nums;
 namespace Engine {
     public static class Physics {
 
+        public static void gjk() {
+
+        }
+
+
         public static bool rayIntersectsSphere(in vec3 p1, in vec3 dir, in vec3 p2, float radius) {
             var hypv = p2 - p1;
             var dot = dir.dot(hypv);

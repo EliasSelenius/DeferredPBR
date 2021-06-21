@@ -123,6 +123,8 @@ namespace Engine {
 
         public static event System.Action onDrawFrame;
 
+        static ParticleSystem pSys = new();
+
         internal static void drawframe(FrameEventArgs e) {
 
             time += deltaTime = e.Time;
@@ -144,6 +146,7 @@ namespace Engine {
                 
                 scene.updateCamera();
                 scene.geometryPass();
+                pSys.render();
             }
 
 

@@ -36,4 +36,6 @@
 
     <shader name="genCubemap" vertsrc="Engine.data.shaders.imagePass.vert.glsl" fragsrc="Engine.data.shaders.genTexture2Dfrag.glsl" />
 
+    <shader name="particle" vertsrc="Engine.data.shaders.particle.vert.glsl" fragsrc="Engine.data.shaders.particle.frag.glsl" />
+
 </assets>
