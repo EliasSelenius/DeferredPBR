@@ -13,8 +13,9 @@ namespace Engine {
 
 
     public class Framebuffer {
-        private List<(int id, FramebufferFormat format)> textureAttachments = new List<(int, FramebufferFormat)>();
-        private List<(int, FramebufferAttachment, RenderbufferStorage)> renderbufferAttachments = new List<(int, FramebufferAttachment, RenderbufferStorage)>();
+        // TODO: maybe make thees readonly lists or something
+        public List<(int id, FramebufferFormat format)> textureAttachments = new List<(int, FramebufferFormat)>();
+        public List<(int, FramebufferAttachment, RenderbufferStorage)> renderbufferAttachments = new List<(int, FramebufferAttachment, RenderbufferStorage)>();
 
         private int id;
 

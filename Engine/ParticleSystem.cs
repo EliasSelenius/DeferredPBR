@@ -8,7 +8,30 @@ using OpenTK.Graphics.OpenGL4;
         <done> particle sizes
         sprites
         velocity
+        blending
 */
+
+class DynamicArray<T> {
+
+    public int length { get; private set; } = 0;
+    public int capacity => innerArray.Length;
+    public T[] innerArray = new T[4];
+
+    public void add(T elm) {
+        if (length == capacity) {
+            Array.Resize(ref innerArray, innerArray.Length * 2);
+        }
+
+        innerArray[length++] = elm;
+    }
+
+    public void remove(T elm) {
+
+    }
+
+    public ref T this[int i] => ref innerArray[i];
+}
+
 
 namespace Engine {
 
@@ -54,6 +77,7 @@ namespace Engine {
 
         public void render() {
             renderShader.use();
+            PBRMaterial.redPlastic.use();
 
             //GL.Enable(EnableCap.PointSprite);
             GL.Enable(EnableCap.ProgramPointSize);

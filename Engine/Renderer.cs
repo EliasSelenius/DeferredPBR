@@ -176,6 +176,7 @@ namespace Engine {
                 scene.forwardPass();
             }
 
+            Effect.blur(hdrBuffer.textureAttachments[0].id, hdrBuffer.textureAttachments[0].id, hdrBuffer.width, hdrBuffer.height, SizedInternalFormat.Rgba16f);
 
             { // image pass
                 GL.Disable(EnableCap.DepthTest);
@@ -268,4 +269,43 @@ namespace Engine {
     RT1    Normal.x         Normal.y         Normal.z         Roughness
 
     */
+
+
+
+    /*
+
+        geometry pass
+            binds gBuffer
+            render: lit materials
+
+        light pass
+            binds hdrBuffer
+            render: lights
+
+        forward pass
+            render: unlit materials 
+
+        image pass
+            binds default
+            render: screenquad
+
+    */
+
+    public static class Effect {
+
+        static Shader blurShader;
+
+        static Effect() {
+            blurShader = new Shader("blur");
+            blurShader.sources[ShaderType.ComputeShader] = Assets.shaderSources["Engine.data.shaders.compute.blur.glsl"];
+            if (!blurShader.linkProgram()) System.Console.WriteLine(blurShader.getInfolog());
+        }
+
+        public static void blur(int srcImg, int destImg, int width, int height, SizedInternalFormat internalFormat) {
+            GL.BindImageTexture(0, srcImg, 0, false, 0, TextureAccess.ReadOnly, internalFormat);
+            GL.BindImageTexture(1, destImg, 0, false, 0, TextureAccess.WriteOnly, internalFormat);
+            blurShader.use();
+            GL.DispatchCompute(width, height, 1);
+        }
+    }
 }

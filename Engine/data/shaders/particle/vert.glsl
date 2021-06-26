@@ -7,6 +7,11 @@ layout (location = 0) in vec3 a_Pos;
 layout (location = 1) in vec3 a_Vel;
 layout (location = 2) in float a_Size;
 
+out V2F {
+    vec3 fragPos;
+    vec3 normal;
+    vec2 uv;
+} v2f;
 
 void main() {
 
@@ -25,4 +30,11 @@ void main() {
     gl_PointSize = 0.25 / projVox.w * dot(window.size.xy, projVox.xy);
     
     gl_Position = camera.projection * eyePos;
+
+
+
+    v2f.fragPos = eyePos.xyz;
+    v2f.normal = vec3(0, 0, 1);
+    v2f.uv = vec2(0.0);
+
 }

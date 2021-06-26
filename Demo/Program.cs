@@ -9,7 +9,14 @@ namespace Demo {
     class Program {
         
 
-        static void Main(string[] args) => Application.run(load);
+        static void Main(string[] args) {
+
+            Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
+            Console.Read();
+
+            Application.run(load);
+            
+        }
         
 
         static void load() {
