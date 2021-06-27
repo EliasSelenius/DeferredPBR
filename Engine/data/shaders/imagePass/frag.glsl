@@ -11,7 +11,8 @@ in V2F {
     vec2 uv;
 } v2f;
 
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec3 FragBrightness;
 
 void main() {
 
@@ -28,5 +29,6 @@ void main() {
     color = pow(color, vec3(1.0 / 2.2));
 
     FragColor = vec4(color, 1.0);
+    FragBrightness = vec3(0.0);
 
 }

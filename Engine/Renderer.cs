@@ -18,10 +18,12 @@ namespace Engine {
         public static Shader lightPass_dirlight { get; private set; }
         public static Shader lightPass_pointlight { get; private set; }
         public static Shader imagePass { get; private set; }
+        public static Shader toscreen { get; private set; }
         public static Shader textShader { get; private set; }
 
         private static Framebuffer gBuffer;
         private static Framebuffer hdrBuffer;
+        private static Framebuffer ldrBuffer;
 
         private static Uniformblock windowInfoUBO;
         private static Uniformblock cameraUBO;
@@ -73,6 +75,11 @@ namespace Engine {
                 }, new[] {
                     FramebufferFormat.rgba16f
                 });
+
+                ldrBuffer = new Framebuffer(windowWidth, windowHeight, rbos:null, new[] {
+                    FramebufferFormat.rgba8, // color
+                    FramebufferFormat.rgb8 // brightness
+                });
             }
 
 
@@ -86,8 +93,12 @@ namespace Engine {
 
             imagePass = Assets.getShader("imagePass");
             imagePass.use();
-            GL.Uniform1(GL.GetUniformLocation(imagePass.id, "input"), 0);
+            GL.Uniform1(GL.GetUniformLocation(imagePass.id, "tex_input"), 0);
 
+            toscreen = Assets.getShader("toscreen");
+            toscreen.use();
+            GL.Uniform1(GL.GetUniformLocation(toscreen.id, "colorInput"), 0);
+            GL.Uniform1(GL.GetUniformLocation(toscreen.id, "brightnessInput"), 1);
 
             lightPass_dirlight = Assets.getShader("lightPass_dirlight");
             lightPass_pointlight = Assets.getShader("lightPass_pointlight");
@@ -176,15 +187,23 @@ namespace Engine {
                 scene.forwardPass();
             }
 
-            Effect.blur(hdrBuffer.textureAttachments[0].id, hdrBuffer.textureAttachments[0].id, hdrBuffer.width, hdrBuffer.height, SizedInternalFormat.Rgba16f);
+            
 
             { // image pass
                 GL.Disable(EnableCap.DepthTest);
 
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                ldrBuffer.bind();
                 imagePass.use();
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+                GL.Clear(ClearBufferMask.ColorBufferBit);
                 hdrBuffer.readMode();
+                GLUtils.renderScreenQuad();
+
+
+                // render to screen:
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                //Effect.blur(ldrBuffer.textureAttachments[0].id, ldrBuffer.textureAttachments[0].id, ldrBuffer.width, ldrBuffer.height, SizedInternalFormat.Rgba8);
+                toscreen.use();
+                ldrBuffer.readMode();
                 GLUtils.renderScreenQuad();
 
             }
@@ -223,6 +242,7 @@ namespace Engine {
             // update framebuffers
             gBuffer.resize(e.Width, e.Height);
             hdrBuffer.resize(e.Width, e.Height);
+            ldrBuffer.resize(e.Width, e.Height);
 
             // update window info ubo:
             vec2 s = new vec2(e.Width, e.Height);

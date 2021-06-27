@@ -2,9 +2,15 @@
     <shader name="geomPass" 
         vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
         fragsrc="Engine.data.shaders.geomPass.frag.glsl" />
+
     <shader name="imagePass" 
         vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
         fragsrc="Engine.data.shaders.imagePass.frag.glsl" />
+
+    <shader name="toscreen" 
+        vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
+        fragsrc="Engine.data.shaders.imagePass.toscreen.glsl" />
+
     <shader name="lightPass_dirlight" 
         vertsrc="Engine.data.shaders.lightPass_dirlight.vert.glsl" 
         fragsrc="Engine.data.shaders.lightPass_dirlight.frag.glsl" />

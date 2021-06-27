@@ -2,7 +2,7 @@
 
 layout (local_size_x = 1, local_size_y = 1) in;
 
-readonly layout (binding = 0, rgba16f) uniform image2D srcImg;
+readonly layout (binding = 0, rgba8) uniform image2D srcImg;
 writeonly layout (binding = 1) uniform image2D destImg;
 
 

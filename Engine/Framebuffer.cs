@@ -6,8 +6,11 @@ namespace Engine {
 
     public enum FramebufferFormat {
         rgba8,
+        rgb8,
+
         rgba16f,
         rgb16f,
+        
         int32
     }
 
@@ -25,7 +28,8 @@ namespace Engine {
 
         static (PixelInternalFormat internalFormat, PixelFormat format, PixelType type) getGLformat(FramebufferFormat format) => format switch {
             FramebufferFormat.rgba8 => (PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte),
-            FramebufferFormat.rgba16f => (PixelInternalFormat.Rgba16f, PixelFormat.Rgba, PixelType.Float),
+            FramebufferFormat.rgb8 => (PixelInternalFormat.Rgb8, PixelFormat.Rgb, PixelType.Byte),
+            FramebufferFormat.rgba16f => (PixelInternalFormat.Rgba16f, PixelFormat.Rgba, PixelType.Float), 
             FramebufferFormat.rgb16f => (PixelInternalFormat.Rgb16f, PixelFormat.Rgb, PixelType.Float),
             FramebufferFormat.int32 => (PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int),
             _ => throw new System.Exception("Framebuffer format not supported")
