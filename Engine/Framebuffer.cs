@@ -14,11 +14,20 @@ namespace Engine {
         int32
     }
 
+    interface IRendertarget {
+        void bind();
+        void resize(int w, int h);
+        int width { get; }
+        int height { get; }
+    }
+
 
     public class Framebuffer {
         // TODO: maybe make thees readonly lists or something
-        public List<(int id, FramebufferFormat format)> textureAttachments = new List<(int, FramebufferFormat)>();
-        public List<(int, FramebufferAttachment, RenderbufferStorage)> renderbufferAttachments = new List<(int, FramebufferAttachment, RenderbufferStorage)>();
+
+        //public readonly struct attachment { public readonly int id; public readonly FramebufferFormat format; }
+        public readonly (int id, FramebufferFormat format)[] textureAttachments;
+        public readonly (int id, FramebufferAttachment attach, RenderbufferStorage storage)[] renderbufferAttachments;
 
         private int id;
 
@@ -41,21 +50,15 @@ namespace Engine {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);
 
             if (rbos != null) {
+                renderbufferAttachments = new (int id, FramebufferAttachment attach, RenderbufferStorage storage)[rbos.Length];
                 for (int i = 0; i < rbos.Length; i++) {
                     int r = GLUtils.createRenderbuffer(rbos[i].Item2, width, height);
-                    renderbufferAttachments.Add((r, rbos[i].Item1, rbos[i].Item2));
+                    renderbufferAttachments[i] = (r, rbos[i].Item1, rbos[i].Item2);
                     GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, rbos[i].Item1, RenderbufferTarget.Renderbuffer, r);
                 }
             }
 
-            for (int i = 0; i < texs.Length; i++) {
-                var f = getGLformat(texs[i]);
-
-                int t = GLUtils.createTexture2D(width, height, f.internalFormat, f.format, f.type, WrapMode.ClampToEdge, Filter.Nearest, false);
-                textureAttachments.Add((t, texs[i]));
-                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0 + i, TextureTarget.Texture2D, t, 0);
-            }
-            GL.DrawBuffers(texs.Length, texs.Select((x, i) => DrawBuffersEnum.ColorAttachment0 + i).ToArray());
+            textureAttachments = initDrawBuffers(texs);
 
             var code = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
             if (code != FramebufferErrorCode.FramebufferComplete) throw new System.Exception("Framebuffer error code: " + code.ToString());
@@ -63,15 +66,25 @@ namespace Engine {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
-        //public void initDrawBuffers(params FramebufferFormat[] formats) { }
+        (int id, FramebufferFormat format)[] initDrawBuffers(FramebufferFormat[] texs) {
+            var res = new (int id, FramebufferFormat format)[texs.Length]; 
+            for (int i = 0; i < texs.Length; i++) {
+                var f = getGLformat(texs[i]);
 
+                int t = GLUtils.createTexture2D(width, height, f.internalFormat, f.format, f.type, WrapMode.ClampToEdge, Filter.Nearest, false);
+                res[i] = (t, texs[i]);
+                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0 + i, TextureTarget.Texture2D, t, 0);
+            }
+            GL.DrawBuffers(texs.Length, texs.Select((x, i) => DrawBuffersEnum.ColorAttachment0 + i).ToArray());
+            return res;
+        }
         
         public void bind() {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);
         }
         public void readMode() {
-            for (int i = 0; i < textureAttachments.Count; i++) {
-                GLUtils.bindTex2D(TextureUnit.Texture0 + i, textureAttachments[i].Item1);
+            for (int i = 0; i < textureAttachments.Length; i++) {
+                GLUtils.bindTex2D(TextureUnit.Texture0 + i, textureAttachments[i].id);
             }
         }
     
@@ -81,28 +94,34 @@ namespace Engine {
 
             (width, height) = (w, h);
             
-            for (int i = 0; i < textureAttachments.Count; i++) {
-                GL.BindTexture(TextureTarget.Texture2D, textureAttachments[i].Item1);
+            for (int i = 0; i < textureAttachments.Length; i++) {
+                GL.BindTexture(TextureTarget.Texture2D, textureAttachments[i].id);
                 var f = getGLformat(textureAttachments[i].format);
                 GLUtils.texImage2D(f.internalFormat, f.format, f.type, width, height);
             }
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
-            for (int i = 0; i < renderbufferAttachments.Count; i++) { 
-                GLUtils.reinitRenderbuffer(renderbufferAttachments[i].Item1, renderbufferAttachments[i].Item3, width, height);
+            int rbs = renderbufferAttachments?.Length ?? 0;
+            for (int i = 0; i < 0; i++) { 
+                GLUtils.reinitRenderbuffer(renderbufferAttachments[i].id, renderbufferAttachments[i].storage, width, height);
             }
         }
 
         public void delete() {
             if (id == 0) return;
 
-            for (int i = 0; i < textureAttachments.Count; i++) GL.DeleteTexture(textureAttachments[i].Item1);
-            for (int i = 0; i < renderbufferAttachments.Count; i++) GL.DeleteRenderbuffer(renderbufferAttachments[i].Item1);
+            for (int i = 0; i < textureAttachments.Length; i++) {
+                GL.DeleteTexture(textureAttachments[i].id);
+                textureAttachments[i].id = 0;
+            }
+            int rbs = renderbufferAttachments?.Length ?? 0;
+            for (int i = 0; i < rbs; i++) {
+                GL.DeleteRenderbuffer(renderbufferAttachments[i].id);
+                renderbufferAttachments[i].id = 0;
+            }
             
             GL.DeleteFramebuffer(id);
 
-            textureAttachments.Clear();
-            renderbufferAttachments.Clear();
 
             id = 0;
         }

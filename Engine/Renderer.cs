@@ -24,6 +24,7 @@ namespace Engine {
         private static Framebuffer gBuffer;
         private static Framebuffer hdrBuffer;
         private static Framebuffer ldrBuffer;
+        static int bluredTexture;
 
         private static Uniformblock windowInfoUBO;
         private static Uniformblock cameraUBO;
@@ -59,6 +60,8 @@ namespace Engine {
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
 
+
+            bluredTexture = GLUtils.createTexture2D(windowWidth/2, windowHeight/2, PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte, WrapMode.ClampToEdge, Filter.Nearest, false);
 
 
             { // init framebuffers
@@ -201,9 +204,10 @@ namespace Engine {
 
                 // render to screen:
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                //Effect.blur(ldrBuffer.textureAttachments[0].id, ldrBuffer.textureAttachments[0].id, ldrBuffer.width, ldrBuffer.height, SizedInternalFormat.Rgba8);
+                // Effect.blur(ldrBuffer.textureAttachments[0].id, bluredTexture, ldrBuffer.width/2, ldrBuffer.height/2, SizedInternalFormat.Rgba8);
                 toscreen.use();
                 ldrBuffer.readMode();
+                //GLUtils.bindTex2D(TextureUnit.Texture0, bluredTexture);
                 GLUtils.renderScreenQuad();
 
             }
@@ -243,6 +247,11 @@ namespace Engine {
             gBuffer.resize(e.Width, e.Height);
             hdrBuffer.resize(e.Width, e.Height);
             ldrBuffer.resize(e.Width, e.Height);
+
+            //GL.BindTexture(TextureTarget.Texture2D, bluredTexture);
+            //GLUtils.texImage2D(PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte, e.Width/2, e.Height/2);
+            //GL.BindTexture(TextureTarget.Texture2D, 0);
+
 
             // update window info ubo:
             vec2 s = new vec2(e.Width, e.Height);
@@ -322,7 +331,8 @@ namespace Engine {
         }
 
         public static void blur(int srcImg, int destImg, int width, int height, SizedInternalFormat internalFormat) {
-            GL.BindImageTexture(0, srcImg, 0, false, 0, TextureAccess.ReadOnly, internalFormat);
+            //GL.BindImageTexture(0, srcImg, 0, false, 0, TextureAccess.ReadOnly, internalFormat);
+            GLUtils.bindTex2D(TextureUnit.Texture0, srcImg);
             GL.BindImageTexture(1, destImg, 0, false, 0, TextureAccess.WriteOnly, internalFormat);
             blurShader.use();
             GL.DispatchCompute(width, height, 1);
