@@ -12,7 +12,7 @@ namespace Demo {
         static void Main(string[] args) {
 
             Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
-            Console.Read();
+            //Console.Read();
 
             Application.run(load);
             

@@ -23,7 +23,6 @@ namespace Engine {
 
 
     public class Framebuffer {
-        // TODO: maybe make thees readonly lists or something
 
         //public readonly struct attachment { public readonly int id; public readonly FramebufferFormat format; }
         public readonly (int id, FramebufferFormat format)[] textureAttachments;
@@ -59,6 +58,7 @@ namespace Engine {
             }
 
             textureAttachments = initDrawBuffers(texs);
+
 
             var code = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
             if (code != FramebufferErrorCode.FramebufferComplete) throw new System.Exception("Framebuffer error code: " + code.ToString());
@@ -101,11 +101,14 @@ namespace Engine {
             }
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
+
             int rbs = renderbufferAttachments?.Length ?? 0;
-            for (int i = 0; i < 0; i++) { 
+            for (int i = 0; i < rbs; i++) { 
                 GLUtils.reinitRenderbuffer(renderbufferAttachments[i].id, renderbufferAttachments[i].storage, width, height);
             }
+
         }
+
 
         public void delete() {
             if (id == 0) return;

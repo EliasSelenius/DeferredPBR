@@ -61,7 +61,7 @@ namespace Engine {
             GL.Enable(EnableCap.Blend);
 
 
-            bluredTexture = GLUtils.createTexture2D(windowWidth/2, windowHeight/2, PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte, WrapMode.ClampToEdge, Filter.Nearest, false);
+            //bluredTexture = GLUtils.createTexture2D(windowWidth/2, windowHeight/2, PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.Byte, WrapMode.ClampToEdge, Filter.Nearest, false);
 
 
             { // init framebuffers
