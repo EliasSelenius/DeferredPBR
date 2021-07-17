@@ -61,4 +61,26 @@ namespace Engine {
             if (vao != 0) throw new Exception("Memory leak detected! vao: " + vao);
         }
     }
+
+
+    class Model {
+        public Mesh<Vertex>[] meshes;
+        public Material[] materials;
+        public Node[] rootNodes;
+
+        public class Node {
+            public readonly Node[] children;
+            public readonly Node parent;
+
+            public readonly Transform transform;
+
+            public Mesh<Vertex> mesh;
+            public Material[] materials;
+        }
+
+        public void render() {
+
+        }
+
+    }
 }

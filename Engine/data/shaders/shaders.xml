@@ -1,49 +1,51 @@
 <assets>
     <shader name="geomPass" 
-        vertsrc="Engine.data.shaders.geomPass.vert.glsl" 
-        fragsrc="Engine.data.shaders.geomPass.frag.glsl" />
+        vert="Engine.data.shaders.geomPass.vert.glsl" 
+        frag="Engine.data.shaders.geomPass.frag.glsl" />
 
     <shader name="imagePass" 
-        vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
-        fragsrc="Engine.data.shaders.imagePass.frag.glsl" />
+        vert="Engine.data.shaders.imagePass.vert.glsl" 
+        frag="Engine.data.shaders.imagePass.frag.glsl" />
 
     <shader name="toscreen" 
-        vertsrc="Engine.data.shaders.imagePass.vert.glsl" 
-        fragsrc="Engine.data.shaders.imagePass.toscreen.glsl" />
+        vert="Engine.data.shaders.imagePass.vert.glsl" 
+        frag="Engine.data.shaders.imagePass.toscreen.glsl" />
 
     <shader name="lightPass_dirlight" 
-        vertsrc="Engine.data.shaders.lightPass_dirlight.vert.glsl" 
-        fragsrc="Engine.data.shaders.lightPass_dirlight.frag.glsl" />
+        vert="Engine.data.shaders.lightPass_dirlight.vert.glsl" 
+        frag="Engine.data.shaders.lightPass_dirlight.frag.glsl" />
     <shader name="lightPass_pointlight" 
-        vertsrc="Engine.data.shaders.lightPass_pointlight.vert.glsl" 
-        fragsrc="Engine.data.shaders.lightPass_pointlight.frag.glsl" />
+        vert="Engine.data.shaders.lightPass_pointlight.vert.glsl" 
+        frag="Engine.data.shaders.lightPass_pointlight.frag.glsl" />
             
     <shader name="text" 
-        vertsrc="Engine.data.shaders.text.vert.glsl" 
-        fragsrc="Engine.data.shaders.text.frag.glsl" />
+        vert="Engine.data.shaders.text.vert.glsl" 
+        frag="Engine.data.shaders.text.frag.glsl" />
 	<shader name="guirect" 
-        vertsrc="Engine.data.shaders.guirect.vert.glsl" 
-        fragsrc="Engine.data.shaders.guirect.frag.glsl" />
+        vert="Engine.data.shaders.guirect.vert.glsl" 
+        frag="Engine.data.shaders.guirect.frag.glsl" />
 
     <shader name="CubemapSkybox" 
-        vertsrc="Engine.data.shaders.CubemapSkybox.vert.glsl" 
-        fragsrc="Engine.data.shaders.CubemapSkybox.frag.glsl" />
+        vert="Engine.data.shaders.CubemapSkybox.vert.glsl" 
+        frag="Engine.data.shaders.CubemapSkybox.frag.glsl" />
     <shader name="ScreenRaycast" 
-        vertsrc="Engine.data.shaders.ScreenRaycast.vert.glsl" 
-        fragsrc="Engine.data.shaders.ScreenRaycast.frag.glsl" />
+        vert="Engine.data.shaders.ScreenRaycast.vert.glsl" 
+        frag="Engine.data.shaders.ScreenRaycast.frag.glsl" />
 
     <shader name="gizmo" 
-        vertsrc="Engine.data.shaders.gizmo.vert.glsl"
-        fragsrc="Engine.data.shaders.gizmo.frag.glsl" />
+        vert="Engine.data.shaders.gizmo.vert.glsl"
+        frag="Engine.data.shaders.gizmo.frag.glsl" />
 
     <shader name="unlit"
-        vertsrc="Engine.data.shaders.geomPass.vert.glsl"
-        fragsrc="Engine.data.shaders.unlit_solidcolor.frag.glsl" />
+        vert="Engine.data.shaders.geomPass.vert.glsl"
+        frag="Engine.data.shaders.unlit_solidcolor.frag.glsl" />
 
-    <shader name="genCubemap" vertsrc="Engine.data.shaders.imagePass.vert.glsl" fragsrc="Engine.data.shaders.genTexture2Dfrag.glsl" />
+    <shader name="genCubemap" vert="Engine.data.shaders.imagePass.vert.glsl" frag="Engine.data.shaders.genTexture2Dfrag.glsl" />
 
-    <shader name="particle" vertsrc="Engine.data.shaders.particle.vert.glsl" fragsrc="Engine.data.shaders.geomPass.frag.glsl" />
+    <shader name="particle" vert="Engine.data.shaders.particle.vert.glsl" frag="Engine.data.shaders.geomPass.frag.glsl" />
+    <shader name="particle_compute" compute="Engine.data.shaders.particle.compute.glsl" />
 
 
+    <shader name="gol_compute" compute="Engine.data.shaders.compute.test1.glsl" />
 
 </assets>

@@ -122,7 +122,14 @@ namespace Engine {
 
                 // shaders:
                 if (xml.Name.Equals("shader")) {
-                    shaders.Add(assetName, new Shader(assetName, shaderSources[xml.GetAttribute("fragsrc")], shaderSources[xml.GetAttribute("vertsrc")]));
+                    if (xml.HasAttribute("frag") && xml.HasAttribute("vert")) {
+                        shaders.Add(assetName, new Shader(assetName, shaderSources[xml.GetAttribute("frag")], shaderSources[xml.GetAttribute("vert")]));
+                    } else if (xml.HasAttribute("compute")) {
+                        var shader = new Shader(assetName);
+                        shader.sources[OpenTK.Graphics.OpenGL4.ShaderType.ComputeShader] = shaderSources[xml.GetAttribute("compute")];
+                        if (!shader.linkProgram()) System.Console.WriteLine(shader.getInfolog());
+                        shaders.Add(assetName, shader);
+                    }
                 }
                 // materials:
                 else if (xml.Name.Equals("material")) {
