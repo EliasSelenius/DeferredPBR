@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Engine;
 using Nums;
 
+using static Parser;
+
 namespace Demo {
     class Program {
         
@@ -14,7 +16,46 @@ namespace Demo {
             Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
             //Console.Read();
 
-            Application.run(load);
+
+
+            var limitArg = ("limit=" & digits).map(res => new {
+                type = "limit",
+                value = res[1]
+            });
+            var typeArg = ("type=" & letters).map(res => new {
+                type = "type",
+                value = res[1]
+            });
+            var nameArg = ("name=" & letters).map(res => new {
+                type = "name",
+                value = res[1]
+            });
+
+
+            var querySelector = 
+                (str("@e") | "@p" | "@r") & 
+                inSquareBrackets((limitArg | typeArg | nameArg) / comma);
+
+            var res0 = querySelector.run("@p[]");
+            var res1 = querySelector.run("@e[limit=1]");
+            var res2 = querySelector.run("@e[type=armourStand]");
+            var res3 = querySelector.run("@r[limit=1,type=player,name=Adamo]");
+
+
+            var primitiveCommand = "/" & letters;
+
+            var if_statement = new Parser(); 
+            var block = inCurlyBrackets(+(primitiveCommand | if_statement | whitespace));
+            if_statement.init("if " & letters & whitespace & block);
+
+
+            var func = "function" & whitespace & letters & whitespace & block;
+
+            var emdlParser = +(func | whitespace);
+
+            var emdlres = emdlParser.run("   function test { /sayHelloWorld   if Hello {}}  ");
+
+            //Application.run(load);
             
         }
         
