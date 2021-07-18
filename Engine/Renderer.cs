@@ -281,7 +281,7 @@ namespace Engine {
                 
                 computeShader.use();
                 GL.Uniform1(0, (float)Application.time);
-                GL.DispatchCompute(tex.width, tex.height, 1);
+                Shader.dsipatchCompute(tex.width, tex.height);
             };
         }
 

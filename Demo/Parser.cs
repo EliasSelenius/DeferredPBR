@@ -51,7 +51,6 @@ class Parser {
 
     //public Parser this[int _] => null;
 
-    public static Parser operator -(Parser parser, Func<dynamic, dynamic> func) => parser.map(func);
 
     public static Parser operator ++(Parser parser) => many1(parser);
     public static Parser operator +(Parser parser) => many(parser);

@@ -45,17 +45,32 @@ namespace Demo {
             var primitiveCommand = "/" & letters;
 
             var if_statement = new Parser(); 
-            var block = inCurlyBrackets(+(primitiveCommand | if_statement | whitespace));
-            if_statement.init("if " & letters & whitespace & block);
+            var block = inCurlyBrackets(+(primitiveCommand | if_statement | whitespace)).map(res => {
+                var newres = new List<dynamic>();
+                foreach (var r in res) {
+                    if (r is string s && string.IsNullOrWhiteSpace(s)) continue;
+                    newres.Add(r);
+                }
+                return newres;
+            });
+            if_statement.init(("if " & letters & whitespace & block).map(res => new {
+                type = "IF_BLOCK",
+                condition = res[1],
+                block = res[3]
+            }));
 
 
-            var func = "function" & whitespace & letters & whitespace & block;
+            var func = ("function" & whitespace & letters & whitespace & block).map(res => new {
+                type = "FUNC",
+                name = res[2],
+                block = res[4]
+            });
 
             var emdlParser = +(func | whitespace);
 
-            var emdlres = emdlParser.run("   function test { /sayHelloWorld   if Hello {}}  ");
+            var emdlres = emdlParser.run("   function test { /sayHelloWorld   if Hello { if te {  /dawwd } } }  ");
 
-            //Application.run(load);
+            Application.run(load);
             
         }
         

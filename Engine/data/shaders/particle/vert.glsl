@@ -3,9 +3,8 @@
 #include "Engine.data.shaders.Camera.glsl"
 #include "Engine.data.shaders.Window.glsl"
 
-layout (location = 0) in vec3 a_Pos;
-layout (location = 1) in vec3 a_Vel;
-layout (location = 2) in float a_Size;
+layout (location = 0) in vec4 a_Pos;
+layout (location = 1) in vec4 a_Vel_Size;
 
 out V2F {
     vec3 fragPos;
@@ -24,13 +23,12 @@ void main() {
         from: https://github.com/devoln/synthgen-particles-win/blob/master/src/shader.h
     */
 
-    vec4 eyePos = camera.view * vec4(a_Pos, 1.0);
+    vec4 eyePos = camera.view * vec4(a_Pos.xyz, 1.0);
 
-    vec4 projVox = camera.projection * vec4(vec2(a_Size), eyePos.zw);
+    vec4 projVox = camera.projection * vec4(vec2(a_Vel_Size.w), eyePos.zw);
     gl_PointSize = 0.25 / projVox.w * dot(window.size.xy, projVox.xy);
     
     gl_Position = camera.projection * eyePos;
-
 
 
     v2f.fragPos = eyePos.xyz;
