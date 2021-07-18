@@ -2,6 +2,11 @@
 
 out vec4 FragColor;
 
+in V2F {
+    vec4 color;
+} v2f;
+
+
 void main() {
-    FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    FragColor = v2f.color;
 }

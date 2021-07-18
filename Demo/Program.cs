@@ -66,6 +66,7 @@ namespace Demo {
                 block = res[4]
             });
 
+
             var emdlParser = +(func | whitespace);
 
             var emdlres = emdlParser.run("   function test { /sayHelloWorld   if Hello { if te {  /dawwd } } }  ");

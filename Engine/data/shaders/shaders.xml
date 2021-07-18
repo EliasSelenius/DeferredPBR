@@ -42,7 +42,7 @@
 
     <shader name="genCubemap" vert="Engine.data.shaders.imagePass.vert.glsl" frag="Engine.data.shaders.genTexture2Dfrag.glsl" />
 
-    <shader name="particle" vert="Engine.data.shaders.particle.vert.glsl" frag="Engine.data.shaders.geomPass.frag.glsl" />
+    <shader name="particle" vert="Engine.data.shaders.particle.vert.glsl" frag="Engine.data.shaders.particle.frag.glsl" />
     <shader name="particle_compute" compute="Engine.data.shaders.particle.compute.glsl" />
 
 

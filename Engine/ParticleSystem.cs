@@ -23,7 +23,7 @@ namespace Engine {
         struct particle {
             public const int bytesize = sizeof(float) + vec3.bytesize * 2;
             
-            public vec4 _pos, _vel_size;
+            public vec4 _pos, _vel_size, _color;
         }
 
         static Shader computeShader;
@@ -49,7 +49,8 @@ namespace Engine {
                 float size = math.range(0.1f, 2f);
                 ps[i] = new particle {
                     _pos = new vec4(math.rand(), math.rand(), math.rand(), 0) * 600f,
-                    _vel_size = new vec4(vel, size)
+                    _vel_size = new vec4(vel, size),
+                    _color = new vec4(math.rand(), math.rand(), math.rand(), 1)
                 };
             }
             vbo = GLUtils.createBuffer(ps);
@@ -59,7 +60,6 @@ namespace Engine {
 
         public void render() {
             renderShader.use();
-            PBRMaterial.redPlastic.use();
             //spritesheet.bind(TextureUnit.Texture0);
 
             //GL.Enable(EnableCap.PointSprite);

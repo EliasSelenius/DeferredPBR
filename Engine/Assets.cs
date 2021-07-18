@@ -127,7 +127,7 @@ namespace Engine {
                     } else if (xml.HasAttribute("compute")) {
                         var shader = new Shader(assetName);
                         shader.sources[OpenTK.Graphics.OpenGL4.ShaderType.ComputeShader] = shaderSources[xml.GetAttribute("compute")];
-                        if (!shader.linkProgram()) System.Console.WriteLine(shader.getInfolog());
+                        if (!shader.linkProgram()) System.Console.WriteLine(shader.name + " infolog: " + shader.getInfolog());
                         shaders.Add(assetName, shader);
                     }
                 }

@@ -5,11 +5,10 @@
 
 layout (location = 0) in vec4 a_Pos;
 layout (location = 1) in vec4 a_Vel_Size;
+layout (location = 2) in vec4 a_Color;
 
 out V2F {
-    vec3 fragPos;
-    vec3 normal;
-    vec2 uv;
+    vec4 color;
 } v2f;
 
 void main() {
@@ -30,9 +29,5 @@ void main() {
     
     gl_Position = camera.projection * eyePos;
 
-
-    v2f.fragPos = eyePos.xyz;
-    v2f.normal = vec3(0, 0, 1);
-    v2f.uv = vec2(0.0);
-
+    v2f.color = a_Color;
 }

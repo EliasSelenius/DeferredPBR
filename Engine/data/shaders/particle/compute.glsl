@@ -5,6 +5,7 @@ layout (local_size_x = 1) in;
 struct Particle {
     vec4 pos;
     vec4 vel_size;
+    vec4 color;
 };
 
 layout (std140, binding = 0) buffer ParitcleBuffer {
