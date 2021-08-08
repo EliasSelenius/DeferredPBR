@@ -1,11 +1,12 @@
 using System;
 using Nums;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 
 /*
     TODO:
         <done> particle projection
         <done> particle sizes
+        paritcle emission
         sprites
         velocity
         blending
@@ -20,9 +21,7 @@ namespace Engine {
     public class ParticleSystem {
 
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        struct particle {
-            public const int bytesize = sizeof(float) + vec3.bytesize * 2;
-            
+        struct particle {            
             public vec4 _pos, _vel_size, _color;
         }
 
@@ -60,9 +59,10 @@ namespace Engine {
 
         public void render() {
             renderShader.use();
-            //spritesheet.bind(TextureUnit.Texture0);
+            spritesheet.bind(TextureUnit.Texture0);
 
-            //GL.Enable(EnableCap.PointSprite);
+            GL.Enable(EnableCap.PointSprite);
+            GL.TexEnv()
             GL.Enable(EnableCap.ProgramPointSize);
             //GL.PointSize(10f);
 
