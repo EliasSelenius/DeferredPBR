@@ -16,4 +16,9 @@ layout (std140, binding = 0) buffer ParitcleBuffer {
 void main() {
     uint index = gl_GlobalInvocationID.x;
     particles[index].pos.xyz += particles[index].vel_size.xyz;
+
+    if (death) {
+        // reset particle (as if a new spawned) 
+        
+    }
 }

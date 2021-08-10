@@ -1,6 +1,6 @@
 using System;
 using Nums;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 
 /*
     TODO:
@@ -8,8 +8,32 @@ using OpenTK.Graphics.OpenGL;
         <done> particle sizes
         paritcle emission
         sprites
-        velocity
+        <done> velocity
         blending
+
+
+    ideal particle system capabilities:
+        transparancy
+        gravity (or forces in general)
+        variable amount of particles 
+        textures
+        collision
+    use cases
+        waterfall
+        water splash
+        engine flame
+        fire
+        explosion
+        ambient dust
+
+    different particle death conditions
+        out of bounds
+        end of lifetime
+        collides
+    different particle birth conditions
+        imeadeatly takes the place of a dead particle
+        emission rate
+        programaticly
 */
 
 namespace Engine {
@@ -59,10 +83,10 @@ namespace Engine {
 
         public void render() {
             renderShader.use();
-            spritesheet.bind(TextureUnit.Texture0);
+            //spritesheet.bind(TextureUnit.Texture0);
 
-            GL.Enable(EnableCap.PointSprite);
-            GL.TexEnv()
+            //GL.Enable(EnableCap.PointSprite);
+            //GL.TexEnv()
             GL.Enable(EnableCap.ProgramPointSize);
             //GL.PointSize(10f);
 
