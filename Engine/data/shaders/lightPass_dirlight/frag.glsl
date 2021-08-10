@@ -24,8 +24,7 @@ out vec4 FragColor;
 
 void main() {
  
-    GBufferData fragdata;
-    readGBuffer(v2f.uv, fragdata);
+    GBufferData fragdata = readGBuffer(v2f.uv);
     
     // ld: light direction in view space
     vec3 ld = (camera.view * vec4(lightDir, 0.0)).xyz;

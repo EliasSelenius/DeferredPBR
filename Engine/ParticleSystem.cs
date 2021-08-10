@@ -19,12 +19,12 @@ using OpenTK.Graphics.OpenGL4;
         textures
         collision
     use cases
-        waterfall
-        water splash
-        engine flame
-        fire
-        explosion
-        ambient dust
+        waterfall (ondeath, cls)
+        water splash (prog, cls)
+        engine flame (ondeath, eol)
+        fire (ondeath, eol)
+        explosion (prog, eol)
+        ambient dust (ondeath, oob)
 
     different particle death conditions
         out of bounds
@@ -34,6 +34,14 @@ using OpenTK.Graphics.OpenGL4;
         imeadeatly takes the place of a dead particle
         emission rate
         programaticly
+
+
+    maxp
+    ptime
+    prate
+
+    prate * ptime = maxp
+    prate = maxp / ptime
 */
 
 namespace Engine {
@@ -61,7 +69,7 @@ namespace Engine {
         }
 
         int vao, vbo;
-        const int numParticles = 1_000_000;
+        const int numParticles = 1_000;
 
         public ParticleSystem() {
             //vbo = GLUtils.createBuffer(particle.bytesize * numParticles);

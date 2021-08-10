@@ -18,8 +18,7 @@ void main() {
 
     vec2 uv = gl_FragCoord.xy / window.size.xy;
 
-    GBufferData fragdata;
-    readGBuffer(uv, fragdata);    
+    GBufferData fragdata = readGBuffer(uv);
 
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, fragdata.albedo, fragdata.metallic);
