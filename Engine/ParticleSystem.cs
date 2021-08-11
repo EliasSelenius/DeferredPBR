@@ -36,9 +36,11 @@ using OpenTK.Graphics.OpenGL4;
         programaticly
 
 
-    maxp
-    ptime
-    prate
+    different particle emissions
+        point
+        insideSphere
+        model surface
+
 
     prate * ptime = maxp
     prate = maxp / ptime
