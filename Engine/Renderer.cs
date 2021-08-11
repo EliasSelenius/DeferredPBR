@@ -26,7 +26,7 @@ namespace Engine {
         private static Framebuffer ldrBuffer;
         static int bluredTexture;
 
-        private static Uniformblock windowInfoUBO;
+        private static Uniformblock applicationUBO;
         private static Uniformblock cameraUBO;
 
         internal static Texture2D whiteTexture;
@@ -121,8 +121,8 @@ namespace Engine {
 
 
             { // init UBOs
-                windowInfoUBO = Uniformblock.get("Window");
-                windowInfoUBO.bindBuffer(GLUtils.createBuffer(vec4.bytesize));
+                applicationUBO = Uniformblock.get("Application");
+                applicationUBO.bindBuffer(GLUtils.createBuffer(vec4.bytesize));
 
                 cameraUBO = Uniformblock.get("Camera");
                 cameraUBO.bindBuffer(GLUtils.createBuffer(2 * mat4.bytesize));
@@ -133,7 +133,7 @@ namespace Engine {
 
             whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
 
-            pSysms = new ParticleSystem[100];
+            pSysms = new ParticleSystem[70];
             for (int i = 0; i < pSysms.Length; i++) pSysms[i] = new();
         }
 
@@ -145,6 +145,14 @@ namespace Engine {
         internal static void drawframe(FrameEventArgs e) {
 
             time += deltaTime = e.Time;
+            var ftime = (float)time;
+            var fdelta = (float)deltaTime;
+            unsafe {
+                //long timedata = *(long*)&ftime | ((*(long*)&fdelta) >> (sizeof(float) * 8));
+                //GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 2, ref timedata);
+            }
+            GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 2, ref ftime);
+            GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 3, ref fdelta);
 
             var scene = Application.scene;
 
@@ -263,7 +271,7 @@ namespace Engine {
 
             // update window info ubo:
             vec2 s = new vec2(e.Width, e.Height);
-            GLUtils.buffersubdata(windowInfoUBO.bufferId, 0, ref s);
+            GLUtils.buffersubdata(applicationUBO.bufferId, 0, ref s);
 
 
         }

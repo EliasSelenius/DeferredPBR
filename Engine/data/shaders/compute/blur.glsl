@@ -1,6 +1,6 @@
 #version 430 core
 
-#include "Engine.data.shaders.Window.glsl"
+#include "Engine.data.shaders.Application.glsl"
 
 layout (local_size_x = 1, local_size_y = 1) in;
 
@@ -13,7 +13,7 @@ uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.0
 void main() {
     ivec2 coord = ivec2(gl_GlobalInvocationID.xy);
 
-    vec2 wSize = window.size.xy / 2.0;
+    vec2 wSize = getWindowSize() / 2.0;
 
     //vec3 res = imageLoad(srcImg, coord).rgb * weight[0];
     vec2 uv = gl_GlobalInvocationID.xy / wSize;

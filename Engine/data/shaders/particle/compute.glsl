@@ -1,5 +1,7 @@
 #version 430 core
 
+#include "Engine.data.shaders.Application.glsl"
+
 layout (local_size_x = 1) in;
 
 struct Particle {
@@ -24,10 +26,14 @@ bool outOfBounds(vec3 pos, float radius) {
 }
 
 void main() {
+    
+    float deltatime = getDeltatime();
+    
     uint index = gl_GlobalInvocationID.x;
     Particle particle = particles[index];
     
-    particle.pos.xyz += particle.vel_size.xyz;
+    particle.pos.xyz += particle.vel_size.xyz * deltatime;
+
 
     if (outOfBounds(particle.pos.xyz, 20)) {
         // reset particle (as if a new spawned) 

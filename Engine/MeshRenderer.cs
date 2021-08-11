@@ -16,6 +16,15 @@ namespace Engine {
     }
 
 
+    /*public abstract class DeferredRenderableComponent : Component {
+
+        protected override void onEnter() {
+            base.onEnter();
+        }
+
+        protected abstract void render();
+    }*/
+
     public class MeshRenderer : Component, IRenderer {
         public Mesh<Vertex> mesh;
         public IMaterial[] materials;

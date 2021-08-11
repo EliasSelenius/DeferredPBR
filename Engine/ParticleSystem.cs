@@ -78,7 +78,7 @@ namespace Engine {
             
             var ps = new particle[numParticles];
             for (int i = 0; i < numParticles; i++) {
-                vec3 vel = new vec3(math.rand(), math.rand(), math.rand()) / 10f;
+                vec3 vel = new vec3(math.rand(), math.rand(), math.rand());
                 float size = math.range(0.1f, 2f);
                 ps[i] = new particle {
                     _pos = new vec4(math.rand(), math.rand(), math.rand(), 0) * 600f,

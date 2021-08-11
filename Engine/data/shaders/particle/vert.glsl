@@ -1,7 +1,7 @@
 #version 330 core
 
 #include "Engine.data.shaders.Camera.glsl"
-#include "Engine.data.shaders.Window.glsl"
+#include "Engine.data.shaders.Application.glsl"
 
 layout (location = 0) in vec4 a_Pos;
 layout (location = 1) in vec4 a_Vel_Size;
@@ -24,8 +24,9 @@ void main() {
 
     vec4 eyePos = camera.view * vec4(a_Pos.xyz, 1.0);
 
+    vec2 windowSize = getWindowSize();
     vec4 projVox = camera.projection * vec4(vec2(a_Vel_Size.w), eyePos.zw);
-    gl_PointSize = 0.25 / projVox.w * dot(window.size.xy, projVox.xy);
+    gl_PointSize = 0.25 / projVox.w * dot(windowSize, projVox.xy);
     
     gl_Position = camera.projection * eyePos;
 

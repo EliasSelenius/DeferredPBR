@@ -1,7 +1,7 @@
 #version 330 core
 #include "Engine.data.shaders.PBR.glsl"
 #include "Engine.data.shaders.GBuffer.glsl"
-#include "Engine.data.shaders.Window.glsl" 
+#include "Engine.data.shaders.Application.glsl" 
 
 /*
     lightPass_pointlight fragment shader
@@ -16,7 +16,8 @@ out vec4 FragColor;
 
 void main() {
 
-    vec2 uv = gl_FragCoord.xy / window.size.xy;
+    vec2 windowSize = getWindowSize();
+    vec2 uv = gl_FragCoord.xy / windowSize;
 
     GBufferData fragdata = readGBuffer(uv);
 
