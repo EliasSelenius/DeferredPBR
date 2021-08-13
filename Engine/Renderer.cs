@@ -133,14 +133,11 @@ namespace Engine {
 
             whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
 
-            pSysms = new ParticleSystem[70];
-            for (int i = 0; i < pSysms.Length; i++) pSysms[i] = new();
         }
 
         public static event System.Action onDrawFrame;
 
-        static ParticleSystem pSys = new();
-        static ParticleSystem[] pSysms;
+
 
         internal static void drawframe(FrameEventArgs e) {
 
@@ -192,10 +189,7 @@ namespace Engine {
                 
                 scene.lightPass();
 
-                foreach (var p in pSysms) {
-                    p.render();
-                }                
-                //pSys.render();
+
             }
 
 

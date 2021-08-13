@@ -1,5 +1,7 @@
 #version 330 core
 
+uniform sampler2D tex; 
+
 out vec4 FragColor;
 
 in V2F {
@@ -8,5 +10,5 @@ in V2F {
 
 
 void main() {
-    FragColor = v2f.color;
+    FragColor = texture(tex, gl_PointCoord);//v2f.color;
 }

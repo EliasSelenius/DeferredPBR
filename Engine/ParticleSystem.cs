@@ -1,6 +1,7 @@
 using System;
 using Nums;
 using OpenTK.Graphics.OpenGL4;
+using System.Collections.Generic;
 
 /*
     TODO:
@@ -52,7 +53,14 @@ namespace Engine {
 
     }
 
-    public class ParticleSystem {
+    public partial class Scene {
+        internal readonly List<ParticleSystem> particleSystems = new();
+    }
+
+    public class ParticleSystem : Component {
+
+        protected override void onEnter() => scene.particleSystems.Add(this);
+        protected override void onLeave() => scene.particleSystems.Remove(this);
 
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
         struct particle {            
@@ -93,17 +101,16 @@ namespace Engine {
 
         public void render() {
             renderShader.use();
-            //spritesheet.bind(TextureUnit.Texture0);
+            spritesheet.bind(TextureUnit.Texture0);
 
-            //GL.Enable(EnableCap.PointSprite);
-            //GL.TexEnv()
             GL.Enable(EnableCap.ProgramPointSize);
-            //GL.PointSize(10f);
+            GL.Disable(EnableCap.DepthTest);
 
             GL.BindVertexArray(vao);
             GL.DrawArrays(PrimitiveType.Points, 0, numParticles);
 
             computeShader.use();
+            GL.Uniform3(GL.GetUniformLocation(computeShader.id, "spawnPoint"), 1, ref transform.position.x);
             GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, vbo);
             Shader.dsipatchCompute(numParticles);
 

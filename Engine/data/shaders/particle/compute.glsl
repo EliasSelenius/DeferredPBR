@@ -22,7 +22,8 @@ float rand(float x) {
 }
 
 bool outOfBounds(vec3 pos, float radius) {
-    return dot(pos, pos) > radius * radius;
+
+    return distance(pos, spawnPoint) > radius;
 }
 
 void main() {

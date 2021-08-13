@@ -114,6 +114,7 @@ namespace Demo {
                         g.addComponent(new Rigidbody());
                         g.addComponent(new SphereCollider());
                         //g.addComponent(new Pointlight() { color = mat.albedo * 3f });
+                        g.addComponent(new ParticleSystem());
 
                         g.transform.position.xy = new Nums.vec2(r, m + 1) * 25;
                         g.enterScene(Scene.active);

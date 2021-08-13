@@ -26,7 +26,7 @@ namespace Engine {
     }
 
 
-    public class Scene : SceneBase {
+    public partial class Scene : SceneBase {
 
         static Scene _active;
         public static Scene active { 
@@ -108,6 +108,10 @@ namespace Engine {
             
             GL.Enable(EnableCap.DepthTest);
             skybox?.render();
+
+            foreach (var p in particleSystems) {
+                p.render();
+            }
         }
 
         internal override void forwardPass() {
