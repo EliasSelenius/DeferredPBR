@@ -418,6 +418,7 @@ namespace Engine {
             return texture;
         }
 
+        //TODO: replace framebuffer stuff with some compute shaders. Eg. dispatchCompute(512, 512, 6) // (texture_size, texture_size, cubemap_sides)
         public static int generateCubemap(Shader shader, int width, int height, PixelInternalFormat internalFormat, WrapMode wrap, Filter filter) {
             int cubemap = createCubemap(width, height, internalFormat, wrap, filter);
             shader.use();

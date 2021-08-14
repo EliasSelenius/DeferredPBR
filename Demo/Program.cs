@@ -217,7 +217,7 @@ namespace Demo {
             }
 
             { // spore creature import
-                var p = Assets.getPrefab("Engine.data.models.spore.Cel.");
+                var p = Assets.getPrefab("Engine.data.models.spore.Cel.hack");
                 var ins = p.createInstance();
                 ins.transform.rotate(vec3.unitx, math.pi / 2f);
                 ins.transform.scale *= 10;
