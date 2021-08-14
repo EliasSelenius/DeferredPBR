@@ -32,7 +32,7 @@ using System.Collections.Generic;
         end of lifetime
         collides
     different particle birth conditions
-        imeadeatly takes the place of a dead particle
+        immediately takes the place of a dead particle
         emission rate
         programaticly
 
@@ -48,6 +48,16 @@ using System.Collections.Generic;
 */
 
 namespace Engine {
+
+    public enum ParticleDeathConditions {
+        outOfBounds
+    }
+
+    public enum ParticleBirthConditions {
+        immediate,
+        emissionRate,
+        programatic
+    }
 
     public class ParticleEmitter {
 
@@ -101,7 +111,8 @@ namespace Engine {
 
         public void render() {
             renderShader.use();
-            spritesheet.bind(TextureUnit.Texture0);
+            //spritesheet.bind(TextureUnit.Texture0);
+            Renderer.whiteTexture.bind(TextureUnit.Texture0);
 
             GL.Enable(EnableCap.ProgramPointSize);
             //GL.Disable(EnableCap.DepthTest);
@@ -113,7 +124,7 @@ namespace Engine {
             computeShader.use();
             GL.Uniform3(GL.GetUniformLocation(computeShader.id, "spawnPoint"), 1, ref transform.position.x);
             GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, vbo);
-            Shader.dsipatchCompute(numParticles);
+            Shader.dispatchCompute(numParticles);
 
         }
 

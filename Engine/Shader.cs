@@ -15,7 +15,7 @@ namespace Engine {
         public void use() => GL.UseProgram(id);
         public string getInfolog() => GL.GetProgramInfoLog(id);
 
-        public static void dsipatchCompute(int num_groups_x, int num_groups_y = 1, int num_groups_z = 1) => 
+        public static void dispatchCompute(int num_groups_x, int num_groups_y = 1, int num_groups_z = 1) => 
             GL.DispatchCompute(num_groups_x, num_groups_y, num_groups_z);
 
         public Shader(string name) {

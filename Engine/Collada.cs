@@ -175,7 +175,7 @@ namespace Engine {
                 float[] float_array;
                 int stride;
                 public Source(XmlElement xml) {
-                    float_array = xml["float_array"].InnerText.Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+                    float_array = xml["float_array"].InnerText.Trim().Split(' ').Select(x => float.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
                     stride = int.Parse(xml["technique_common"]["accessor"].GetAttribute("stride"));
                 }
                 public T[] as_vector_array<T>() where T : vec, new() {
@@ -222,10 +222,13 @@ namespace Engine {
 
                     var input_nodes = xml.GetElementsByTagName("input");
                     num_inputs = input_nodes.Count;
+                    var input_offsets = new int[num_inputs];
+                    var input_index = 0;
                     foreach (var input in input_nodes) {
                         var i = input as XmlElement;
                         var src = geometry.sources.TryGetValue(i.GetAttribute("source").TrimStart('#'), out Source s) ? s : null;
                         var ofs = int.Parse(i.GetAttribute("offset"));
+                        input_offsets[input_index++] = ofs;
                         var semantic = i.GetAttribute("semantic");
                         if (semantic.Equals(VERTEX)) {
                             pos_input.source = src;
@@ -241,10 +244,11 @@ namespace Engine {
                     }
 
 
-                    var ints = xml["p"].InnerText.Split(' ').Select(x => int.Parse(x)).ToArray();
+                    var ints = xml["p"].InnerText.Trim().Split(' ').Select(x => int.Parse(x)).ToArray();
                     var indices = new List<vertexindices>();
-                    for (int i = 0; i < ints.Length / num_inputs; i++) {
-                        var index = i * num_inputs;
+                    var num_indecies_per_triangle = input_offsets.Distinct().Count();
+                    for (int i = 0; i < ints.Length / num_indecies_per_triangle; i++) {
+                        var index = i * num_indecies_per_triangle;
                         int get_input_index((Source source, int offset) input) {
                             if (input.source == null) return -1;
                             else return ints[index + input.offset];
@@ -354,11 +358,15 @@ namespace Engine {
                     return new vec4(n.ElementAt(0), n.ElementAt(1), n.ElementAt(2), n.ElementAt(3));
                 }
 
-                pbrMaterial = new PBRMaterial {
-                    albedo = parse_color(lambert_xml["diffuse"].InnerText).xyz,
-                    //emission = parse_color(lambert_xml["emission"].InnerText).xyz,
-                    roughness = 1 - float.Parse(lambert_xml["reflectivity"]?.InnerText ?? "0", System.Globalization.CultureInfo.InvariantCulture)
-                };
+                if (lambert_xml != null) {
+                    pbrMaterial = new PBRMaterial {
+                        albedo = parse_color(lambert_xml["diffuse"].InnerText).xyz,
+                        //emission = parse_color(lambert_xml["emission"].InnerText).xyz,
+                        roughness = 1 - float.Parse(lambert_xml["reflectivity"]?.InnerText ?? "0", System.Globalization.CultureInfo.InvariantCulture)
+                    };
+                } else {
+                    pbrMaterial = PBRMaterial.defaultMaterial;
+                }
 
             }
 

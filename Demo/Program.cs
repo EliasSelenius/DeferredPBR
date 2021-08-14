@@ -216,7 +216,14 @@ namespace Demo {
                 g.enterScene(Scene.active);
             }
 
-
+            { // spore creature import
+                var p = Assets.getPrefab("Engine.data.models.spore.Cel.");
+                var ins = p.createInstance();
+                ins.transform.rotate(vec3.unitx, math.pi / 2f);
+                ins.transform.scale *= 10;
+                ins.transform.position = (-50, 10, 0);
+                ins.enterScene(Scene.active);
+            }
 
         }
     }
