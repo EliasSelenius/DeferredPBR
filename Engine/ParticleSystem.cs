@@ -104,7 +104,8 @@ namespace Engine {
             spritesheet.bind(TextureUnit.Texture0);
 
             GL.Enable(EnableCap.ProgramPointSize);
-            GL.Disable(EnableCap.DepthTest);
+            //GL.Disable(EnableCap.DepthTest);
+            GL.DepthMask(false);
 
             GL.BindVertexArray(vao);
             GL.DrawArrays(PrimitiveType.Points, 0, numParticles);

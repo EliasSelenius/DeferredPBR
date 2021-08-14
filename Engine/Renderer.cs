@@ -142,14 +142,9 @@ namespace Engine {
         internal static void drawframe(FrameEventArgs e) {
 
             time += deltaTime = e.Time;
-            var ftime = (float)time;
-            var fdelta = (float)deltaTime;
-            unsafe {
-                //long timedata = *(long*)&ftime | ((*(long*)&fdelta) >> (sizeof(float) * 8));
-                //GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 2, ref timedata);
-            }
-            GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 2, ref ftime);
-            GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 3, ref fdelta);
+            var timedata = new vec2((float)time, (float)deltaTime);
+            GLUtils.buffersubdata(applicationUBO.bufferId, sizeof(float) * 2, ref timedata);
+
 
             var scene = Application.scene;
 
