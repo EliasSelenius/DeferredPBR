@@ -44,6 +44,8 @@ namespace Engine.Gui {
 
                 // name:
                 //canvas.text(pos, )
+
+
                 pos.x = startPos.x;
             }
 

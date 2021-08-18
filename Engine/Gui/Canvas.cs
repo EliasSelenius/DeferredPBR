@@ -25,7 +25,7 @@ namespace Engine.Gui {
 
         readonly Dictionary<Font, Mesh<textVertex>> textBatches = new();
         
-        readonly Mesh<rectVertex> rectBatch = new();
+        readonly Mesh<rectVertex> batch = new();
 
 
         public Canvas(int w, int h) {
@@ -52,8 +52,8 @@ namespace Engine.Gui {
             
             // render rects
             Renderer.whiteTexture.bind(TextureUnit.Texture0);
-            rectBatch.updateBuffers();
-            rectBatch.render();
+            batch.updateBuffers();
+            batch.render();
 
             // render text
             foreach (var batch in textBatches) {
@@ -68,7 +68,7 @@ namespace Engine.Gui {
             }
 
             // clear rect batch
-            rectBatch.data.clear();
+            batch.data.clear();
         }
 
         Mesh<textVertex> getTextBatch(Font font) {
@@ -126,14 +126,14 @@ namespace Engine.Gui {
 
             color.color2vec(in color, out vec4 vertcolor);
 
-            uint count = (uint)rectBatch.data.vertices.Count;
+            uint count = (uint)batch.data.vertices.Count;
 
             vertex(pos, (0, 0), vertcolor);
             vertex(pos + (size.x, 0), (1, 0), vertcolor);
             vertex(pos + size, (1, 1), vertcolor);
             vertex(pos + (0, size.y), (0, 1), vertcolor);
 
-            rectBatch.data.addTriangles(new uint[] {
+            batch.data.addTriangles(new uint[] {
                 count + 2, count + 1, count + 0,
                 count + 3, count + 2, count + 0
             });
@@ -147,7 +147,7 @@ namespace Engine.Gui {
             color.color2vec(color, out vec4 vertcolor);
 
 
-            uint i0 = (uint)rectBatch.data.vertices.Count,
+            uint i0 = (uint)batch.data.vertices.Count,
                  i1 = i0 + 1,
                  i2 = i0 + 2,
                  i3 = i0 + 3,
@@ -171,7 +171,7 @@ namespace Engine.Gui {
             vertex(v3 + (thicc, -thicc), (0, 1), vertcolor); // 6
             vertex(v4 -thicc,            (0, 1), vertcolor); // 7
 
-            rectBatch.data.addTriangles(new uint[] {
+            batch.data.addTriangles(new uint[] {
                 i0, i1, i4,
                 i4, i1, i5,
 
@@ -188,6 +188,63 @@ namespace Engine.Gui {
 
 
         }
+
+
+        /*
+                o v1
+            o v2    o v6
+
+            o v3    o v5
+                o v4
+        
+        */
+        public void hex(vec2 pos, float radius, in color color) {
+            var oldp = pos;
+            convertCoord(ref pos);
+            color.color2vec(in color, out vec4 vertcolor);
+
+
+            uint i0 = (uint)batch.data.vertices.Count;
+            
+
+            const float sin60 = 0.86602540378443864676372317075294f;
+            const float cos60 = 0.5f;
+
+            vec2 v1 = pos + (0, radius),
+                 v2 = pos + new vec2(-sin60, cos60) * radius,
+                 v3 = pos + new vec2(-sin60, -cos60) * radius,
+                 v4 = pos + (0, -radius),
+                 v5 = pos + new vec2(sin60, -cos60) * radius,
+                 v6 = pos + new vec2(sin60, cos60) * radius;
+
+
+            vertex(v1, (0, 1), in vertcolor);
+            vertex(v2, (0, 1), in vertcolor);
+            vertex(v3, (0, 1), in vertcolor);
+            vertex(v4, (0, 1), in vertcolor);
+            vertex(v5, (0, 1), in vertcolor);
+            vertex(v6, (0, 1), in vertcolor);
+
+            batch.data.addTriangles(new uint[] {
+                i0, 
+                i0 + 1,
+                i0 + 5,
+
+                i0 + 1,
+                i0 + 2,
+                i0 + 4,
+
+                i0 + 1,
+                i0 + 4,
+                i0 + 5,
+
+                i0 + 2,
+                i0 + 3,
+                i0 + 4
+            });
+
+        }
+
 
         void test(vec2 pos, vec2 size, float borderRadius, in color color) {
             convertCoord(ref pos);
@@ -211,7 +268,7 @@ namespace Engine.Gui {
 
         }
         void vertex(vec2 pos, vec2 uv, in vec4 color) {
-            rectBatch.data.vertices.Add(new rectVertex {
+            batch.data.vertices.Add(new rectVertex {
                 position = pos,
                 uv = uv,
                 color = color

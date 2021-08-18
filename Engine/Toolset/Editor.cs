@@ -77,6 +77,8 @@ namespace Engine.Toolset {
 
                 Common.displayObject(canvas, 400, test_instance);
 
+
+                canvas.hex(370, 40, in color.purple);
             }
 
             canvas.dispatchFrame();
