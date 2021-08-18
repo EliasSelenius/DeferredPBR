@@ -366,6 +366,9 @@ namespace Engine {
                     };
                 } else {
                     pbrMaterial = PBRMaterial.defaultMaterial;
+                    /*pbrMaterial = new PBRMaterial {
+                        albedoMap = Assets.getTexture2D("Engine.data.textures.test.png")
+                    };*/
                 }
 
             }

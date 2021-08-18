@@ -18,7 +18,7 @@ namespace Engine.Gui {
             - MSAA
 
     */
-    public class Canvas {
+    public partial class Canvas {
 
         public int width, height;
         public ivec2 size => new ivec2(width, height);
@@ -217,7 +217,6 @@ namespace Engine.Gui {
                 color = color
             });
         }
-
 
     }
 

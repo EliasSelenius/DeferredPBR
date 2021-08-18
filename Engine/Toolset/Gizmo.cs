@@ -64,6 +64,8 @@ namespace Engine.Toolset {
         }
 
         internal static void dispatchFrame() {
+            GL.Disable(EnableCap.DepthTest);
+            
             shader.use();
 
             points.render();

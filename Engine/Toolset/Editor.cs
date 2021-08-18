@@ -35,6 +35,8 @@ namespace Engine.Toolset {
         }
 
         static Textbox textbox = new();
+        static bool test_checkbox;
+        static Common.TestObject test_instance = new();
 
         static void renderer_drawframe() {
 
@@ -64,7 +66,18 @@ namespace Engine.Toolset {
 
             renderConsole();
 
-            Assets.drawGui(canvas);
+
+            { // testing GUI features here:
+                canvas.checkbox(3, ref test_checkbox);
+
+                if (test_checkbox) {
+                    Assets.drawGui(canvas);
+                }
+
+
+                Common.displayObject(canvas, 400, test_instance);
+
+            }
 
             canvas.dispatchFrame();
         }

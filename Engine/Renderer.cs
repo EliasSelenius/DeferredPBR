@@ -225,6 +225,7 @@ namespace Engine {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0); 
             scene.renderFrame();
 
+            
             Toolset.Gizmo.dispatchFrame();
 
             
@@ -319,6 +320,12 @@ namespace Engine {
         image pass
             binds default
             render: screenquad
+
+
+
+        bloom:
+            isolate bright pixels
+            
 
     */
 
