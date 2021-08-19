@@ -22,6 +22,20 @@ namespace Engine.Toolset {
 
         static color getMessageColor(MessageLevel level) => level switch { MessageLevel.notification => color.white, MessageLevel.warning => color.yellow, MessageLevel.error => color.red, _ => throw new System.Exception("Ooops") };
 
+
+
+        static Dictionary<string, int> entries = new();
+        public static void print(string msg) {
+            System.Console.WriteLine(msg);
+        }
+
+        public static void renderToConsole() {
+            System.Console.Clear();
+            foreach (var kv in entries) {
+                System.Console.WriteLine(kv.Value + ": " + kv.Key);
+            }
+        } 
+
     }
 
 }

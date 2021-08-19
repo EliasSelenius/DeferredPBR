@@ -77,14 +77,16 @@ namespace Engine {
                 _ => "DontCare"
             };
 
-            Console.ForegroundColor = color;
+            //Console.ForegroundColor = color;
             msg += " severity: " + sev;
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
 
             var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
-            System.Console.WriteLine("    " + m);
+            //System.Console.WriteLine("    " + m);
 
-            Console.ResetColor();
+            Toolset.Editor.print(m);
+
+            //Console.ResetColor();
         }
         public static void enableDebug() {
             GL.Enable(EnableCap.DebugOutput);

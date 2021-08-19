@@ -82,6 +82,9 @@ namespace Engine.Toolset {
             }
 
             canvas.dispatchFrame();
+
+
+            //renderToConsole();
         }
 
     }
