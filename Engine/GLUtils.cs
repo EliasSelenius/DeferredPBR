@@ -84,7 +84,8 @@ namespace Engine {
             var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
             //System.Console.WriteLine("    " + m);
 
-            Toolset.Editor.print(m);
+            //Toolset.Editor.print(m);
+            //Console.WriteLine(m);
 
             //Console.ResetColor();
         }

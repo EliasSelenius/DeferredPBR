@@ -49,7 +49,7 @@ namespace Engine {
         public static readonly color green = new color(0, 1, 0);
         public static readonly color blue = new color(0, 0, 1);
         public static readonly color yellow = new color(1, 1, 0);
-        public static readonly color purple = new color(1, 0, 1);
+        public static readonly color magenta = new color(1, 0, 1);
 
 
         #endregion
