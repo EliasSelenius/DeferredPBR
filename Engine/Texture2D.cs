@@ -6,6 +6,9 @@ namespace Engine {
 
         public int width { get; private set; }
         public int height { get; private set; }
+
+        // TODO: its kinda stupid to store the pixel data on the CPU when 99% of the time it wont be used.
+        // resolution: dont store the pixel data here, and make a special class for handling CPU generated textures
         public color[,] pixels { get; private set; }
         public PixelInternalFormat internalFormat = PixelInternalFormat.Rgba8;
         public readonly WrapMode wrapMode = WrapMode.Repeat;
