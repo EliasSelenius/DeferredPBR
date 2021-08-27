@@ -40,6 +40,8 @@ namespace Engine.Gui {
                     pos += 10 + 4;
 
                     field.SetValue(obj, v);
+                } else if (field.FieldType == typeof(Enum)) {
+                    
                 }
 
                 // name:
