@@ -131,7 +131,8 @@ namespace Engine {
 
 
 
-            whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
+            //whiteTexture = new Texture2D(WrapMode.Repeat, Filter.Nearest, new[,] { {new color(1f) }});
+            whiteTexture = new Texture2D(new[,] {{color.white}});
 
         }
 
@@ -276,8 +277,8 @@ namespace Engine {
                 computeShader = Assets.getShader("gol_compute");
             }
 
-            tex.internalFormat = PixelInternalFormat.R8;
-            tex.applyChanges();
+            //tex.internalFormat = PixelInternalFormat.R8;
+            //tex.applyChanges();
 
             onDrawFrame += () => {
 

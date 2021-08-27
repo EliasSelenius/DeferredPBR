@@ -7,41 +7,46 @@ namespace Engine {
         public int width { get; private set; }
         public int height { get; private set; }
 
-        // TODO: its kinda stupid to store the pixel data on the CPU when 99% of the time it wont be used.
-        // resolution: dont store the pixel data here, and make a special class for handling CPU generated textures
-        public color[,] pixels { get; private set; }
-        public PixelInternalFormat internalFormat = PixelInternalFormat.Rgba8;
-        public readonly WrapMode wrapMode = WrapMode.Repeat;
-        public readonly Filter filter = Filter.Linear;
-        public bool genMipmap = true;
+        public PixelInternalFormat internalFormat { get; init; } = PixelInternalFormat.Rgba8;
+        public bool genMipmap { get; init; } = true;
 
-        public Texture2D(WrapMode wmode, Filter f, int w, int h) : this(wmode, f, new color[w,h]) { }
-        public Texture2D(WrapMode wmode, Filter f, color[,] pixels) {
-            (width, height) = (pixels.GetLength(0), pixels.GetLength(1));         
-            this.pixels = pixels;
-            wrapMode = wmode;
-            filter = f;
-            id = GLUtils.createTexture2D(this.pixels, internalFormat, wrapMode, filter, genMipmap);
+        private WrapMode _wrapMode;
+        public WrapMode wrapMode {
+            get => _wrapMode;
+            set { _bind(id); GLUtils.tex2DWrap(_wrapMode = value); _bind(0); }
         }
 
+        private Filter _filter;
+        public Filter filter {
+            get => _filter;
+            set { _bind(id); GLUtils.tex2DFilter(_filter = value); bind(0); }
+        }
+
+        public Texture2D() {
+            id = GL.GenTexture();            
+        }
+
+        public Texture2D(color[,] pixels) : this() {
+            setPixels(pixels);
+        }
+
+        static void _bind(int tex) => GL.BindTexture(TextureTarget.Texture2D, tex);
         public void bind(TextureUnit unit) => GLUtils.bindTex2D(unit, id);
 
-        public void resize(int w, int h) {
-            (width, height) = (w, h);
-            pixels = new color[width, height];
+        public color[,] getPixels() => throw new System.NotImplementedException();
+        public void setPixels(color[,] pixels) {
+            (width, height) = (pixels.GetLength(0), pixels.GetLength(1));
+            _bind(id);
+                GLUtils.texImage2D(internalFormat, pixels);
+                if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            _bind(0);
         }
+
+
 
         public static Texture2D fromFile(string filename) {
-            return new Texture2D(WrapMode.Repeat, Filter.Nearest, Utils.bitmapToColorArray(new System.Drawing.Bitmap(System.Drawing.Image.FromFile(filename))));
+            return new Texture2D(Utils.bitmapToColorArray(new System.Drawing.Bitmap(System.Drawing.Image.FromFile(filename))));
         }
 
-        
-
-        public void applyChanges() {
-            GL.BindTexture(TextureTarget.Texture2D, id);
-            GLUtils.texImage2D(internalFormat, pixels);
-            if (genMipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-        }
     }
 }

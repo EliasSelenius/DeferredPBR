@@ -9,14 +9,26 @@ using Nums;
 namespace Demo {
     class Program {
         
+        class Testing {
+            public bool value { get; init; } = false;
+
+            public Testing() {
+                System.Console.WriteLine(value);
+            }
+        }
 
         static void Main(string[] args) {
 
             Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
             //Console.Read();
 
+            Testing t = new() {
+                value = true
+            };
 
-            Application.run(load);
+
+
+            //Application.run(load);
             
         }
         
@@ -49,11 +61,11 @@ namespace Demo {
             { // textured plane
                 var m = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(10, 10f));
 
-                var tex = new Texture2D(WrapMode.MirroredRepeat, Filter.Nearest, 100, 100);
-                for (int i = 0; i < tex.width; i++) {
-                    for (int j = 0; j < tex.height; j++) {
+                var pixels = new color[100,100];
+                for (int i = 0; i < 100; i++) {
+                    for (int j = 0; j < 100; j++) {
                         var scale = math.gradnoise(new vec2(i,j) / 10f)*.5f+.5f;
-                        tex.pixels[i,j] = scale switch {
+                        pixels[i,j] = scale switch {
                             < 0.4f => color.rgb(0,0,1),
                             < 0.5f => color.rgb(1,1,0),
                             < 0.7f => color.rgb(0,1,0),
@@ -62,7 +74,7 @@ namespace Demo {
                     }
                 }
 
-                tex.applyChanges();
+                var tex = new Texture2D(pixels);
 
                 Renderer.startGameOfLife(tex);
 
