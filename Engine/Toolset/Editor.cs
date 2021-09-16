@@ -68,7 +68,7 @@ namespace Engine.Toolset {
 
 
             { // testing GUI features here:
-                canvas.checkbox(3, ref test_checkbox);
+                //canvas.checkbox(3, ref test_checkbox);
 
                 if (test_checkbox) {
                     Assets.drawGui(canvas);
@@ -79,6 +79,8 @@ namespace Engine.Toolset {
 
 
                 canvas.hex(370, 40, in color.magenta);
+
+                canvas.test();
             }
 
             canvas.dispatchFrame();

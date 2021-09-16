@@ -36,7 +36,8 @@ namespace Engine.Gui {
                 if (field.FieldType == typeof(bool)) {
                     var v = (bool)field.GetValue(obj);
                     
-                    canvas.checkbox(pos, ref v, size:10);
+                    //canvas.checkbox(pos, ref v, size:10);
+
                     pos += 10 + 4;
 
                     field.SetValue(obj, v);
