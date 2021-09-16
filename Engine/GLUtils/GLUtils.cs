@@ -60,6 +60,7 @@ namespace Engine {
         static DebugProc dbcallback;
         static void debug_callback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam) {
             
+
             var msg = "[" + type.ToString().Substring("DebugType".Length) + "]";
             
             var color = severity switch {
@@ -77,11 +78,14 @@ namespace Engine {
             };
 
             //Console.ForegroundColor = color;
-            msg += " severity: " + sev;
-            //Console.WriteLine(msg);
+            msg += " severity: " + sev + "\n";
 
             var m = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
-            //System.Console.WriteLine("    " + m);
+            msg += "    " + m;
+
+            if (type == DebugType.DebugTypeError) throw new Exception(msg);
+            else System.Console.WriteLine(msg);
+
 
             //Toolset.Editor.print(m);
             //Console.WriteLine(m);

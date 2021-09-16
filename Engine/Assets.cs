@@ -54,7 +54,11 @@ namespace Engine {
 
             { // textures
                 foreach (var res in provider.enumerate("png")) {
-                    textures[res] = new Texture2D(WrapMode.Repeat, Filter.Linear, Utils.bitmapToColorArray(provider.getBitmap(res)));
+                    var tex = new Texture2D();
+                    tex.setPixels(provider.getBitmap(res));
+                    tex.wrapMode = WrapMode.Repeat;
+                    tex.filter = Filter.Linear;
+                    textures[res] = tex;
                 }
             }
 

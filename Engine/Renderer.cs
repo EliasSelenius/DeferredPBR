@@ -52,7 +52,6 @@ namespace Engine {
 
         public static void load() {
 
-            GLUtils.enableDebug();
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);

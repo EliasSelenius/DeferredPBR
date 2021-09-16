@@ -36,6 +36,8 @@ namespace Engine {
         
 
         static void load() {
+            GLUtils.enableDebug();
+
             Assets.load(new EmbeddedResourceProvider(typeof(Application).Assembly));
         }
 
