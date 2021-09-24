@@ -5,10 +5,10 @@ using Nums;
 
 namespace Engine.Gui {
 
-    using static CanvasGui;
+    using static ImmediateGui;
 
 
-    public static class CanvasGui {
+    public static class ImmediateGui {
 
         struct box {
             public vec2 pos, size;
@@ -48,12 +48,32 @@ namespace Engine.Gui {
             if (leftclick()) value = !value;
             pop();
         }
+
+        public static void slider(ref float value, vec2 pos, float width) {
+            push(pos, (width, 3));
+            fill(color.gray);
+
+            float a = pos.x,
+                  b = pos.x + width;
+
+            float value_x = a + (b-a) * value;
+
+            //value = math.lerp(a, b, value) / (b - a);
+
+            // -5 + 1.5f to center it. 
+            push((value_x - 5, pos.y - 5 + 1.5f), 10);
+            fill(color.white);
+            pop();
+
+            pop();
+        }
     }
 
 
     public partial class Canvas {
 
         static bool test_bool;
+        static float test_slider;
 
         public void test() {
             beginCanvas(this);
@@ -65,6 +85,8 @@ namespace Engine.Gui {
             if (test_bool) {
                 fill(color.white);
             }
+
+            slider(ref test_slider, (800, 130), width:70);
 
             pop();
         }
@@ -100,8 +122,8 @@ namespace Engine.Gui {
 
 #endregion
 
-        public void slider(vec2 pos, ref float value) => throw new NotImplementedException();
-        public void slider(vec2 pos, ref int value) => throw new NotImplementedException();
+        //public void slider(vec2 pos, ref float value) => throw new NotImplementedException();
+        //public void slider(vec2 pos, ref int value) => throw new NotImplementedException();
 
         public void number(vec2 pos, ref float value) => throw new NotImplementedException();
         public void number(vec2 pos, ref int value) => throw new NotImplementedException();

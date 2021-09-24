@@ -22,13 +22,8 @@ namespace Demo {
             Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
             //Console.Read();
 
-            Testing t = new() {
-                value = true
-            };
 
-
-
-            //Application.run(load);
+            Application.run(load);
             
         }
         
