@@ -23,8 +23,7 @@ namespace Demo {
             //Console.Read();
 
 
-            Application.run(load);
-            
+            Application.run(load);            
         }
         
 

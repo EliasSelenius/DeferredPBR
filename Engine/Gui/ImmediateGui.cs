@@ -8,7 +8,9 @@ namespace Engine.Gui {
     using static ImmediateGui;
 
 
-    public static class ImmediateGui {
+    public static unsafe class ImmediateGui {
+
+        public static bool drawDebugLines = true;
 
         struct box {
             public vec2 pos, size;
@@ -26,7 +28,13 @@ namespace Engine.Gui {
 
         public static void beginCanvas(Canvas c) => canvas = c;
 
+        static Font cur_font = Font.arial;
+        static int cur_font_size = 12;
+        static color cur_color = color.white;
+
         public static void push(vec2 pos, vec2 size) {
+            if (drawDebugLines) canvas.rectborder(pos, size, 1, in color.red);
+            
             box_stack.Push(new box {
                 pos = pos,
                 size = size
@@ -40,6 +48,26 @@ namespace Engine.Gui {
         public static void fill(in color c) => canvas.rect(cur_pos, cur_size, c);
         public static void border(float thickness, in color c) => canvas.rectborder(cur_pos, cur_size, thickness, c);
         
+        public static void text(string text) => canvas.text(cur_pos, cur_font, cur_font_size, text, cur_color);
+
+        public static bool button(string label, vec2 pos) {
+            var w = Text.length(label, 0, label.Length, cur_font_size, cur_font);
+            w += 10; // adds a little margin
+            push(pos, (w, cur_font_size));
+            text(label);
+
+            var click = leftclick();
+            if (click) {
+                fill(color.black);
+            } else {
+                if (hover()) fill(color.gray);
+                else fill(color.silver);
+            }
+
+            pop();
+
+            return click;
+        }
 
         public static void checkbox(ref bool value, vec2 pos, float size = 10) {
             push(pos, size);
@@ -49,7 +77,14 @@ namespace Engine.Gui {
             pop();
         }
 
+        static float* s;
+
         public static void slider(ref float value, vec2 pos, float width) {
+
+            fixed (float* p = &value) {
+                s = p;
+            }
+            
             push(pos, (width, 3));
             fill(color.gray);
 
@@ -109,6 +144,9 @@ namespace Engine.Gui {
             }
 
             slider(ref test_slider, (800, 130), width:70);
+            if (button("Hello, World!", (800, 160))) {
+                test_bool = !test_bool;
+            }
 
             pop();
         }
