@@ -21,6 +21,7 @@ namespace Engine {
         
 
         public static void invert(in mat4 m, out mat4 inv) => inv = toNums(toOpenTK(m).Inverted());
+        public static void invert(ref mat4 mat) => mat = toNums(toOpenTK(mat).Inverted());
 
         public static color randColor(int seed) => color.rgba(math.range(seed, 0, 1), math.range(seed+1, 0, 1), math.range(seed+2, 0, 1), 1.0f);
         public static color randColor() => color.rgba(math.range(0, 1), math.range(0, 1), math.range(0, 1), 1.0f);

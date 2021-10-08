@@ -21,6 +21,12 @@ namespace Engine {
             this.scale = transform.scale;
         }
 
+        public void transform(in mat4 matrix) {
+            this.getMatrix(out mat4 t);
+            t *= matrix;
+            this.setMatrix(in t);
+        }
+
         public void getMatrix(out mat4 m) {
             m = mat4.identity;
             

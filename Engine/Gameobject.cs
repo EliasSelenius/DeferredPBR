@@ -90,7 +90,15 @@ namespace Engine {
 
 #region add/remove children
 
-        public void addChild(Gameobject child) {
+        public void addChild(Gameobject child, bool preserveTransform = false) {
+
+            if (preserveTransform) {
+                // multiply by parent inverse model matrix to convert from world-space to local-space 
+                this.calcModelMatrix(out mat4 p);
+                Utils.invert(ref p);
+                child.transform.transform(in p);
+            }
+
             // make sure the child is not already a child
             if (child.parent is not null) child.parent.removeChild(child);
 
@@ -104,9 +112,15 @@ namespace Engine {
             _children.Add(child);
         }
 
-        public void removeChild(Gameobject child) {
+        public void removeChild(Gameobject child, bool preserveTransform = false) {
             // make sure the child actually is a child before removing it
             if (child.parent != this) return;
+
+            if (preserveTransform) {
+                // multiply by parent model to transform from local-space to world-space
+                this.calcModelMatrix(out mat4 p);
+                child.transform.transform(in p);
+            }
 
             child.parent = null;
             _children.Remove(child);
