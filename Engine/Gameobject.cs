@@ -132,10 +132,16 @@ namespace Engine {
 #region enter/leave scene and destroy
 
         public void enterScene(Scene s) {
-            if (scene == s) return;
-            if (scene is not null) leaveScene();
+            if (isChild) throw new System.Exception("Child-Gameobject attempted to enter a scene without its parent.");
 
-            for (int i = 0; i < children.Count; i++) children[i].enterScene(s);
+            if (scene == s) return; // We're already in this scene, just return. You cant enter a house if you're already inside.
+            if (scene is not null) leaveScene(); // leave the scene you're inn before entering another.
+
+            _enterSceneRecursive(s);
+        }
+
+        void _enterSceneRecursive(Scene s) {
+            for (int i = 0; i < children.Count; i++) children[i]._enterSceneRecursive(s);
 
             scene = s;
             scene._addGameobject(this);
@@ -144,21 +150,29 @@ namespace Engine {
             for (int i = 0; i < components.Count; i++) components[i].enter();
         }
 
-        // NOTE: its not being removed from its potential parent 
         public void leaveScene() {
-            if (scene is null) return;
+            if (isChild) throw new System.Exception("Child-Gameobject attempted to leave scene without its parent.");
 
-            for (int i = 0; i < children.Count; i++) children[i].leaveScene();
+            if (scene is null) return; // if we already dont exist in a scene, then just return. You cant leave if you've already left.
+
+            _leaveSceneRecursive();
+        }
+
+        void _leaveSceneRecursive() {
+            for (int i = 0; i < children.Count; i++) children[i]._leaveSceneRecursive();
 
             for (int i = 0; i < components.Count; i++) components[i].leave();
 
             scene._removeGameobject(this);
             scene = null;
-            
         }
 
         public void destroy() {
-            leaveScene();
+            leaveScene(); // just leave for now. And let garbage collection handle the mess. 
+
+            // TODO: do some proper clean-up
+            // - object pooling
+            // - or nulling out all fields to help GC?
 
         }
 
