@@ -94,6 +94,7 @@ namespace Engine {
 
             if (preserveTransform) {
                 // multiply by parent inverse model matrix to convert from world-space to local-space 
+                // TODO: the child is not in world-space when its the child of another gameobject, this will cause the wrong transformation.
                 this.calcModelMatrix(out mat4 p);
                 Utils.invert(ref p);
                 child.transform.transform(in p);
