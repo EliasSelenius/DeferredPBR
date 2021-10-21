@@ -19,7 +19,8 @@ using System.Collections.Generic;
         variable amount of particles 
         textures
         collision
-    use cases
+
+    use cases (birth, death) conditions
         waterfall (ondeath, cls)
         water splash (prog, cls)
         engine flame (ondeath, eol)
@@ -28,13 +29,13 @@ using System.Collections.Generic;
         ambient dust (ondeath, oob)
 
     different particle death conditions
-        out of bounds
-        end of lifetime
-        collides
+        out of bounds (oob)
+        end of lifetime (eol)
+        collides (cls)
     different particle birth conditions
-        immediately takes the place of a dead particle
-        emission rate
-        programaticly
+        immediately takes the place of a dead particle (ondeath)
+        emission rate 
+        programaticly (prog)
 
 
     different particle emissions
@@ -97,9 +98,9 @@ namespace Engine {
             var ps = new particle[numParticles];
             for (int i = 0; i < numParticles; i++) {
                 vec3 vel = new vec3(math.rand(), math.rand(), math.rand());
-                float size = math.range(0.1f, 2f);
+                float size = 0.1f;// math.range(0.1f, 2f);
                 ps[i] = new particle {
-                    _pos = new vec4(math.rand(), math.rand(), math.rand(), 0) * 600f,
+                    _pos = new vec4(math.rand(), math.rand(), math.rand(), 0) * 50,
                     _vel_size = new vec4(vel, size),
                     _color = new vec4(math.rand(), math.rand(), math.rand(), 1)
                 };
@@ -122,11 +123,22 @@ namespace Engine {
             GL.DrawArrays(PrimitiveType.Points, 0, numParticles);
 
             computeShader.use();
-            GL.Uniform3(GL.GetUniformLocation(computeShader.id, "spawnPoint"), 1, ref transform.position.x);
+            GL.Uniform3(GL.GetUniformLocation(computeShader.id, "origin"), 1, ref transform.position.x);
             GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, vbo);
             Shader.dispatchCompute(numParticles);
 
         }
 
     }
+
+
+
+
+
+
+
+
+
+
+
 }

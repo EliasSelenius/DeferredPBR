@@ -168,7 +168,8 @@ namespace Engine {
         }
 
         public void destroy() {
-            leaveScene(); // just leave for now. And let garbage collection handle the mess. 
+            if (isChild) parent.removeChild(this);
+	        leaveScene(); // just leave for now. And let garbage collection handle the mess. 
 
             // TODO: do some proper clean-up
             // - object pooling

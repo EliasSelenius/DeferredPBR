@@ -129,7 +129,12 @@ namespace Engine {
             return pixels;
         }
 
+        
 
+        public static void addOneElement<T>(ref T[] array, T value) {
+            System.Array.Resize(ref array, array.Length + 1);
+            array[array.Length - 1] = value;
+        }
 
     }
 }

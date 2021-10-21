@@ -32,6 +32,7 @@ namespace Engine {
         bool isUnlit() {
             var type = materials[0].GetType();
 
+            // checks to see if all materials are of the same type, and throws if not.
             if (!materials.Select(x => x.GetType()).All(x => x == type)) throw new System.Exception();
             
             return materials[0] is Material;

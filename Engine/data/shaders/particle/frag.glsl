@@ -10,5 +10,5 @@ in V2F {
 
 
 void main() {
-    FragColor = texture(tex, gl_PointCoord);//v2f.color;
+    FragColor = texture(tex, gl_PointCoord) * v2f.color;
 }

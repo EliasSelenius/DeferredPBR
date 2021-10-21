@@ -9,37 +9,58 @@ using Nums;
 namespace Demo {
     class Program {
         
-        class Testing {
-            public bool value { get; init; } = false;
-
-            public Testing() {
-                System.Console.WriteLine(value);
-            }
-        }
+        public static Gameobject camera;
 
         static void Main(string[] args) {
 
-            Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
+            //Console.WriteLine("Working Dir: " + System.IO.Directory.GetCurrentDirectory());
             //Console.Read();
 
-
+	    
             Application.run(load);            
         }
         
 
         static void load() {
+            camera = new Gameobject(new CameraFlyController());
+            camera.enterScene(Scene.active);
 
 
-            test();
+            setupTestScene();
+            //setupOceanScene();
         }
 
+        static void setupOceanScene() {
+            var scene = new Scene();
+            initBasicDirlight(scene);
 
-        static void test() {
+            var waterPlaneMesh = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(30, 30));
+            var waterObj = new Gameobject(
+                new MeshRenderer {
+                    mesh = waterPlaneMesh,
+                    materials = new[] {
+                        PBRMaterial.defaultMaterial
+                    }
+                }
+            );
+            waterObj.enterScene(scene);
+
+
+            Scene.active = scene;
+            camera.enterScene(scene);
+        }
+
+        static void initBasicDirlight(Scene scene) {
+            scene.dirlights.Add(new Dirlight {
+                dir = new Nums.vec3(2,5,3).normalized(),
+                color = Nums.vec3.one * 4f
+            });
+        }
+
+        static void setupTestScene() {
 
             Assets.getPrefab("Engine.data.models.Ships.Frigate").createInstance().enterScene(Scene.active);
 
-            var camera = new Gameobject(new CameraFlyController());
-            camera.enterScene(Scene.active);
 
             Scene.active.skybox = CubemapSkybox.generate(Assets.getShader("genCubemap"));
 
@@ -80,7 +101,7 @@ namespace Demo {
                         albedo = 1f,
                         roughness = 0.5f,
                         //metallic = 1f
-                } }
+                    } }
                 });
                 g.addComponent(new AABBCollider() {
                     size = (1,1,1)
