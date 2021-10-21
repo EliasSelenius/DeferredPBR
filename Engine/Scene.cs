@@ -22,7 +22,6 @@ namespace Engine {
         Transform transform { get; }
 
         void render();
-        void render(int shaderID);
     }
 
 

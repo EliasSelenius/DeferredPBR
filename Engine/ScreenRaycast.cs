@@ -48,7 +48,14 @@ namespace Engine {
             int i = 1;
             foreach (var r in renderers) {
                 GL.Uniform1(uniformloc, 1, ref i);
-                r.render(shader.id);
+                
+                // NOTO: hardcoded to only render MeshRenderers for now
+                if (r is MeshRenderer mr) {
+                    mr.gameobject.calcModelMatrix(out mat4 model);
+                    ModelUBO.setModelMatrix(ref model);
+                    mr.mesh.render();
+                }
+
                 i++;
             }
         }
