@@ -84,7 +84,7 @@ namespace Engine {
             msg += "    " + m;
 
             if (type == DebugType.DebugTypeError) throw new Exception(msg);
-            else System.Console.WriteLine(msg);
+            //else System.Console.WriteLine(msg);
 
 
             //Toolset.Editor.print(m);

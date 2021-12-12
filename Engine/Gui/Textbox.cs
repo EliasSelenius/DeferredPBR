@@ -33,6 +33,8 @@ namespace Engine.Gui {
             }
         }
         
+        bool force_cursor_visibility;
+
         public Textbox() {
 
             // add first initial line
@@ -43,41 +45,59 @@ namespace Engine.Gui {
         
         void keyboard_keypressed(key k, keymod m) {
 
-            if (k == key.Up) moveCursor(0, -1); 
-            else if (k == key.Down) moveCursor(0, 1); 
-            else if (k == key.Left) moveCursor(-1, 0); 
-            else if (k == key.Right) moveCursor(1, 0); 
+            force_cursor_visibility = true;
 
-            else if (k == key.Enter) {
-                var sb = new StringBuilder(currentLine.ToString().Substring(cursor.x));
-                currentLine.Remove(cursor.x, currentLine.Length - cursor.x);
-                lines.AddAfter(lines.Find(currentLine), sb); 
-                moveCursor(-cursor.x, 1);
-            } else if (k == key.Backspace) {
-                if (cursor.x == 0) {
-                    if (cursor.y != 0) {
-                        var o = lines.ElementAt(cursor.y - 1);
-                        var l = o.Length;
-                        o.Append(currentLine.ToString());
-                        lines.Remove(currentLine);
-                        moveCursor(l, -1);
-                    }
-                } else {
-                    currentLine.Remove(cursor.x - 1, 1);
-                    moveCursor(-1, 0);
+            if (m == keymod.control) {
+                switch (k) {
+                    case key.Up: fontsize += 2; break;
+                    case key.Down: fontsize -= 2; break;
                 }
-            } else if (k == key.Delete) {
-                if (cursor.x == currentLine.Length) {
-                    if (cursor.y != lines.Count-1) {
-                        lines.ElementAt(cursor.y + 1).Insert(0, currentLine.ToString());
-                        lines.Remove(currentLine);
-                        moveCursor(0, 0);
-                    }
-                } else {
-                    currentLine.Remove(cursor.x, 1);
+            } else {
+                switch (k) {
+                    case key.Up: moveCursor(0, -1); break;
+                    case key.Down: moveCursor(0, 1); break;
+                    case key.Left: moveCursor(-1, 0); break;
+                    case key.Right: moveCursor(1, 0); break;
+
+
+                    case key.Enter: 
+                        var sb = new StringBuilder(currentLine.ToString().Substring(cursor.x));
+                        currentLine.Remove(cursor.x, currentLine.Length - cursor.x);
+                        lines.AddAfter(lines.Find(currentLine), sb); 
+                        moveCursor(-cursor.x, 1);
+                        break;
+
+                    case key.Backspace:
+                        if (cursor.x == 0) {
+                            if (cursor.y != 0) {
+                                var o = lines.ElementAt(cursor.y - 1);
+                                var l = o.Length;
+                                o.Append(currentLine.ToString());
+                                lines.Remove(currentLine);
+                                moveCursor(l, -1);
+                            }
+                        } else {
+                            currentLine.Remove(cursor.x - 1, 1);
+                            moveCursor(-1, 0);
+                        }
+                        break;
+
+                    case key.Delete: 
+                        if (cursor.x == currentLine.Length) {
+                            if (cursor.y != lines.Count-1) {
+                                lines.ElementAt(cursor.y + 1).Insert(0, currentLine.ToString());
+                                lines.Remove(currentLine);
+                                moveCursor(0, 0);
+                            }
+                        } else {
+                            currentLine.Remove(cursor.x, 1);
+                        }
+                        break;
+                        
+                    case key.Tab: 
+                        input("    ");
+                        break;
                 }
-            } else if (k == key.Tab) {
-                input("    ");
             }
         }
 
@@ -129,12 +149,14 @@ namespace Engine.Gui {
 
             // cursor
             const float blinktime = 1;
-            if (Application.time % blinktime < blinktime / 2f) {
+            if (force_cursor_visibility || Application.time % blinktime < blinktime / 2f) {
                 var cursorpos = offset + new vec2(
                     x: Text.length(currentLine.ToString(), 0, cursor.x, fontsize, font), 
                     y: cursor.y * fontsize );
 
                 canvas.rect(cursorpos, new vec2(2, fontsize), in color.white);
+
+                force_cursor_visibility = false;
             }
          
 

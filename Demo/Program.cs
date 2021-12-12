@@ -34,15 +34,7 @@ namespace Demo {
             var scene = new Scene();
             initBasicDirlight(scene);
 
-            var waterPlaneMesh = new Mesh<Vertex>(MeshFactory<Vertex>.genPlane(30, 30));
-            var waterObj = new Gameobject(
-                new MeshRenderer {
-                    mesh = waterPlaneMesh,
-                    materials = new[] {
-                        PBRMaterial.defaultMaterial
-                    }
-                }
-            );
+            var waterObj = new Gameobject(new WaterChunk());
             waterObj.enterScene(scene);
 
 

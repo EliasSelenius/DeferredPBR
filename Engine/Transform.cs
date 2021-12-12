@@ -65,7 +65,10 @@ namespace Engine {
         }
 
 
-        public void rotate(quat q) => rotation *= q;
+        public void rotate(quat q) {
+            rotation *= q;
+            rotation.normalize();
+        }
         public void rotate(vec3 axis, float angle) => rotate(quat.fromAxisangle(axis, angle));
 
         public void lookat(in vec3 point, in vec3 up) {
